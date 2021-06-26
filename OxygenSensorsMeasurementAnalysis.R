@@ -75,22 +75,49 @@ Files<-list.files("C:\\Users\\frm10\\The Pennsylvania State University\\Strategi
 
 Files[grep(".xlsx",Files)]
 
-## read the files
+## Read all the files
+# i=Files[grep(".xlsx",Files)][1]
+
+for (i in Files[grep(".xlsx",Files)] ) {
+  
+  ## read the dataloger names
+  
+  Datalogger.Name<-read.xlsx(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\",i), sheet=1, startRow = 1, colNames = F, rows=1, cols=6) ;
+  
+  ## read the dataloggers varaible names
+  
+  Datalogger.Variables<-read.xlsx(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\",i), sheet=1, startRow = 2, colNames = T, rows=2) ;
+  names(Datalogger.Variables)
+  
+  
+  ## read the data logger data
+  DataLogger.Data<-read.xlsx(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\",i), sheet=1, startRow = 5, colNames = F) ;
+  
+  ## add the nmes of the variables to the datalogger data
+  names(DataLogger.Data)<-names(Datalogger.Variables);
+  
+  str(DataLogger.Data)
+  
+  ## convert the excel numeric data format of the TIMESTAMP to the R data format POSIXct
+  
+  DataLogger.Data$TIME<-convertToDateTime(DataLogger.Data$TIMESTAMP) ;
+  
+  
+  ## add the data logger name to all the records
+  
+  DataLogger.Data$Plot<-unlist(Datalogger.Name);
+  
+  ## crate an appropriate name for the data frame
+  
+  Name.of.DataLogger<-sub(i, pattern="*.dat.xlsx",replacement="");
+  
+  assign(Name.of.DataLogger,DataLogger.Data);
+  
+  
+  rm(Datalogger.Name, Datalogger.Variables, DataLogger.Data, Name.of.DataLogger);
+
+}
 
 
-Datalogger.Name<-read.xlsx("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\B1Clover.dat.xlsx", sheet=1, startRow = 1, colNames = F, rows=1, cols=6) ;
 
 
-Datalogger.Variables<-read.xlsx("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\B1Clover.dat.xlsx", sheet=1, startRow = 2, colNames = T, rows=2) ;
-names(Datalogger.Variables)
-
-DataLogger.Data<-read.xlsx("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\B1Clover.dat.xlsx", sheet=1, startRow = 5, colNames = F) ;
-
-names(DataLogger.Data)<-names(Datalogger.Variables);
-
-
-str(DataLogger.Data)
-
-DataLogger.Data$TIME<-as.POSIXct(DataLogger.Data$TIMESTAMP, format="%Y-%m-%d %H:%M:%S") ;
-
-DataLogger.Data$Plot<-unlist(Datalogger.Names[6]);
