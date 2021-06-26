@@ -65,3 +65,32 @@ library(sp)
 ###############################################################################################################
 #                           load the files the will be needed  
 ###############################################################################################################
+
+
+## Read which files are available in the directory
+
+Files<-list.files("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting")
+
+## Select files that are ..xlsx only
+
+Files[grep(".xlsx",Files)]
+
+## read the files
+
+
+Datalogger.Name<-read.xlsx("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\B1Clover.dat.xlsx", sheet=1, startRow = 1, colNames = F, rows=1, cols=6) ;
+
+
+Datalogger.Variables<-read.xlsx("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\B1Clover.dat.xlsx", sheet=1, startRow = 2, colNames = T, rows=2) ;
+names(Datalogger.Variables)
+
+DataLogger.Data<-read.xlsx("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\B1Clover.dat.xlsx", sheet=1, startRow = 5, colNames = F) ;
+
+names(DataLogger.Data)<-names(Datalogger.Variables);
+
+
+str(DataLogger.Data)
+
+DataLogger.Data$TIME<-as.POSIXct(DataLogger.Data$TIMESTAMP, format="%Y-%m-%d %H:%M:%S") ;
+
+DataLogger.Data$Plot<-unlist(Datalogger.Names[6]);
