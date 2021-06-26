@@ -118,6 +118,99 @@ for (i in Files[grep(".xlsx",Files)] ) {
 
 }
 
+str(B1Clover)
+names(B1Clover)
+
+###############################################################################################################
+#                           Plotting the data 
+###############################################################################################################
 
 
+## plotting B1Clover
 
+## Combining the data with Oxybase
+
+B1Clover.Oxybase<-merge(B1Clover, OXYbase, by="TIME");
+names(B1Clover.Oxybase)
+
+## Using the package Lattice
+
+Plot.B1Clover<-xyplot(B1CloverA5cmO2_Avg + B1CloverA20cmO2_Avg + B1CloverB5cmO2_Avg + B1CloverB20cmO2_Avg + B1CloverC5cmO2_Avg + B1CloverC20cmO2_Avg + OXYBaseOxygen  ~TIME, data=B1Clover.Oxybase, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l", ylim=c(0,80))
+
+Plot.B1Clover
+
+
+## plotting B2Clover
+
+## Combining the data with Oxybase
+
+B2Clover.Oxybase<-merge(B2Clover, OXYbase, by="TIME");
+names(B2Clover.Oxybase)
+
+## Using the package Lattice
+
+Plot.B2Clover<-xyplot(B2CloverA5cmO2_Avg + B2CloverA20cmO2_Avg + B2CloverB5cmO2_Avg + B2CloverB20cmO2_Avg + B2CloverC5cmO2_Avg + B2CloverC20cmO2_Avg + OXYBaseOxygen  ~TIME, data=B2Clover.Oxybase, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l", ylim=c(0,80)) ;
+
+Plot.B2Clover
+
+
+## plotting B2Triticale
+
+## Combining the data with Oxybase
+
+B2Triticale.Oxybase<-merge(B2Triticale, OXYbase, by="TIME");
+names(B2Triticale.Oxybase)
+
+## Using the package Lattice
+
+Plot.B2Triticale<-xyplot(B2TriticaleA5cmO2_Avg + B2TriticaleA20cmO2_Avg + B2TriticaleB5cmO2_Avg + B2TriticaleB20cmO2_Avg + B2TriticaleC5cmO2_Avg + B2TriticaleC20cmO2_Avg + OXYBaseOxygen  ~TIME, data=B2Triticale.Oxybase, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l", ylim=c(0,80)) ;
+
+Plot.B2Triticale
+
+## plotting B3Clover
+
+## Combining the data with Oxybase
+
+B3Clover.Oxybase<-merge(B3Clover, OXYbase, by="TIME");
+names(B3Clover.Oxybase)
+
+## Using the package Lattice
+
+Plot.B3Clover<-xyplot(B3CloverA5cmO2_Avg + B3CloverA20cmO2_Avg + B3CloverB5cmO2_Avg + B3CloverB20cmO2_Avg + B3CloverC5cmO2_Avg + B3CloverC20cmO2_Avg + OXYBaseOxygen  ~TIME, data=B3Clover.Oxybase, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l", ylim=c(0,80)) ;
+
+Plot.B3Clover   
+
+## plotting B4Clover
+
+## Combining the data with Oxybase
+
+B4Clover.Oxybase<-merge(B4Clover, OXYbase, by="TIME");
+names(B4Clover.Oxybase)
+
+## Using the package Lattice
+
+Plot.B4Clover<-xyplot(B4CloverA5cmO2_Avg + B4CloverA20cmO2_Avg + B4CloverB5cmO2_Avg + B4CloverB20cmO2_Avg + B4CloverC5cmO2_Avg + B4CloverC20cmO2_Avg + OXYBaseOxygen  ~TIME, data=B4Clover.Oxybase, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l", ylim=c(0,80)) ;
+
+Plot.B4Clover   
+
+
+## plotting B4Clover
+
+## Combining the data with Oxybase
+
+B4Clover.Oxybase<-merge(B4Clover, OXYbase, by="TIME");
+names(B4Clover.Oxybase)
+
+## Using the package Lattice
+
+Plot.B4Clover<-xyplot(B4CloverA5cmO2_Avg + B4CloverA20cmO2_Avg + B4CloverB5cmO2_Avg + B4CloverB20cmO2_Avg + B4CloverC5cmO2_Avg + B4CloverC20cmO2_Avg + OXYBaseOxygen  ~TIME, data=B4Clover.Oxybase, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l", ylim=c(0,80)) ;
+
+Plot.B4Clover   
+
+
+## plotting B4Triticale
+
+Plot.B4Triticale<-xyplot(B4TriticaleA5cmO2_Avg + B4TriticaleA20cmO2_Avg + B4TriticaleB5cmO2_Avg + B4TriticaleB20cmO2_Avg + B4TriticaleC5cmO2_Avg + B4TriticaleC20cmO2_Avg ~TIME, data=B4Triticale,auto.key = T, type="l", ylim=c(0,80) ) ;
+
+
+Plot.B4Triticale
