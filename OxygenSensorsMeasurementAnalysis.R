@@ -35,7 +35,7 @@
 
 # readClipboard()
 
-setwd("C:\\Felipe\\Willow_Project\\Willow_Experiments\\Willow Rock Spring\\SkyCap_SelectionTrial\\DataCollection") ;   # 
+#setwd("C:\\Felipe\\Willow_Project\\Willow_Experiments\\Willow Rock Spring\\SkyCap_SelectionTrial\\DataCollection") ;   # 
 
 "https://pennstateoffice365.sharepoint.com/:f:/s/StrategicTillageAndN2O/Ehl9Lh_gza5FiOtKIyDD7MQBOKFdFk6h_k4EEYEktWJUYw?e=uYLqL0"
 
@@ -63,7 +63,7 @@ library(sp)
 
 
 ###############################################################################################################
-#                           load the files the will be needed  
+#                           load the files that will be needed  
 ###############################################################################################################
 
 
@@ -75,7 +75,11 @@ Files<-list.files("C:\\Users\\frm10\\The Pennsylvania State University\\Strategi
 
 Files[grep(".xlsx",Files)]
 
-## Read all the files
+
+###############################################################################################################
+#                           Read all the  excel files 
+###############################################################################################################
+
 # i=Files[grep(".xlsx",Files)][1]
 
 for (i in Files[grep(".xlsx",Files)] ) {
@@ -120,6 +124,54 @@ for (i in Files[grep(".xlsx",Files)] ) {
 
 str(B1Clover)
 names(B1Clover)
+
+###############################################################################################################
+#                           Read all the .dat files 
+###############################################################################################################
+#j= "1.dat"
+
+for (j in c("1.dat" , "2.dat", "3.dat", "4.dat" ,"5.dat" ,"6.dat") ) {
+  
+  ## read the dataloger names
+  
+  Datalogger.Name<-read.csv(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\",j), header=F, nrows=1) ;
+  
+  ## read the dataloggers varaible names
+  
+  Datalogger.Variables<-read.csv(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\",j), header=T, skip=1,nrows=1);
+  names(Datalogger.Variables)
+  
+  
+  ## read the data logger data
+  DataLogger.Data<-read.csv(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\",j), header=F, skip=4);
+  
+  ## add the nmes of the variables to the datalogger data
+  names(DataLogger.Data)<-names(Datalogger.Variables);
+  
+  str(DataLogger.Data)
+  
+  ## convert the excel numeric data format of the TIMESTAMP to the R data format POSIXct
+  
+  DataLogger.Data$TIME<-as.POSIXct(DataLogger.Data$TIMESTAMP) ;
+  
+  
+  ## add the data logger name to all the records
+  
+  DataLogger.Data$Plot<-unlist(Datalogger.Name[6]);
+  
+  ## crate an appropriate name for the data frame
+  
+  Name.of.DataLogger<-sub(j, pattern="*.dat",replacement="");
+  
+  assign(Name.of.DataLogger,DataLogger.Data);
+  
+  
+  rm(Datalogger.Name, Datalogger.Variables, DataLogger.Data, Name.of.DataLogger);
+  
+}
+
+
+
 
 ###############################################################################################################
 #                           Plotting the data 
