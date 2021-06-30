@@ -130,7 +130,7 @@ names(B1Clover)
 ###############################################################################################################
 #j= "1.dat"
 
-for (j in c("1.dat" , "2.dat", "3.dat", "4.dat" ,"5.dat" ,"6.dat") ) {
+for (j in c("1.dat" , "2.dat", "3.dat", "4.dat" ,"5.dat" ,"6.dat", "B4Triticale.dat") ) {
   
   ## read the dataloger names
   
@@ -348,3 +348,18 @@ names(dat.6.dat.Oxybase)
 Plot.dat.6.dat<-xyplot(B3TriticaleA5cmO2_Avg + B3TriticaleA20cmO2_Avg + B3TriticaleB5cmO2_Avg + B3TriticaleB20cmO2_Avg + B3TriticaleC5cmO2_Avg + B3TriticaleC20cmO2_Avg + OXYBaseOxygen  ~TIME, data=dat.6.dat.Oxybase, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l", ylim=c(0,80)) ;
 
 Plot.dat.6.dat 
+
+
+## plotting dat.B4Triticale.dat
+
+## Combining the data with Oxybase
+
+dat.B4Triticale.dat.Oxybase<-merge(dat.B4Triticale.dat, OXYbase, by="TIME");
+names(dat.B4Triticale.dat.Oxybase)
+
+## Using the package Lattice
+
+Plot.dat.B4Triticale.dat<-xyplot(B4TriticaleA5cmO2_Avg + B4TriticaleA20cmO2_Avg + B4TriticaleB5cmO2_Avg + B4TriticaleB20cmO2_Avg + B4TriticaleC5cmO2_Avg + B4TriticaleC20cmO2_Avg + OXYBaseOxygen  ~TIME, data=dat.B4Triticale.dat.Oxybase, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l", ylim=c(0,80)) ;
+
+Plot.dat.B4Triticale.dat
+
