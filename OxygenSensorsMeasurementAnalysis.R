@@ -161,7 +161,7 @@ for (j in c("1.dat" , "2.dat", "3.dat", "4.dat" ,"5.dat" ,"6.dat") ) {
   
   ## crate an appropriate name for the data frame
   
-  Name.of.DataLogger<-sub(j, pattern="*.dat",replacement="");
+  Name.of.DataLogger<-paste0("dat.",j);
   
   assign(Name.of.DataLogger,DataLogger.Data);
   
@@ -246,23 +246,105 @@ Plot.B4Clover<-xyplot(B4CloverA5cmO2_Avg + B4CloverA20cmO2_Avg + B4CloverB5cmO2_
 Plot.B4Clover   
 
 
-## plotting B4Clover
-
-## Combining the data with Oxybase
-
-B4Clover.Oxybase<-merge(B4Clover, OXYbase, by="TIME");
-names(B4Clover.Oxybase)
-
-## Using the package Lattice
-
-Plot.B4Clover<-xyplot(B4CloverA5cmO2_Avg + B4CloverA20cmO2_Avg + B4CloverB5cmO2_Avg + B4CloverB20cmO2_Avg + B4CloverC5cmO2_Avg + B4CloverC20cmO2_Avg + OXYBaseOxygen  ~TIME, data=B4Clover.Oxybase, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l", ylim=c(0,80)) ;
-
-Plot.B4Clover   
-
 
 ## plotting B4Triticale
 
-Plot.B4Triticale<-xyplot(B4TriticaleA5cmO2_Avg + B4TriticaleA20cmO2_Avg + B4TriticaleB5cmO2_Avg + B4TriticaleB20cmO2_Avg + B4TriticaleC5cmO2_Avg + B4TriticaleC20cmO2_Avg ~TIME, data=B4Triticale,auto.key = T, type="l", ylim=c(0,80) ) ;
+## Combining the data with Oxybase
+
+B4Triticale.Oxybase<-merge(B4Triticale, OXYbase, by="TIME");
+names(B4Triticale.Oxybase)
+
+## Using the package Lattice
+
+Plot.B4Triticale<-xyplot(B4TriticaleA5cmO2_Avg + B4TriticaleA20cmO2_Avg + B4TriticaleB5cmO2_Avg + B4TriticaleB20cmO2_Avg + B4TriticaleC5cmO2_Avg + B4TriticaleC20cmO2_Avg + OXYBaseOxygen  ~TIME, data=B4Triticale.Oxybase, xlim=c(as.POSIXct("2021-06-24 15:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l", ylim=c(0,80)) ;
+
+Plot.B4Triticale  
 
 
-Plot.B4Triticale
+
+
+## plotting dat.1.dat
+
+## Combining the data with Oxybase
+
+dat.1.dat.Oxybase<-merge(dat.1.dat, OXYbase, by="TIME");
+names(dat.1.dat.Oxybase)
+
+## Using the package Lattice
+
+Plot.dat.1.dat<-xyplot(B13SppNA5cmO2_Avg + B13SppNA20cmO2_Avg + B13SppNB5cmO2_Avg + B13SppNB20cmO2_Avg + B13SppNC5cmO2_Avg + B13SppNC20cmO2_Avg + OXYBaseOxygen  ~TIME, data=dat.1.dat.Oxybase, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l", ylim=c(0,80)) ;
+
+Plot.dat.1.dat   
+
+
+## plotting dat.2.dat
+
+## Combining the data with Oxybase
+
+dat.2.dat.Oxybase<-merge(dat.2.dat, OXYbase, by="TIME");
+names(dat.2.dat.Oxybase)
+
+## Using the package Lattice
+
+Plot.dat.2.dat<-xyplot(B43SppNA5cmO2_Avg + B43SppNA20cmO2_Avg + B43SppNB5cmO2_Avg + B43SppNB20cmO2_Avg + B43SppNC5cmO2_Avg + B43SppNC20cmO2_Avg + OXYBaseOxygen  ~TIME, data=dat.2.dat.Oxybase, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l", ylim=c(0,80)) ;
+
+Plot.dat.2.dat  
+
+
+
+## plotting dat.3.dat
+
+## Combining the data with Oxybase
+
+dat.3.dat.Oxybase<-merge(dat.3.dat, OXYbase, by="TIME");
+names(dat.3.dat.Oxybase)
+
+## Using the package Lattice
+
+Plot.dat.3.dat<-xyplot(B33SppNA5cmO2_Avg + B33SppNA20cmO2_Avg + B33SppNB5cmO2_Avg + B33SppNB20cmO2_Avg + B33SppNC5cmO2_Avg + B33SppNC20cmO2_Avg + OXYBaseOxygen  ~TIME, data=dat.3.dat.Oxybase, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l", ylim=c(0,80)) ;
+
+Plot.dat.3.dat  
+
+
+
+
+## plotting dat.4.dat
+
+## Combining the data with Oxybase
+
+dat.4.dat.Oxybase<-merge(dat.4.dat, OXYbase, by="TIME");
+names(dat.4.dat.Oxybase)
+
+## Using the package Lattice
+
+Plot.dat.4.dat<-xyplot(B1TriticaleA5cmO2_Avg + B1TriticaleA20cmO2_Avg + B1TriticaleB5cmO2_Avg + B1TriticaleB20cmO2_Avg + B1TriticaleC5cmO2_Avg + B1TriticaleC20cmO2_Avg + OXYBaseOxygen  ~TIME, data=dat.4.dat.Oxybase, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l", ylim=c(0,80)) ;
+
+Plot.dat.4.dat 
+
+
+## plotting dat.5.dat
+
+## Combining the data with Oxybase
+
+dat.5.dat.Oxybase<-merge(dat.5.dat, OXYbase, by="TIME");
+names(dat.5.dat.Oxybase)
+
+## Using the package Lattice
+
+Plot.dat.5.dat<-xyplot(B23SppNA5cmO2_Avg + B23SppNA20cmO2_Avg + B23SppNB5cmO2_Avg + B23SppNB20cmO2_Avg + B23SppNC5cmO2_Avg + B23SppNC20cmO2_Avg + OXYBaseOxygen  ~TIME, data=dat.5.dat.Oxybase, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l", ylim=c(0,80)) ;
+
+Plot.dat.5.dat 
+
+
+## plotting dat.6.dat
+
+## Combining the data with Oxybase
+
+dat.6.dat.Oxybase<-merge(dat.6.dat, OXYbase, by="TIME");
+names(dat.6.dat.Oxybase)
+
+## Using the package Lattice
+
+Plot.dat.6.dat<-xyplot(B3TriticaleA5cmO2_Avg + B3TriticaleA20cmO2_Avg + B3TriticaleB5cmO2_Avg + B3TriticaleB20cmO2_Avg + B3TriticaleC5cmO2_Avg + B3TriticaleC20cmO2_Avg + OXYBaseOxygen  ~TIME, data=dat.6.dat.Oxybase, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l", ylim=c(0,80)) ;
+
+Plot.dat.6.dat 
