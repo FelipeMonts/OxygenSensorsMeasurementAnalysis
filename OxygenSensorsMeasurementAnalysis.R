@@ -363,3 +363,126 @@ Plot.dat.B4Triticale.dat<-xyplot(B4TriticaleA5cmO2_Avg + B4TriticaleA20cmO2_Avg 
 
 Plot.dat.B4Triticale.dat
 
+
+
+###############################################################################################################
+#                           
+#   Transform the data into potential signal (mv) based on the calibration equation used in the tests
+#   Alli suggested that the calibration equation is artificially increasing the differences between sensors. Tranforming the 
+#   signal back to the uncalibrated potential my show that the differences between sensors are not signifficant (Brilliant!)
+#  
+#   The Equation is O2 = CF * Signal - offset 
+#
+#  Therefore Signal = (O2-offset) / CF 
+#
+#
+#   with CF = 6.057 and Offset = 4.13
+#
+###############################################################################################################
+
+
+str(dat.1.dat)
+
+#### using mapply to subtract the offset from the O2 Data
+
+mapply('-', dat.1.dat[,c(5,7,9,11,13,15)], c(4.13)) ;
+
+
+#### using mapply to divide the offset corrected data by the CF
+
+
+mapply('/', mapply('-', dat.1.dat[,c(5,7,9,11,13,15)], c(4.13), SIMPLIFY = F), c(6.057), SIMPLIFY = T) ;
+
+
+### combining both operations into one
+
+dat.1.Signal<-data.frame(mapply('/', mapply('-', dat.1.dat[,c(5,7,9,11,13,15)], c(4.13), SIMPLIFY = F), c(6.057) , SIMPLIFY = T)) ;
+
+names(dat.1.Signal)<-paste0("Signal_", names(dat.1.dat[c(5,7,9,11,13,15)])) ;
+
+dat.1<- cbind(dat.1.dat , dat.1.Signal);
+
+
+dat.2.Signal<-data.frame(mapply('/', mapply('-', dat.2.dat[,c(5,7,9,11,13,15)], c(4.13), SIMPLIFY = F), c(6.057) , SIMPLIFY = T)) ;
+
+names(dat.2.Signal)<-paste0("Signal_", names(dat.2.dat[c(5,7,9,11,13,15)])) ;
+
+dat.2<- cbind(dat.2.dat , dat.2.Signal);
+
+
+dat.3.Signal<-data.frame(mapply('/', mapply('-', dat.3.dat[,c(5,7,9,11,13,15)], c(4.13), SIMPLIFY = F), c(6.057) , SIMPLIFY = T)) ;
+
+names(dat.3.Signal)<-paste0("Signal_", names(dat.3.dat[c(5,7,9,11,13,15)])) ;
+
+dat.3<- cbind(dat.3.dat , dat.3.Signal);
+
+
+dat.4.Signal<-data.frame(mapply('/', mapply('-', dat.4.dat[,c(5,7,9,11,13,15)], c(4.13), SIMPLIFY = F), c(6.057) , SIMPLIFY = T)) ;
+
+names(dat.4.Signal)<-paste0("Signal_", names(dat.4.dat[c(5,7,9,11,13,15)])) ;
+
+dat.4<- cbind(dat.4.dat , dat.4.Signal);
+
+
+dat.5.Signal<-data.frame(mapply('/', mapply('-', dat.5.dat[,c(5,7,9,11,13,15)], c(4.13), SIMPLIFY = F), c(6.057) , SIMPLIFY = T)) ;
+
+names(dat.5.Signal)<-paste0("Signal_", names(dat.5.dat[c(5,7,9,11,13,15)])) ;
+
+dat.5<- cbind(dat.5.dat , dat.5.Signal);
+
+
+dat.6.Signal<-data.frame(mapply('/', mapply('-', dat.6.dat[,c(5,7,9,11,13,15)], c(4.13), SIMPLIFY = F), c(6.057) , SIMPLIFY = T)) ;
+
+names(dat.6.Signal)<-paste0("Signal_", names(dat.6.dat[c(5,7,9,11,13,15)])) ;
+
+dat.6<- cbind(dat.6.dat , dat.6.Signal);
+
+
+
+## plotting dat.1
+
+
+## Using the package Lattice
+
+Plot.dat.1<-xyplot(Signal_B13SppNA5cmO2_Avg + Signal_B13SppNA20cmO2_Avg + Signal_B13SppNB5cmO2_Avg + Signal_B13SppNB20cmO2_Avg + Signal_B13SppNC5cmO2_Avg + Signal_B13SppNC20cmO2_Avg   ~TIME, data=dat.1, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l") ;
+
+Plot.dat.1
+ 
+
+## plotting dat.2 
+
+## Using the package Lattice
+
+Plot.dat.2<-xyplot(Signal_B43SppNA5cmO2_Avg + Signal_B43SppNA20cmO2_Avg + Signal_B43SppNB5cmO2_Avg + Signal_B43SppNB20cmO2_Avg + Signal_B43SppNC5cmO2_Avg + Signal_B43SppNC20cmO2_Avg   ~ TIME, data=dat.2, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l") ;
+
+Plot.dat.2
+
+## plotting dat.3 
+## Using the package Lattice
+
+Plot.dat.3<-xyplot(Signal_B33SppNA5cmO2_Avg + Signal_B33SppNA20cmO2_Avg + Signal_B33SppNB5cmO2_Avg + Signal_B33SppNB20cmO2_Avg + Signal_B33SppNC5cmO2_Avg + Signal_B33SppNC20cmO2_Avg  ~ TIME, data=dat.3, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l") ;
+
+Plot.dat.3
+
+## plotting dat.4 
+## Using the package Lattice
+
+Plot.dat.4<-xyplot(Signal_B1TriticaleA5cmO2_Avg + Signal_B1TriticaleA20cmO2_Avg + Signal_B1TriticaleB5cmO2_Avg + Signal_B1TriticaleB20cmO2_Avg + Signal_B1TriticaleC5cmO2_Avg + Signal_B1TriticaleC20cmO2_Avg  ~ TIME, data=dat.4, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l") ;
+
+Plot.dat.4 
+
+
+## plotting dat.5
+## Using the package Lattice
+
+Plot.dat.5<-xyplot(Signal_B23SppNA5cmO2_Avg + Signal_B23SppNA20cmO2_Avg + Signal_B23SppNB5cmO2_Avg + Signal_B23SppNB20cmO2_Avg + Signal_B23SppNC5cmO2_Avg + Signal_B23SppNC20cmO2_Avg  ~ TIME, data=dat.5, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l") ;
+
+Plot.dat.5 
+
+
+## plotting dat.6.dat
+## Using the package Lattice
+
+Plot.dat.6<-xyplot(Signal_B3TriticaleA5cmO2_Avg + Signal_B3TriticaleA20cmO2_Avg + Signal_B3TriticaleB5cmO2_Avg + Signal_B3TriticaleB20cmO2_Avg + Signal_B3TriticaleC5cmO2_Avg + Signal_B3TriticaleC20cmO2_Avg ~ TIME, data=dat.6, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l") ;
+
+Plot.dat.6
