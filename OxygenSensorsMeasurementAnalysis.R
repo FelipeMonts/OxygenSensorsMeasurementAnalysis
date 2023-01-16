@@ -71,7 +71,8 @@ library(sp)
 
 Files<-list.files("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting")
 
-## Select files that are ..xlsx only
+## 
+Select files that are ..xlsx only
 
 Files[grep(".xlsx",Files)]
 

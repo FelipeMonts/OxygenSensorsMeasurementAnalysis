@@ -8,6 +8,8 @@
 # 
 # Felipe Montes 2021/08/26
 # 
+# Updated 01/16/2023
+# 
 # 
 ############################################################################################################### 
 
@@ -20,7 +22,7 @@
 
 #  Tell the program where the package libraries are  #####################
 
-.libPaths("C:/Felipe/SotwareANDCoding/R_Library/library")  ;
+#.libPaths("C:/Felipe/SotwareANDCoding/R_Library/library")  ;
 
 
 ###############################################################################################################
@@ -34,16 +36,20 @@
 
 "https://pennstateoffice365.sharepoint.com/:f:/s/StrategicTillageAndN2O/Ehl9Lh_gza5FiOtKIyDD7MQBOKFdFk6h_k4EEYEktWJUYw?e=uYLqL0"
 
-#setwd("C:\\Felipe\\Willow_Project\\Willow_Experiments\\
+setwd("D:\\Felipe\\CCC Based Experiments\\StrategicTillage_NitrogenLosses_OrganicCoverCrops\\Data\\Oxygen") ;
 
 ###############################################################################################################
 #                            Install the packages that are needed                       
 ###############################################################################################################
-install.packages("magick", dependencies = T)
 
-install.packages("jpeg", dependencies = T)
+install.packages("openxlxs", dependencies = T)
 
-install.packages("Rcpp", dependencies = T)
+# 
+# install.packages("magick", dependencies = T)
+# 
+# install.packages("jpeg", dependencies = T)
+# 
+# install.packages("Rcpp", dependencies = T)
 
 
 ###############################################################################################################
@@ -52,78 +58,71 @@ install.packages("Rcpp", dependencies = T)
 
 library(openxlsx)
 
-library(lattice)
-
-library(jpeg)
-
-library(magick)
+# library(lattice)
+# 
+# library(jpeg)
+# 
+# library(magick)
 
 
 
 ###############################################################################################################
 #                           Explore the files and directory and files with the data from Felipe's Downloads
 ###############################################################################################################
-### Read the Directories where the GC data are stored
+### Read the Directories, files and data from the download directory where the GC data are stored
 
-DownloadDate = "20210903Download"  ;
-
-O2.Directory ="B1Clover" ;
-
-CampbellSci.files<-c("CR1000_DataTableInfo.dat" , "CR1000_Oxygen.dat" ,       "CR1000_Public.dat"  ,      "CR1000_Status.dat" ) ;
+CampbellSci.files<-c("CR1000NEW_DataTableInfo.dat" , "CR1000NEW_Oxygen.dat" ,       "CR1000NEW_Public.dat"  ,      "CR1000NEW_Status.dat" ) ;
 
 
-Directory.List<-list.files(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2Sensors\\", DownloadDate , "\\", O2.Directory));
+Directory.List.Locations<-list.files("./OxygenSensorsData2022");
 
-O2.Data.1.Names<-read.csv(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2Sensors\\20210825Download\\",O2.Directory, "\\",CampbellSci.files[2] ), header=F, skip=1, nrows=1)
 
-O2.Data.1<-read.csv(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2Sensors\\20210825Download\\",O2.Directory, "\\",CampbellSci.files[2] ), header=F, skip=4, nrows=-1) ;
+O2.Data.1<-read.csv(paste0("./OxygenSensorsData2022\\",Directory.List.Locations[[1]],"\\",CampbellSci.files[[2]] ), header=F, skip=4) ;
 
-names(O2.Data.1)<-O2.Data.1.Names[1,] ;
 
-str(O2.Data.1)
+names(O2.Data.1)<-read.csv(paste0("./OxygenSensorsData2022\\",Directory.List.Locations[[1]],"\\",CampbellSci.files[[2]] ), header=F, skip=1,nrows=1) ;
 
-### Prepare a detailed and well formatted data frame for data analysis and exploration
+head(O2.Data.1) 
+
+ tail(O2.Data.1)
+
+### correct the time stamp fo the date and format it into a POSIXct Time-Date 
+
 
 O2.Data.1$TIME<-as.POSIXct(O2.Data.1$TIMESTAMP) ;
+length(O2.Data.1$TIME)
 
+### The first records have worng the date 1999
+
+O2.Data.1$Inverse.Record.No<-seq.int(from=(length(O2.Data.1$TIME)),to=1) ;
+
+O2.Data.1$Corrected.TIME<-O2.Data.1$TIME[length(O2.Data.1$TIME)]-(O2.Data.1$Inverse.Record.No*30*60) ;
+
+### Reshape the data from a wide format where block and treatments are in separate columns to one in which all are in the same column with separate rows
+
+O2.Data<-O2.Data.1[1:6] ;
+
+head(O2.Data);
+
+O2.Data$Block.Treat<-names(O2.Data)[5]
+
+
+names(O2.Data)[c(5,6)]<-c("O2.conc", "Temp.C") ;
+
+head(O2.Data)
+
+O2.Data.1[c(1,2,3,4,7,8)] 
 
 
 ###############################################################################################################
 #                           Explore the files and directory and files with the data from Alli's downloads
 ###############################################################################################################
 
-### Read the data from Alli's downloads
-
-O2.Data.Alli.names<-read.csv("09172021B1Clover.dat", skip=1, header=T, nrows=1);
-
-O2.Data.Alli.data<-read.csv("09172021B1Clover.dat", skip=4, header=F);
-
-
-names(O2.Data.Alli.data)<-names(O2.Data.Alli.names)
-
-
-str(O2.Data.Alli.data)
-
-### Prepare a detailed and well formatted data frame for data analysis and exploration
-
-O2.Data.Alli.data$TIME<-as.POSIXct(O2.Data.Alli.data$TIMESTAMP) ;
 
 
 
 
-
-
-#### Read picture of the O2 Sensor Installed
   
-
-
-O2Picture<-readJPEG(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Pictures\\Pictures_O2Sensors_20210927\\IMG_0073.JPG")) ;
-
-
-O2Picture2<-image_read(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Pictures\\Pictures_O2Sensors_20210927\\IMG_0073.JPG")) ;
-
-O2Picture3<-image_rotate(O2Picture2, -90);
-
 
 #### read precipitation data from https://wcc.sc.egov.usda.gov/nwcc/site?sitenum=2036
 
