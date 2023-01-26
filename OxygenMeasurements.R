@@ -13,16 +13,100 @@
 # 
 ############################################################################################################### 
 
-
-
 ###############################################################################################################
-#                             Tell the program where the package libraries are stored                        
+#                       Campbell Scientific Data-logger Oxygen measurement program                       
 ###############################################################################################################
+# 'CR1000 Series Datalogger
+# 'Datalogger program for Apogee Instruments model SO-200 series oxygen sensors
+# 'date: May 6, 2021
+# 'program author: Alli Koehle
+# 
+# 'Explanation of Constants and Variables Used in Datalogger Program
+# 'CF = calibration factor (slope) to convert voltage signal to pressure
+# 'Offset = offset (intercept) to convert voltage signal to pressure
+# 'BattV = datalogger battery voltage
+# 'PanelT = datalogger panel temperature
+# 'Signal = mV signal output from pressure sensor
+# 'O2 = absolute oxygen concentration in kilopascals
+# 'SensorTC = sensor temperature in degrees Celsius
+# 
+# 'Declare Public Variables
+# Public BattV, PanelT
+# Public B33SppNA5cmO2, B33SppNA5cmTemp, B33SppNA5cmSignal,
+# Public B33SppNA20cmO2, B33SppNA20cmTemp, B33SppNA20cmSignal,
+# Public B33SppNB5cmO2, B33SppNB5cmTemp, B33SppNB5cmSignal,
+# Public B33SppNB20cmO2, B33SppNB20cmTemp, B33SppNB20cmSignal,
+# Public B33SppNC5cmO2, B33SppNC5cmTemp, B33SppNC5cmSignal,
+# Public B33SppNC20cmO2, B33SppNC20cmTemp, B33SppNC20cmSignal
+# 
+# 'Declare Constants
+# 'Const CF = 0.388 'sensor specific
+# 'Const Offset = 1.35 'sensor specific
+# Const CF = 1
+# Const Offset = 0
+# 
+# 'Define Data Table
+# DataTable (Oxygen,1,-1)
+# 	DataInterval (0,30,Min,10)
+# 	Minimum(1,BattV,IEEE4,0,False)
+# 	Sample(1,PanelT,IEEE4)
+# 'A 5cm
+# Median(1,B33SppNA5cmO2,30,IEEE4,0)
+# Median(1,B33SppNA5cmTemp,30,IEEE4,0)
+# 'A 20cm
+# 	Median(1,B33SppNA20cmO2,30,IEEE4,0)
+# 	Median(1,B33SppNA20cmTemp,30,IEEE4,0)
+# 'B 5 cm
+# Median(1,B33SppNB5cmO2,30,IEEE4,0)
+# Median(1,B33SppNB5cmTemp,30,IEEE4,0)
+# 'B 20 cm
+# 	Median(1,B33SppNB20cmO2,30,IEEE4,0)
+# 	Median(1,B33SppNB20cmTemp,30,IEEE4,0)
+# 'C 5 cm
+# Median(1,B33SppNC5cmO2,30,IEEE4,0)
+# Median(1,B33SppNC5cmTemp,30,IEEE4,0)
+# 'C 20 cm
+# 	Median(1,B33SppNC20cmO2,30,IEEE4,0)
+# 	Median(1,B33SppNC20cmTemp,30,IEEE4,0)
+# EndTable
+# 
+# 
+# 'Main Program
+# BeginProg
+# Scan(1,Min,0,0)
+# Battery(BattV)
+# PanelTemp(PanelT,_60Hz)
+# 'A 5cm
+# 	    VoltDiff (B33SppNA5cmSignal,1,mV250,1,True ,0,_60Hz,1.0,0)
+# 	    B33SppNA5cmO2 = CF * B33SppNA5cmSignal - Offset
+#     	   Therm109 (B33SppNA5cmTemp,1,3,Vx1,0,_60Hz,1.0,0)
+# 'A 20cm
+# VoltDiff (B33SppNA20cmSignal,1,mV250,2,True ,0,_60Hz,1.0,0)
+# B33SppNA20cmO2 = CF * B33SppNA20cmSignal - Offset
+# Therm109 (B33SppNA20cmTemp,1,5,Vx1,0,_60Hz,1.0,0)
+# 'B 5 cm
+# 	    VoltDiff (B33SppNB5cmSignal,1,mV250,3,True ,0,_60Hz,1.0,0)
+# 	    B33SppNB5cmO2 = CF * B33SppNB5cmSignal - Offset
+#    	Therm109 (B33SppNB5cmTemp,1,7,Vx2,0,_60Hz,1.0,0)
+# 'B 20 cm
+# VoltDiff (B33SppNB20cmSignal,1,mV250,4,True ,0,_60Hz,1.0,0)
+# B33SppNB20cmO2 = CF * B33SppNB20cmSignal - Offset
+# Therm109 (B33SppNB20cmTemp,1,9,Vx2,0,_60Hz,1.0,0)
+# 'C 5 cm
+# 	    VoltDiff (B33SppNC5cmSignal,1,mV250,5,True ,0,_60Hz,1.0,0)
+# 	    B33SppNC5cmO2 = CF * B33SppNC5cmSignal - Offset
+#    	Therm109 (B33SppNC5cmTemp,1,11,Vx3,0,_60Hz,1.0,0)
+# 'C 20 cm
+# VoltDiff (B33SppNC20cmSignal,1,mV250,6,True ,0,_60Hz,1.0,0)
+# B33SppNC20cmO2 = CF * B33SppNC20cmSignal - Offset
+# Therm109 (B33SppNC20cmTemp,1,13,Vx3,0,_60Hz,1.0,0)
+# 
+# 'Call Output Tables
+# 		CallTable Oxygen
+# 	NextScan
+# EndProg
 
 
-#  Tell the program where the package libraries are  #####################
-
-#.libPaths("C:/Felipe/SotwareANDCoding/R_Library/library")  ;
 
 
 ###############################################################################################################
@@ -32,55 +116,38 @@
 
 #      set the working directory
 
-# readClipboard() Willow Rock Spring\\SkyCap_SelectionTrial\\DataCollection") ;   # 
+# readClipboard() Willow Rock Spring\\SkyCap_SelectionTrial\\DataCollection") ;
+# #
 
-"https://pennstateoffice365.sharepoint.com/:f:/s/StrategicTillageAndN2O/Ehl9Lh_gza5FiOtKIyDD7MQBOKFdFk6h_k4EEYEktWJUYw?e=uYLqL0"
-
-setwd("D:\\Felipe\\CCC Based Experiments\\StrategicTillage_NitrogenLosses_OrganicCoverCrops\\Data\\Oxygen") ;
+setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors") ;
 
 ###############################################################################################################
 #                            Install the packages that are needed                       
 ###############################################################################################################
-
-install.packages("openxlxs", dependencies = T)
-
-# 
-# install.packages("magick", dependencies = T)
-# 
-# install.packages("jpeg", dependencies = T)
-# 
-# install.packages("Rcpp", dependencies = T)
 
 
 ###############################################################################################################
 #                           load the libraries that are needed   
 ###############################################################################################################
 
-library(openxlsx)
-
-# library(lattice)
-# 
-# library(jpeg)
-# 
-# library(magick)
-
 
 
 ###############################################################################################################
 #                           Explore the files and directory and files with the data from Felipe's Downloads
 ###############################################################################################################
-### Read the Directories, files and data from the download directory where the GC data are stored
+
+### Read the Directories, files and data from the download directory where the Oxygen data is stored 
 
 CampbellSci.files<-c("CR1000NEW_DataTableInfo.dat" , "CR1000NEW_Oxygen.dat" ,       "CR1000NEW_Public.dat"  ,      "CR1000NEW_Status.dat" ) ;
 
 
-Directory.List.Locations<-list.files("./OxygenSensorsData2022");
+Files.Directories<-list.files("./OxygenSensorsData2022_2023");
 
 
-O2.Data.1<-read.csv(paste0("./OxygenSensorsData2022\\",Directory.List.Locations[[1]],"\\",CampbellSci.files[[2]] ), header=F, skip=4) ;
+O2.Data.1<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[1]],"\\",CampbellSci.files[[2]] ), header=F, skip=4) ;
 
 
-names(O2.Data.1)<-read.csv(paste0("./OxygenSensorsData2022\\",Directory.List.Locations[[1]],"\\",CampbellSci.files[[2]] ), header=F, skip=1,nrows=1) ;
+names(O2.Data.1)<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[1]],"\\",CampbellSci.files[[2]] ), header=F, skip=1,nrows=1) ;
 
 head(O2.Data.1) 
 
@@ -92,58 +159,65 @@ head(O2.Data.1)
 O2.Data.1$TIME<-as.POSIXct(O2.Data.1$TIMESTAMP) ;
 length(O2.Data.1$TIME)
 
-### The first records have worng the date 1999
+
+### The first records have wrong the date 1999
 
 O2.Data.1$Inverse.Record.No<-seq.int(from=(length(O2.Data.1$TIME)),to=1) ;
 
 O2.Data.1$Corrected.TIME<-O2.Data.1$TIME[length(O2.Data.1$TIME)]-(O2.Data.1$Inverse.Record.No*30*60) ;
 
-### Reshape the data from a wide format where block and treatments are in separate columns to one in which all are in the same column with separate rows
+head(O2.Data.1) 
 
-O2.Data<-O2.Data.1[1:6] ;
+names(O2.Data.1)
 
-head(O2.Data);
+#  Select temperature and Oxygen data according to the depth 5cm or 20 cm
 
-O2.Data$Block.Treat<-names(O2.Data)[5]
+grep("5cmTemp",names(O2.Data.1))
+
+grep("5cmTemp",names(O2.Data.1))
+
+grep("20cmTemp",names(O2.Data.1))
 
 
-names(O2.Data)[c(5,6)]<-c("O2.conc", "Temp.C") ;
-
-head(O2.Data)
-
-O2.Data.1[c(1,2,3,4,7,8)] 
 
 
 ###############################################################################################################
-#                           Explore the files and directory and files with the data from Alli's downloads
+#                          Get precipitation date to explore the oxygen sensor measurements
 ###############################################################################################################
 
 
 
+# #### read precipitation data from https://wcc.sc.egov.usda.gov/nwcc/site?sitenum=2036
+# 
+# Precipitation<-read.csv("C:\\Users\\frm10\\Downloads\\2036_18_YEAR=2021.csv" , header= T, skip=3)
+# 
+# 
+# str(Precipitation)
+# 
+# 
+#   
+# Precipitation$Date.Time<-as.POSIXct(paste0(Precipitation$Date," ", Precipitation$Time),format="%Y-%m-%d %H:%M");
+# 
+# Pcp.range<-range(Precipitation[which(Precipitation$Date.Time>=min(O2.Data.Alli.data$TIME) & Precipitation$Date.Time<=max(O2.Data.Alli.data$TIME)),c("PRCP.H.1..in.")])
+# 
+# 
+# 
+# DateTime.range<-as.Date(range(O2.Data.Alli.data$TIME)) ;
+# 
+# O2.range<-range(O2.Data.Alli.data$B1CloverA5cmO2_Med)
+
+###############################################################################################################
+#                          Use lab calibration curve to  update the oxygen data
+###############################################################################################################
 
 
-  
 
-#### read precipitation data from https://wcc.sc.egov.usda.gov/nwcc/site?sitenum=2036
-
-Precipitation<-read.csv("C:\\Users\\frm10\\Downloads\\2036_18_YEAR=2021.csv" , header= T, skip=3)
-
-
-str(Precipitation)
-
-
-  
-Precipitation$Date.Time<-as.POSIXct(paste0(Precipitation$Date," ", Precipitation$Time),format="%Y-%m-%d %H:%M");
-
-Pcp.range<-range(Precipitation[which(Precipitation$Date.Time>=min(O2.Data.Alli.data$TIME) & Precipitation$Date.Time<=max(O2.Data.Alli.data$TIME)),c("PRCP.H.1..in.")])
+###############################################################################################################
+#                          Plot and Explore the data 
+###############################################################################################################
 
 
 
-DateTime.range<-as.Date(range(O2.Data.Alli.data$TIME)) ;
-
-O2.range<-range(O2.Data.Alli.data$B1CloverA5cmO2_Med)
-
-#####  Start plotting
 
 plot(O2.Data.Alli.data$TIME,O2.Data.Alli.data$B1CloverC5cmO2_Med, col="RED" ) #, ylim=c(8,12) )
 

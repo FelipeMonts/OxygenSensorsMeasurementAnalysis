@@ -9,21 +9,11 @@
 # 
 #  Felipe Montes 2021/06/26
 # 
-# 
+# Updated 2023/01/24
 # 
 # 
 ############################################################################################################### 
 
-
-
-###############################################################################################################
-#                             Tell the program where the package libraries are stored                        
-###############################################################################################################
-
-
-#  Tell the program where the package libraries are  #####################
-
-.libPaths("C:/Felipe/SotwareANDCoding/R_Library/library")  ;
 
 
 ###############################################################################################################
@@ -35,9 +25,9 @@
 
 # readClipboard()
 
-#setwd("C:\\Felipe\\Willow_Project\\Willow_Experiments\\Willow Rock Spring\\SkyCap_SelectionTrial\\DataCollection") ;   # 
+setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors") ;
 
-"https://pennstateoffice365.sharepoint.com/:f:/s/StrategicTillageAndN2O/Ehl9Lh_gza5FiOtKIyDD7MQBOKFdFk6h_k4EEYEktWJUYw?e=uYLqL0"
+
 
 ###############################################################################################################
 #                            Install the packages that are needed                       
@@ -50,15 +40,7 @@
 #                           load the libraries that are needed   
 ###############################################################################################################
 
-library(openxlsx)
 
-library(lattice)
-
-library(rgdal)
-
-library(raster)
-
-library(sp)
 
 
 
@@ -69,13 +51,13 @@ library(sp)
 
 ## Read which files are available in the directory
 
-Files<-list.files("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting")
+Files.Directories<-list.files(".\\OxygenSensorsData2022_2023");
 
-## 
-Select files that are ..xlsx only
+## get the CR1000NEW_Oxygen.dat files 
 
-Files[grep(".xlsx",Files)]
+Files.Directories[[1]]
 
+paste0(Files.Directories[[1]],"\\CR1000NEW_Oxygen.dat")
 
 ###############################################################################################################
 #                           Read all the  excel files 
