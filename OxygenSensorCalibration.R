@@ -237,15 +237,6 @@ O2SensorCalibration.data$CorrectedTime[1:310]<-O2SensorCalibration.data$Time[1:3
 
 O2SensorCalibration.data$CorrectedTime[311:length(O2SensorCalibration.data$Time)]<-O2SensorCalibration.data$Time[311:length(O2SensorCalibration.data$Time)]+0.55 ;
 
-
-### working with the O2Sensor Experiments.xlsx file
-
-O2Sensor_Experiments.data<-read.xlsx(xlsxFile = ".\\O2SensorTesting\\Calibration\\O2Sensor Experiments.xlsx", sheet= "Data_AnalysisFM_202301" , startRow = 1 , colNames = TRUE) ;
-
-head(O2Sensor_Experiments.data)
-
-tail(O2Sensor_Experiments.data)
-
 ###############################################################################################################
 #                           Explore the data
 ###############################################################################################################
@@ -258,25 +249,6 @@ points(OXYBaseOx_kPa~CorrectedTime, data=O2SensorCalibration.data, col="RED") ;
 plot(OXYBaseOx_kPa~S200Ox_kPa, data=O2SensorCalibration.data, col="BLUE") ;
 #text(O2SensorCalibration.data$OXYBaseOx_kPa, O2SensorCalibration.data$S200Ox_kPa,labels=O2SensorCalibration.data$CorrectedTime.h) ;
 
-
-### O2Sensor Experiments.xlsx data
-
-plot(O2_S200 ~ RN, data=O2Sensor_Experiments.data, col="BLUE") ;
-points(OXYBaseOxygen ~ RN, data=O2Sensor_Experiments.data, col="RED") ;
-
-### Select only the data from March 1 2021 after 1:00 pm and before 2:40 pm
-
-plot(O2_S200 ~ RN, data=O2Sensor_Experiments.data[O2Sensor_Experiments.data$Date == 44256 & O2Sensor_Experiments.data$RN >= 300 & O2Sensor_Experiments.data$RN <= 800,], col="ORANGE") ;
-points(O2_S400 ~ RN, data=O2Sensor_Experiments.data[O2Sensor_Experiments.data$Date == 44256 & O2Sensor_Experiments.data$RN >= 300 & O2Sensor_Experiments.data$RN <= 800,], col="BLUE") ;
-points(OXYBaseOxygen ~ RN, data=O2Sensor_Experiments.data[O2Sensor_Experiments.data$Date == 44256 & O2Sensor_Experiments.data$RN >= 300 & O2Sensor_Experiments.data$RN <= 800,], col="GREY") ;
-
-
-plot(O2Sensor_Experiments.data[O2Sensor_Experiments.data$Date == 44256 & O2Sensor_Experiments.data$RN >= 300 & O2Sensor_Experiments.data$RN <= 800,c("OXYBaseOxygen", "OXYBaseOxygen")], col="GREY") ;
-points(O2Sensor_Experiments.data[O2Sensor_Experiments.data$Date == 44256 & O2Sensor_Experiments.data$RN >= 300 & O2Sensor_Experiments.data$RN <= 800,c("OXYBaseOxygen", "O2_S400")], col="BLUE") ;
-points(O2Sensor_Experiments.data[O2Sensor_Experiments.data$Date == 44256 & O2Sensor_Experiments.data$RN >= 300 & O2Sensor_Experiments.data$RN <= 800,c("OXYBaseOxygen","O2_S200" )], col="ORange") ;
-
-
-O2Sensor_Experiments.data[O2Sensor_Experiments.data$Date == 44256 & O2Sensor_Experiments.data$RN >= 300 & O2Sensor_Experiments.data$RN <= 800,]
 
 ###############################################################################################################
 #                          start the calibration process; OXYBaseOx_kPa~S200Ox_kPa
@@ -375,6 +347,7 @@ coefficients(Calibration.O2SensorCalibration) ;
 
 # (Intercept)  S200Ox_kPa 
 # 1.3164205   0.8998665
+
 
 
 
