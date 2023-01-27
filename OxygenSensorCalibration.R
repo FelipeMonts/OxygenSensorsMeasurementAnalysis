@@ -203,11 +203,178 @@ setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors
 ###############################################################################################################
 #                           load the libraries that are needed   
 ###############################################################################################################
-
+library(openxlsx) ;
 
 
 ###############################################################################################################
-#                           Explore the files and directory and files with the data from Felipe's Downloads
+#                           Explore the files and directory and files with the data Oxygen calibration files
 ###############################################################################################################
+
+### working with the O2SensorCalibration.xlsx file
+
+O2SensorCalibration.data<-read.xlsx(xlsxFile = ".\\O2SensorTesting\\Calibration\\O2SensorCalibration.xlsx", sheet= "CR1000_Oxygen_FM202301" , startRow = 1 , colNames = TRUE) ;
+
+head(O2SensorCalibration.data)
+tail(O2SensorCalibration.data)
+
+### There is an error in the time stamp after 12:59 pm. It changes to 1:00 AM
+
+O2SensorCalibration.data[O2SensorCalibration.data$Time >= 0.54 & O2SensorCalibration.data$Time <= 0.55,] ;
+
+### The error starts after Time 0.5414931, row no 310
+
+length(O2SensorCalibration.data$Time)
+
+O2SensorCalibration.data$Time[310:length(O2SensorCalibration.data$Time) ]
+
+O2SensorCalibration.data$Time[311:length(O2SensorCalibration.data$Time) ]
+
+#### correcting the time stamp
+
+O2SensorCalibration.data$CorrectedTime<-NA ;
+
+O2SensorCalibration.data$CorrectedTime[1:310]<-O2SensorCalibration.data$Time[1:310];
+
+O2SensorCalibration.data$CorrectedTime[311:length(O2SensorCalibration.data$Time)]<-O2SensorCalibration.data$Time[311:length(O2SensorCalibration.data$Time)]+0.55 ;
+
+
+### working with the O2Sensor Experiments.xlsx file
+
+O2Sensor_Experiments.data<-read.xlsx(xlsxFile = ".\\O2SensorTesting\\Calibration\\O2Sensor Experiments.xlsx", sheet= "Data_AnalysisFM_202301" , startRow = 1 , colNames = TRUE) ;
+
+head(O2Sensor_Experiments.data)
+
+tail(O2Sensor_Experiments.data)
+
+###############################################################################################################
+#                           Explore the data
+###############################################################################################################
+
+### O2SensorCalibration.xlsx data
+
+plot(S200Ox_kPa~CorrectedTime, data=O2SensorCalibration.data, col="BLUE") ;
+points(OXYBaseOx_kPa~CorrectedTime, data=O2SensorCalibration.data, col="RED") ;
+
+plot(OXYBaseOx_kPa~S200Ox_kPa, data=O2SensorCalibration.data, col="BLUE") ;
+#text(O2SensorCalibration.data$OXYBaseOx_kPa, O2SensorCalibration.data$S200Ox_kPa,labels=O2SensorCalibration.data$CorrectedTime.h) ;
+
+
+### O2Sensor Experiments.xlsx data
+
+plot(O2_S200 ~ RN, data=O2Sensor_Experiments.data, col="BLUE") ;
+points(OXYBaseOxygen ~ RN, data=O2Sensor_Experiments.data, col="RED") ;
+
+### Select only the data from March 1 2021 after 1:00 pm and before 2:40 pm
+
+plot(O2_S200 ~ RN, data=O2Sensor_Experiments.data[O2Sensor_Experiments.data$Date == 44256 & O2Sensor_Experiments.data$RN >= 300 & O2Sensor_Experiments.data$RN <= 800,], col="ORANGE") ;
+points(O2_S400 ~ RN, data=O2Sensor_Experiments.data[O2Sensor_Experiments.data$Date == 44256 & O2Sensor_Experiments.data$RN >= 300 & O2Sensor_Experiments.data$RN <= 800,], col="BLUE") ;
+points(OXYBaseOxygen ~ RN, data=O2Sensor_Experiments.data[O2Sensor_Experiments.data$Date == 44256 & O2Sensor_Experiments.data$RN >= 300 & O2Sensor_Experiments.data$RN <= 800,], col="GREY") ;
+
+
+plot(O2Sensor_Experiments.data[O2Sensor_Experiments.data$Date == 44256 & O2Sensor_Experiments.data$RN >= 300 & O2Sensor_Experiments.data$RN <= 800,c("OXYBaseOxygen", "OXYBaseOxygen")], col="GREY") ;
+points(O2Sensor_Experiments.data[O2Sensor_Experiments.data$Date == 44256 & O2Sensor_Experiments.data$RN >= 300 & O2Sensor_Experiments.data$RN <= 800,c("OXYBaseOxygen", "O2_S400")], col="BLUE") ;
+points(O2Sensor_Experiments.data[O2Sensor_Experiments.data$Date == 44256 & O2Sensor_Experiments.data$RN >= 300 & O2Sensor_Experiments.data$RN <= 800,c("OXYBaseOxygen","O2_S200" )], col="ORange") ;
+
+
+O2Sensor_Experiments.data[O2Sensor_Experiments.data$Date == 44256 & O2Sensor_Experiments.data$RN >= 300 & O2Sensor_Experiments.data$RN <= 800,]
+
+###############################################################################################################
+#                          start the calibration process; OXYBaseOx_kPa~S200Ox_kPa
+###############################################################################################################
+
+### Do linear regression analysis on OXYBaseOx_kPa~S200Ox_kPa. 
+### What do we need to do to S200Ox_kPa measurements to approach the "true" O2  concentration OXYBaseOx_kPa
+
+Calibration.O2SensorCalibration<-lm(OXYBaseOx_kPa~S200Ox_kPa, data=O2SensorCalibration.data) ;
+
+summary(Calibration.O2SensorCalibration)
+
+# Call:
+#   lm(formula = OXYBaseOx_kPa ~ S200Ox_kPa, data = O2SensorCalibration.data)
+# 
+# Residuals:
+#   Min      1Q  Median      3Q     Max 
+# -7.1051 -0.3399 -0.1920  0.2735  5.6823 
+# 
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)    
+# (Intercept) 1.316421   0.073197   17.98   <2e-16 ***
+#   S200Ox_kPa  0.899866   0.005375  167.41   <2e-16 ***
+#   ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Residual standard error: 0.8958 on 376 degrees of freedom
+# Multiple R-squared:  0.9868,	Adjusted R-squared:  0.9867 
+# F-statistic: 2.803e+04 on 1 and 376 DF,  p-value: < 2.2e-16
+
+coefficients(Calibration.O2SensorCalibration) ;
+
+
+# (Intercept)  S200Ox_kPa 
+# 1.3164205   0.8998665 
+
+
+
+abline(a=1.30346, b=0.8998665, col="RED", lwd=3) ;
+
+#### Removing the points that are farthest away from the 1:1 line to improve the calibration 
+
+
+head(O2SensorCalibration.data)
+
+### Add the fitted values to the data frame
+
+O2SensorCalibration.data$Fitted.1<-1.3164205 + (O2SensorCalibration.data$S200Ox_kPa*0.8998665)  ;
+
+points(O2SensorCalibration.data$S200Ox_kPa,O2SensorCalibration.data$Fitted.1, col="BLUE", cex=3) ;
+
+### calculate the distance between the measurements and the fitted line
+
+O2SensorCalibration.data$Distance.Fitted.1<-abs(O2SensorCalibration.data$OXYBaseOx_kPa - O2SensorCalibration.data$Fitted.1) ;
+
+points(O2SensorCalibration.data$S200Ox_kPa,O2SensorCalibration.data$Distance.Fitted.1, col="GREEN") ;
+
+### select the points that are within 2 KPa fomr the fitted line
+
+O2SensorCalibration.data[O2SensorCalibration.data$Distance.Fitted.1<=2,]
+
+plot(OXYBaseOx_kPa~S200Ox_kPa, data=O2SensorCalibration.data, col="BLUE") ;
+
+abline(a=1.30346, b=0.8998665, col="RED", lwd=3) ;
+
+points(O2SensorCalibration.data[O2SensorCalibration.data$Distance.Fitted.1<=2,c("S200Ox_kPa", "Fitted.1" )], pch=3, col="GREEN", cex=2)
+
+### Do linear regression analysis on OXYBaseOx_kPa~S200Ox_kPa with only the points that are closer to the 1:1 line. 
+### This eliminate points that are take long to equillibrate between the two sensors, have measurement issues (bubbles), Outliers.
+
+Calibration.O2SensorCalibration.1<-lm(OXYBaseOx_kPa~S200Ox_kPa, data=O2SensorCalibration.data[O2SensorCalibration.data$Distance.Fitted.1<=2,]) ;
+
+summary(Calibration.O2SensorCalibration.1)
+
+# Call:
+#   lm(formula = OXYBaseOx_kPa ~ S200Ox_kPa, data = O2SensorCalibration.data[O2SensorCalibration.data$Distance.Fitted.1 <= 
+#                                                                              2, ])
+# 
+# Residuals:
+#   Min       1Q   Median       3Q      Max 
+# -1.50333 -0.12941 -0.08941  0.16644  1.73414 
+# 
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)    
+# (Intercept) 1.047576   0.030636   34.19   <2e-16 ***
+#   S200Ox_kPa  0.916677   0.002225  412.03   <2e-16 ***
+#   ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Residual standard error: 0.3631 on 363 degrees of freedom
+# Multiple R-squared:  0.9979,	Adjusted R-squared:  0.9979 
+# F-statistic: 1.698e+05 on 1 and 363 DF,  p-value: < 2.2e-16
+# 
+
+coefficients(Calibration.O2SensorCalibration) ;
+
+# (Intercept)  S200Ox_kPa 
+# 1.3164205   0.8998665
+
 
 
