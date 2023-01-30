@@ -343,7 +343,7 @@ summary(Calibration.O2SensorCalibration.1)
 # F-statistic: 1.698e+05 on 1 and 363 DF,  p-value: < 2.2e-16
 # 
 
-coefficients(Calibration.O2SensorCalibration) ;
+coefficients(Calibration.O2SensorCalibration.1) ;
 
 # (Intercept)  S200Ox_kPa 
 # 1.3164205   0.8998665

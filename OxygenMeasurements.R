@@ -178,6 +178,18 @@ grep("5cmTemp",names(O2.Data.1))
 
 grep("20cmTemp",names(O2.Data.1))
 
+###############################################################################################################
+#                           Reshape the data form wide to long from processing and calibration
+###############################################################################################################
+head(O2.Data.1) 
+
+tail(O2.Data.1)
+
+names(O2.Data.1)[3:16]
+
+
+O2.Data.1.long<-reshape(data = O2.Data.1, idvar="Corrected.TIME", timevar="Measurement",varying = c(4:16), v.names=c("Value"), times=names(O2.Data.1)[4:16],  drop = c(1,2,3,17,18), new.row.names = NULL ,direction = "long" );
+
 
 
 
@@ -209,6 +221,50 @@ grep("20cmTemp",names(O2.Data.1))
 ###############################################################################################################
 #                          Use lab calibration curve to  update the oxygen data
 ###############################################################################################################
+
+# The calibration of one of the S200 was done using simultaneous mesurements with an OxyBase O2 that is NIST traceable.
+# 
+# The R code used for the calibration is at:
+# 
+#   D:\Felipe\CCC Based Experiments\StrategicTillage_NitrogenLosses_OrganicCoverCrops\DataAnalysis\RCode\OxygenSensorsMeasurementAnalysis
+#   and at github
+# 
+# 
+#
+# #  The results of the calibration process are as follows
+# 
+# summary(Calibration.O2SensorCalibration.1)
+# 
+# 
+# Call:
+# 
+# lm(formula = OXYBaseOx_kPa ~ S200Ox_kPa, 
+#  data = O2SensorCalibration.data[O2SensorCalibration.data$Distance.Fitted.1 <= 2, ])
+#                                                                         
+# 
+# Residuals:
+#   Min       1Q   Median       3Q      Max 
+# -1.50333 -0.12941 -0.08941  0.16644  1.73414 
+# 
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)    
+# (Intercept) 1.047576   0.030636   34.19   <2e-16 ***
+#   S200Ox_kPa  0.916677   0.002225  412.03   <2e-16 ***
+#   ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Residual standard error: 0.3631 on 363 degrees of freedom
+# Multiple R-squared:  0.9979,	Adjusted R-squared:  0.9979 
+# F-statistic: 1.698e+05 on 1 and 363 DF,  p-value: < 2.2e-16
+# 
+# (Intercept)  S200Ox_kPa 
+  #1.0475757   0.9166775 
+
+
+###############################################################################################################
+#                          Adjust oxygen measurement data based on the Lab Calibration
+###############################################################################################################
+
 
 
 
