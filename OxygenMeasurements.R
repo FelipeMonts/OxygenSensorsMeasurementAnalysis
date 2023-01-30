@@ -295,13 +295,46 @@ abline(b=1,a=0, col="Blue")
 names(O2.Data.2)
 
 
+### Add the panel temperature to the data
+
+O2.Data.1.Temp_C[O2.Data.1.Temp_C$Measurement == "PanelT",]
+
+O2.Data.2$PanelT<-O2.Data.1.Temp_C[O2.Data.1.Temp_C$Measurement == "PanelT", c("Value")] ;
+
+head(O2.Data.2)
+
 ####### There are a few measurements that exceed 20 Kpa
 
 plot(O2.Data.2[O2.Data.2$Calibrated.O2_Kpa >=25 ,c("Deg.C", "Calibrated.O2_Kpa")])
 
-max(O2.Data.2$Calibrated.O2_Kpa[!is.nan(O2.Data.2$Calibrated.O2_Kpa)])
+plot(O2.Data.2[O2.Data.2$Calibrated.O2_Kpa <=22 ,c("Deg.C", "Calibrated.O2_Kpa")])
+
+plot(O2.Data.2[O2.Data.2$Temp.Corected.O2_Kpa >=25 ,c("Deg.C", "Calibrated.O2_Kpa")])
+
+plot(O2.Data.2[O2.Data.2$Temp.Corected.O2_Kpa <=22 ,c("Deg.C", "Calibrated.O2_Kpa")])
+
+plot(O2.Data.2[O2.Data.2$Kpa >=25 ,c("Deg.C", "Calibrated.O2_Kpa")])
+
+plot(O2.Data.2[O2.Data.2$Kpa <=22 ,c("Deg.C", "Calibrated.O2_Kpa")])
+
+# remove the data points that have O2 measurements above 21 kpa
 
 
+O2.calibrated.Data<-O2.Data.2[O2.Data.2$Kpa <= 25  &  O2.Data.2$Deg.C >= -20,] ;
+
+
+names(O2.calibrated.Data)
+
+head(O2.calibrated.Data)
+
+
+max(O2.calibrated.Data$Kpa, na.rm=T)
+
+O2.calibrated.Data$Percent.O2<-(O2.calibrated.Data$Calibrated.O2_Kpa/max(O2.calibrated.Data$Kpa, na.rm=T))*100 ;
+
+plot(O2.calibrated.Data$Deg.C,O2.calibrated.Data$Percent.O2)
+
+plot(O2.calibrated.Data$PanelT,O2.calibrated.Data$Percent.O2)
 
 
 
