@@ -1,7 +1,7 @@
 ##############################################################################################################
 # 
 # 
-# Program to Calibrate Oxygen sensor data collected from Apogee O2 201 Sensors to data collected simultanously as  
+# Program to Calibrate Oxygen sensor data collected from Apogee O2 201 Sensors to data collected simultaneously as  
 # 
 #  The Oxybase sensor data connected to a and CR1000 data loggers 
 #  
@@ -347,6 +347,28 @@ coefficients(Calibration.O2SensorCalibration.1) ;
 
 # (Intercept)  S200Ox_kPa 
 # 1.3164205   0.8998665
+
+###############################################################################################################
+#                          Mean, Median Sensor Temparature during Calibration
+###############################################################################################################
+
+Calibration.T<-c(mean(O2SensorCalibration.data$Sensor_TC), median(O2SensorCalibration.data$Sensor_TC) , 
+                 mean(O2SensorCalibration.data$SensorTC2), median(O2SensorCalibration.data$SensorTC2) ,
+                 mean(O2SensorCalibration.data$OXYBaseTemp) , median(O2SensorCalibration.data$OXYBaseTemp) ,
+                 mean(O2SensorCalibration.data$PTemp) , median(O2SensorCalibration.data$PTemp) )
+
+print(Calibration.T)
+
+plot(Calibration.T, col="RED",pch=19)                 
+                 
+TC.Deg.C<-mean(Calibration.T[c(2,4,8)])
+
+abline(h=TC.Deg.C, col="BLUE")
+
+
+
+
+
 
 
 

@@ -185,52 +185,75 @@ head(O2.Data.1)
 
 tail(O2.Data.1)
 
-names(O2.Data.1)[3:16]
+names(O2.Data.1)
 
 
-O2.Data.1.long<-reshape(data = O2.Data.1, idvar="Corrected.TIME", timevar="Measurement",varying = c(4:16), v.names=c("Value"), times=names(O2.Data.1)[4:16],  drop = c(1,2,3,17,18), new.row.names = NULL ,direction = "long" );
+O2.Data.1.O2_Kpa<-reshape(data = O2.Data.1, idvar="Corrected.TIME", timevar="Measurement",
+                        varying = names(O2.Data.1)[c(9,11,13,15)], v.names=c("Value"), 
+                        times=names(O2.Data.1)[c(9,11,13,15)],  drop = c(1,2,3,4,5,6,7,8,10,12,14,16,17,18), 
+                        new.row.names = NULL ,direction = "long" );
 
 
+O2.Data.1.Temp_C<-reshape(data = O2.Data.1, idvar="Corrected.TIME", timevar="Measurement",
+                        varying = names(O2.Data.1)[c(4,10,12,14,16)], v.names=c("Value"), 
+                        times=names(O2.Data.1)[c(4,10,12,14,16)],  drop = c(1,2,3,5,6,7,8,9,11,13,15,17,18), 
+                        new.row.names = NULL ,direction = "long" );
 
 
-###############################################################################################################
-#                          Get precipitation date to explore the oxygen sensor measurements
-###############################################################################################################
-
-
-
-# #### read precipitation data from https://wcc.sc.egov.usda.gov/nwcc/site?sitenum=2036
-# 
-# Precipitation<-read.csv("C:\\Users\\frm10\\Downloads\\2036_18_YEAR=2021.csv" , header= T, skip=3)
-# 
-# 
-# str(Precipitation)
-# 
-# 
-#   
-# Precipitation$Date.Time<-as.POSIXct(paste0(Precipitation$Date," ", Precipitation$Time),format="%Y-%m-%d %H:%M");
-# 
-# Pcp.range<-range(Precipitation[which(Precipitation$Date.Time>=min(O2.Data.Alli.data$TIME) & Precipitation$Date.Time<=max(O2.Data.Alli.data$TIME)),c("PRCP.H.1..in.")])
-# 
-# 
-# 
-# DateTime.range<-as.Date(range(O2.Data.Alli.data$TIME)) ;
-# 
-# O2.range<-range(O2.Data.Alli.data$B1CloverA5cmO2_Med)
 
 ###############################################################################################################
-#                          Use lab calibration curve to  update the oxygen data
+# #                         Calibration with temperature
+# 
+#   Based on the S0-100_200 manual page 14
+# 
+#   https://www.apogeeinstruments.com/content/SO-100-200-manual.pdf 
+# #
+#     O2 = O2M +C3*(Ts^3) + C2*(Ts^2) + C1*Ts + C0
+# 
+#     C0=-(C3*(Tc^3) + C2*(TC^2) + C1*TC)
+#     
+#     where Ts = measured sensor temperature [C]
+#           C0 = C0 is the offset coefficient calculated from measured temperature at calibration (TC) [C]
+#           C3 = -4.333e-6 
+#           C2 = 1.896e-3
+#           C1 = -3.610e-2
+#           
+#     TC = 21 °C (obtained from the calibration data)      
+#           
+#           
+# 
 ###############################################################################################################
 
-# The calibration of one of the S200 was done using simultaneous mesurements with an OxyBase O2 that is NIST traceable.
-# 
-# The R code used for the calibration is at:
-# 
-#   D:\Felipe\CCC Based Experiments\StrategicTillage_NitrogenLosses_OrganicCoverCrops\DataAnalysis\RCode\OxygenSensorsMeasurementAnalysis
-#   and at github
-# 
-# 
-#
+head(O2.Data.1.O2_Kpa)
+
+head(O2.Data.1.Temp_C)
+
+O2.Data.2<-merge(O2.Data.1.Temp_C[O2.Data.1.Temp_C$Measurement != "PanelT",],O2.Data.1.O2_Kpa, by= "Corrected.TIME") ;
+
+names(O2.Data.2)<-c("Corrected.TIME" , "Temperature" ,"Deg.C" , "Oxygen" , "Kpa") ;
+
+tail(O2.Data.2)
+
+
+#coorection Factors
+
+ C3 = -4.333e-6
+ C2 = 1.896e-3
+ C1 = -3.610e-2
+ TC = 21 
+ C0 = -((C3 * (TC^3)) + (C2 * (TC^2)) +(C1 * TC))  
+
+
+ 
+O2.Data.2$Temp.Corected.O2_Kpa<-O2.Data.2$Kpa + (C3 * (O2.Data.2$Deg.C^3 )) + (C2 * (O2.Data.2$Deg.C^2 )) + (C1 * O2.Data.2$Deg.C) + C0 ;
+
+###############################################################################################################
+#                         Calibration of the data based on the calibration equation obtained from  
+#                         simultaneous measurements with the NIST traceable OXYBaseOx_kPa~S200Ox_kPa
+#                          and temperature
+###############################################################################################################
+
+
 # #  The results of the calibration process are as follows
 # 
 # summary(Calibration.O2SensorCalibration.1)
@@ -258,12 +281,74 @@ O2.Data.1.long<-reshape(data = O2.Data.1, idvar="Corrected.TIME", timevar="Measu
 # F-statistic: 1.698e+05 on 1 and 363 DF,  p-value: < 2.2e-16
 # 
 # (Intercept)  S200Ox_kPa 
-  #1.0475757   0.9166775 
+#1.0475757   0.9166775 
+
+
+
+O2.Data.2$Calibrated.O2_Kpa<-(O2.Data.2$Temp.Corected.O2_Kpa * 0.9166775) + 1.0475757 ;
+
+plot(O2.Data.2$Corrected.TIME, O2.Data.2$Kpa, col="Blue") ;
+points(O2.Data.2$Corrected.TIME, O2.Data.2$Calibrated.O2_Kpa, col="RED");
+
+plot(O2.Data.2$Kpa,O2.Data.2$Calibrated.O2_Kpa, col="RED" )
+abline(b=1,a=0, col="Blue")
+names(O2.Data.2)
+
+
+####### There are a few measurements that exceed 20 Kpa
+
+plot(O2.Data.2[O2.Data.2$Calibrated.O2_Kpa >=25 ,c("Deg.C", "Calibrated.O2_Kpa")])
+
+max(O2.Data.2$Calibrated.O2_Kpa[!is.nan(O2.Data.2$Calibrated.O2_Kpa)])
+
+
+
+
+
 
 
 ###############################################################################################################
-#                          Adjust oxygen measurement data based on the Lab Calibration
+#                          Get precipitation date to explore the oxygen sensor measurements
 ###############################################################################################################
+
+
+
+
+
+# #### read precipitation data from https://wcc.sc.egov.usda.gov/nwcc/site?sitenum=2036
+# 
+# Precipitation<-read.csv("C:\\Users\\frm10\\Downloads\\2036_18_YEAR=2021.csv" , header= T, skip=3)
+# 
+# 
+# str(Precipitation)
+# 
+# 
+#   
+# Precipitation$Date.Time<-as.POSIXct(paste0(Precipitation$Date," ", Precipitation$Time),format="%Y-%m-%d %H:%M");
+# 
+# Pcp.range<-range(Precipitation[which(Precipitation$Date.Time>=min(O2.Data.Alli.data$TIME) & Precipitation$Date.Time<=max(O2.Data.Alli.data$TIME)),c("PRCP.H.1..in.")])
+# 
+# 
+# 
+# DateTime.range<-as.Date(range(O2.Data.Alli.data$TIME)) ;
+# 
+# O2.range<-range(O2.Data.Alli.data$B1CloverA5cmO2_Med)
+
+###############################################################################################################
+#                          Use lab calibration curve to  update the oxygen data
+###############################################################################################################
+
+# The calibration of one of the S200 was done using simultaneous measurements with an OxyBase O2 that is NIST traceable.
+# 
+# The R code used for the calibration is at:
+# 
+#   D:\Felipe\CCC Based Experiments\StrategicTillage_NitrogenLosses_OrganicCoverCrops\DataAnalysis\RCode\OxygenSensorsMeasurementAnalysis
+#   and at github
+# 
+# 
+#
+
+
 
 
 
