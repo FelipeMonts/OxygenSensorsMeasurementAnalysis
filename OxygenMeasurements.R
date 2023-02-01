@@ -144,7 +144,7 @@ CampbellSci.files<-c("CR1000NEW_DataTableInfo.dat" , "CR1000NEW_Oxygen.dat" ,   
 Files.Directories<-list.files("./OxygenSensorsData2022_2023");
 
 
-O2.Data.1<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[1]],"\\",CampbellSci.files[[2]] ), header=F, skip=4) ;
+O2.Data.1<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[5]],"\\",CampbellSci.files[[2]] ), header=F, skip=4) ;
 
 
 names(O2.Data.1)<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[1]],"\\",CampbellSci.files[[2]] ), header=F, skip=1,nrows=1) ;
@@ -164,7 +164,7 @@ O2.Data.1$TIME<-as.POSIXct(O2.Data.1$TIMESTAMP) ;
 length(O2.Data.1$TIME)
 
 
-plot(O2.Data.1$TIME)
+plot(O2.Data.1$TIME, col = "BLUE")
 
 ### The first records have wrong the date 1999
 
@@ -176,13 +176,15 @@ head(O2.Data.1)
 
 names(O2.Data.1)
 
-#  Select temperature and Oxygen data according to the depth 5cm or 20 cm
+plot(O2.Data.1$TIME,O2.Data.1$Corrected.TIME, col= "RED")
 
-grep("5cmTemp",names(O2.Data.1))
-
-grep("5cmTemp",names(O2.Data.1))
-
-grep("20cmTemp",names(O2.Data.1))
+# #  Select temperature and Oxygen data according to the depth 5cm or 20 cm
+# 
+# grep("5cmTemp",names(O2.Data.1))
+# 
+# grep("5cmTemp",names(O2.Data.1))
+# 
+# grep("20cmTemp",names(O2.Data.1))
 
 ###############################################################################################################
 #                           Reshape the data form wide to long from processing and calibration
@@ -336,7 +338,7 @@ head(O2.calibrated.Data)
 
 max(O2.calibrated.Data$Kpa, na.rm=T)
 
-O2.calibrated.Data$Percent.O2<-(O2.calibrated.Data$Calibrated.O2_Kpa/max(O2.calibrated.Data$Kpa, na.rm=T))*100 ;
+O2.calibrated.Data$Percent.O2<-(O2.calibrated.Data$Calibrated.O2_Kpa/21)*100 ;
 
 plot(O2.calibrated.Data$Deg.C,O2.calibrated.Data$Percent.O2)
 
@@ -367,9 +369,21 @@ as.numeric(row.names(O2.calibrated.Data))  ;
 diff(as.numeric(row.names(O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171 & !is.na(O2.calibrated.Data$PanelT),]))) ;
 
 #### the error occurs every 5059 records. It seems that at 5059 records the memory capacity is reached and there is a signal
-#### that sets the PanelT to 105.8171 and adds to NA rows. 
+#### that sets the PanelT to 105.8171 and adds to NA rows. Remove these records
+
+Remove.NA<-which(is.na(O2.calibrated.Data$Corrected.TIME)) ;
+
+Remove.MemCap<-which(O2.calibrated.Data$PanelT == 105.8171) ;
+
+O2.Clean.Data<-O2.calibrated.Data[!O2.calibrated.Data %in% Remove.NA | !O2.calibrated.Data %in% Remove.MemCap]
 
 
+plot(O2.Clean.Data$Corrected.TIME,O2.Clean.Data$Kpa, col = "BLUE") ;
 
+plot(O2.Clean.Data$Corrected.TIME,O2.Clean.Data$Percent.O2, col = "GREEN") ;
+
+plot(O2.Clean.Data$Corrected.TIME,O2.Clean.Data$PanelT , col = "RED" ) ;
+
+plot(O2.Clean.Data$Corrected.TIME,O2.Clean.Data$Deg.C, col = "MAGENTA")
 
 
