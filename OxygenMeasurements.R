@@ -151,14 +151,20 @@ names(O2.Data.1)<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directo
 
 head(O2.Data.1) 
 
- tail(O2.Data.1)
+tail(O2.Data.1)
+
+str(O2.Data.1)
 
 ### correct the time stamp fo the date and format it into a POSIXct Time-Date 
 
 
+
 O2.Data.1$TIME<-as.POSIXct(O2.Data.1$TIMESTAMP) ;
+
 length(O2.Data.1$TIME)
 
+
+plot(O2.Data.1$TIME)
 
 ### The first records have wrong the date 1999
 
@@ -336,9 +342,32 @@ plot(O2.calibrated.Data$Deg.C,O2.calibrated.Data$Percent.O2)
 
 plot(O2.calibrated.Data$PanelT,O2.calibrated.Data$Percent.O2)
 
+plot(O2.calibrated.Data[O2.calibrated.Data$PanelT >= 50,c("PanelT")],O2.calibrated.Data[O2.calibrated.Data$PanelT >= 50,c("Percent.O2")])
 
 
+##@# There are some measurements with panel Temperature above 100 °C
 
+O2.calibrated.Data[O2.calibrated.Data$PanelT >= 50,]
+
+max(O2.calibrated.Data$PanelT,na.rm=T) 
+
+O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171,]
+
+#### it seems that at PanelT == 105.8171 there is a maximum that signals an error
+
+
+plot(O2.calibrated.Data$Corrected.TIME,O2.calibrated.Data$PanelT)  ;
+
+O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171 & !is.na(O2.calibrated.Data$PanelT),]    ;
+
+diff(O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171 & !is.na(O2.calibrated.Data$PanelT),c("PanelT")],lag=1)   ;
+
+as.numeric(row.names(O2.calibrated.Data))  ;
+
+diff(as.numeric(row.names(O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171 & !is.na(O2.calibrated.Data$PanelT),]))) ;
+
+#### the error occurs every 5059 records. It seems that at 5059 records the memory capacity is reached and there is a signal
+#### that sets the PanelT to 105.8171 and adds to NA rows. 
 
 
 
