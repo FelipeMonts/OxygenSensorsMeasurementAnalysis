@@ -186,6 +186,152 @@ plot(O2.Data.1$TIME,O2.Data.1$Corrected.TIME, col= "RED")
 # 
 # grep("20cmTemp",names(O2.Data.1))
 
+plot(O2.Data.1$Corrected.TIME,O2.Data.1$BattV_Min)
+
+plot(O2.Data.1$Corrected.TIME,O2.Data.1$BattV_Min, xlim=c(as.POSIXct("2022-12-17 17:30:00"), as.POSIXct("2022-12-20 17:30:00")))
+
+plot(O2.Data.1$Corrected.TIME, O2.Data.1$PanelT)
+
+plot(O2.Data.1$Corrected.TIME,O2.Data.1$PanelT, xlim=c(as.POSIXct("2022-12-17 17:30:00"), as.POSIXct("2022-12-29 17:30:00"))) ;
+
+
+###############################################################################################################
+#                           Processing the temperature data
+###############################################################################################################
+
+
+###### Treatment A #######
+
+Temperature.Data.A5<-O2.Data.1[,c(grep("A5cmTemp",names(O2.Data.1)),which(names(O2.Data.1)== "Corrected.TIME" ))]  ;
+
+Temperature.Data.A5$Depth_cm<-5 ;
+
+Temperature.Data.A5$Treatment<-"A" ;
+
+names(Temperature.Data.A5)[[1]]<-"Temperature_C"
+
+str(Temperature.Data.A5)
+
+
+
+Temperature.Data.A20<-O2.Data.1[,c(grep("A20cmTemp",names(O2.Data.1)),which(names(O2.Data.1)== "Corrected.TIME" ))]  ;
+
+str(Temperature.Data.A20)
+
+
+Temperature.Data.A20$Depth_cm<-20 ;
+
+Temperature.Data.A20$Treatment<-"A" ;
+
+names(Temperature.Data.A20)[[1]]<-"Temperature_C" ;
+
+str(Temperature.Data.A20)
+
+Temperature.Data.A<-rbind(Temperature.Data.A5,Temperature.Data.A20) ;
+
+str(Temperature.Data.A)
+
+###### Treatment B #######
+
+Temperature.Data.B5<-O2.Data.1[,c(grep("B5cmTemp",names(O2.Data.1)),which(names(O2.Data.1)== "Corrected.TIME" ))]  ;
+
+str(Temperature.Data.B5)
+
+Temperature.Data.B5$Depth_cm<-5 ;
+
+Temperature.Data.B5$Treatment<-"B" ;
+
+names(Temperature.Data.B5)[[1]]<-"Temperature_C" ;
+
+str(Temperature.Data.B5)
+
+
+Temperature.Data.B20<-O2.Data.1[,c(grep("B20cmTemp",names(O2.Data.1)),which(names(O2.Data.1)== "Corrected.TIME" ))]  ;
+
+str(Temperature.Data.B20)
+
+
+Temperature.Data.B20$Depth_cm<-5 ;
+
+Temperature.Data.B20$Treatment<-"B" ;
+
+names(Temperature.Data.B20)[[1]]<-"Temperature_C" ;
+
+str(Temperature.Data.B20)
+
+
+Temperature.Data.B<-rbind(Temperature.Data.B5,Temperature.Data.B20) ;
+
+str(Temperature.Data.B)
+
+
+###### Treatment C #######
+
+Temperature.Data.C5<-O2.Data.1[,c(grep("C5cmTemp",names(O2.Data.1)),which(names(O2.Data.1)== "Corrected.TIME" ))]  ;
+
+str(Temperature.Data.C5)
+
+Temperature.Data.C5$Depth_cm<-5 ;
+
+Temperature.Data.C5$Treatment<-"C" ;
+
+names(Temperature.Data.C5)[[1]]<-"Temperature_C" ;
+
+str(Temperature.Data.C5)
+
+
+
+Temperature.Data.C20<-O2.Data.1[,c(grep("C20cmTemp",names(O2.Data.1)),which(names(O2.Data.1)== "Corrected.TIME" ))]  ;
+
+str(Temperature.Data.C20)
+
+Temperature.Data.C20$Depth_cm<-5 ;
+
+Temperature.Data.C20$Treatment<-"C" ;
+
+names(Temperature.Data.C20)[[1]]<-"Temperature_C" ;
+
+str(Temperature.Data.C20)
+
+
+Temperature.Data.C<-rbind(Temperature.Data.C5,Temperature.Data.C20) ;
+
+str(Temperature.Data.C)
+
+
+
+###### Panel #######
+
+Temperature.Data.Panel<-O2.Data.1[,c(grep("PanelT",names(O2.Data.1)),which(names(O2.Data.1)== "Corrected.TIME" ))]  ;
+
+str(Temperature.Data.Panel)
+
+Temperature.Data.Panel$Depth_cm<--100 ;
+
+Temperature.Data.Panel$Treatment<-"Panel" ;
+
+names(Temperature.Data.Panel)[[1]]<-"Temperature_C" ;
+
+str(Temperature.Data.Panel)
+
+
+##### combining all #### 
+
+
+Temperature.Data<-rbind(Temperature.Data.A5 , Temperature.Data.A20 , Temperature.Data.B5 , Temperature.Data.B20 ,
+                          Temperature.Data.C5 , Temperature.Data.C20 , Temperature.Data.Panel) ;
+
+str(Temperature.Data);
+
+Temperature.Data$FAC.Depth_cm<-as.factor(Temperature.Data$Depth_cm) ;
+
+Temperature.Data$FAC.Treatment<-as.factor(Temperature.Data$Treatment) ;
+
+str(Temperature.Data);
+
+
+
+
 ###############################################################################################################
 #                           Reshape the data form wide to long from processing and calibration
 ###############################################################################################################
@@ -195,17 +341,32 @@ tail(O2.Data.1)
 
 names(O2.Data.1)
 
+str(O2.Data.1)
 
 O2.Data.1.O2_Kpa<-reshape(data = O2.Data.1, idvar="Corrected.TIME", timevar="Measurement",
                         varying = names(O2.Data.1)[c(9,11,13,15)], v.names=c("Value"), 
                         times=names(O2.Data.1)[c(9,11,13,15)],  drop = c(1,2,3,4,5,6,7,8,10,12,14,16,17,18), 
                         new.row.names = NULL ,direction = "long" );
 
+str(O2.Data.1.O2_Kpa)
+
+# #  Select temperature and Oxygen data according to the depth 5cm or 20 cm
+# 
+# grep("5cmTemp",names(O2.Data.1))
+# 
+# grep("5cmTemp",names(O2.Data.1))
+# 
+# grep("20cmTemp",names(O2.Data.1))
+
 
 O2.Data.1.Temp_C<-reshape(data = O2.Data.1, idvar="Corrected.TIME", timevar="Measurement",
-                        varying = names(O2.Data.1)[c(4,10,12,14,16)], v.names=c("Value"), 
-                        times=names(O2.Data.1)[c(4,10,12,14,16)],  drop = c(1,2,3,5,6,7,8,9,11,13,15,17,18), 
+                        varying = names(O2.Data.1)[c(10,12,14,16)], v.names=c("Value"), 
+                        times=names(O2.Data.1)[c(10,12,14,16)],  drop = c(1,2,3,4,5,6,7,8,9,11,13,15,17,18), 
                         new.row.names = NULL ,direction = "long" );
+
+str(O2.Data.1.Temp_C)
+
+head(O2.Data.1.Temp_C)
 
 
 
@@ -236,7 +397,9 @@ head(O2.Data.1.O2_Kpa)
 
 head(O2.Data.1.Temp_C)
 
-O2.Data.2<-merge(O2.Data.1.Temp_C[O2.Data.1.Temp_C$Measurement != "PanelT",],O2.Data.1.O2_Kpa, by= "Corrected.TIME") ;
+O2.Data.2<-merge(O2.Data.1.Temp_C,O2.Data.1.O2_Kpa, by="Corrected.TIME") ;
+
+str(O2.Data.2)
 
 names(O2.Data.2)<-c("Corrected.TIME" , "Temperature" ,"Deg.C" , "Oxygen" , "Kpa") ;
 
@@ -300,16 +463,48 @@ points(O2.Data.2$Corrected.TIME, O2.Data.2$Calibrated.O2_Kpa, col="RED");
 
 plot(O2.Data.2$Kpa,O2.Data.2$Calibrated.O2_Kpa, col="RED" )
 abline(b=1,a=0, col="Blue")
+
+
+plot(O2.Data.2$Corrected.TIME,O2.Data.2$Deg.C, col="MAGENTA" )
+
 names(O2.Data.2)
 
+# ### Add the panel temperature to the data
+# 
+# head(O2.Data.1.Temp_C) 
+# 
+# O2.Data.1.Temp_C[O2.Data.1.Temp_C$Measurement == "PanelT",]
+# 
+# 
+# plot(O2.Data.1.Temp_C[O2.Data.1.Temp_C$Measurement == "PanelT",c("Corrected.TIME", "Value")])
+# 
+# str(O2.Data.1.Temp_C)
+# 
+# O2.Data.2$PanelT<-O2.Data.1.Temp_C[O2.Data.1.Temp_C$Measurement == "PanelT", c("Value")] ;
+# 
+# str(O2.Data.2$PanelT)
+# 
+# head(O2.Data.2)
+# 
+# plot(O2.Data.2$Corrected.TIME, O2.Data.2$PanelT, col="BLUE" )
 
-### Add the panel temperature to the data
 
-O2.Data.1.Temp_C[O2.Data.1.Temp_C$Measurement == "PanelT",]
+### Get ready the panel temperature PanelT for plotting
+names(O2.Data.1)
 
-O2.Data.2$PanelT<-O2.Data.1.Temp_C[O2.Data.1.Temp_C$Measurement == "PanelT", c("Value")] ;
+str(O2.Data.1)
 
-head(O2.Data.2)
+Panel.T<-O2.Data.1[,c("Corrected.TIME", "PanelT")]
+
+str(Panel.T)
+
+plot(Panel.T[,c("Corrected.TIME", "PanelT")], col="GREEN") ;
+
+str(O2.Data.2[O2.Data.2$Temperature == "B3TriticaleB5cmTemp_Med",c("Corrected.TIME","Deg.C")])
+
+plot(Panel.T$PanelT,  O2.Data.2[O2.Data.2$Temperature == "B3TriticaleB5cmTemp_Med",c("Deg.C")] , col="BLUE") ;
+
+str
 
 ####### There are a few measurements that exceed 20 Kpa
 
