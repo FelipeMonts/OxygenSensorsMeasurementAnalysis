@@ -330,43 +330,126 @@ Temperature.Data$FAC.Treatment<-as.factor(Temperature.Data$Treatment) ;
 str(Temperature.Data);
 
 
-
-
 ###############################################################################################################
-#                           Reshape the data form wide to long from processing and calibration
+#                           Processing Oxyigen Data
 ###############################################################################################################
-head(O2.Data.1) 
-
-tail(O2.Data.1)
-
-names(O2.Data.1)
 
 str(O2.Data.1)
 
-O2.Data.1.O2_Kpa<-reshape(data = O2.Data.1, idvar="Corrected.TIME", timevar="Measurement",
-                        varying = names(O2.Data.1)[c(9,11,13,15)], v.names=c("Value"), 
-                        times=names(O2.Data.1)[c(9,11,13,15)],  drop = c(1,2,3,4,5,6,7,8,10,12,14,16,17,18), 
-                        new.row.names = NULL ,direction = "long" );
+###### Treatment A #######
 
-str(O2.Data.1.O2_Kpa)
+Oxygen.Data.A5<-O2.Data.1[,c(grep("A5cmO2",names(O2.Data.1)),which(names(O2.Data.1)== "Corrected.TIME" ))]  ;
 
-# #  Select temperature and Oxygen data according to the depth 5cm or 20 cm
-# 
-# grep("5cmTemp",names(O2.Data.1))
-# 
-# grep("5cmTemp",names(O2.Data.1))
-# 
-# grep("20cmTemp",names(O2.Data.1))
+Oxygen.Data.A5$Depth_cm<-5 ;
+
+Oxygen.Data.A5$Treatment<-"A" ;
+
+names(Oxygen.Data.A5)[[1]]<-"Oxygen_Kpa"
+
+str(Oxygen.Data.A5)
 
 
-O2.Data.1.Temp_C<-reshape(data = O2.Data.1, idvar="Corrected.TIME", timevar="Measurement",
-                        varying = names(O2.Data.1)[c(10,12,14,16)], v.names=c("Value"), 
-                        times=names(O2.Data.1)[c(10,12,14,16)],  drop = c(1,2,3,4,5,6,7,8,9,11,13,15,17,18), 
-                        new.row.names = NULL ,direction = "long" );
 
-str(O2.Data.1.Temp_C)
+Oxygen.Data.A20<-O2.Data.1[,c(grep("A20cmO2",names(O2.Data.1)),which(names(O2.Data.1)== "Corrected.TIME" ))]  ;
 
-head(O2.Data.1.Temp_C)
+str(Oxygen.Data.A20)
+
+
+Oxygen.Data.A20$Depth_cm<-20 ;
+
+Oxygen.Data.A20$Treatment<-"A" ;
+
+names(Oxygen.Data.A20)[[1]]<-"Oxygen_Kpa" ;
+
+str(Oxygen.Data.A20)
+
+Oxygen.Data.A<-rbind(Oxygen.Data.A5,Oxygen.Data.A20) ;
+
+str(Oxygen.Data.A)
+
+
+###### Treatment B #######
+
+Oxygen.Data.B5<-O2.Data.1[,c(grep("B5cmO2",names(O2.Data.1)),which(names(O2.Data.1)== "Corrected.TIME" ))]  ;
+
+Oxygen.Data.B5$Depth_cm<-5 ;
+
+Oxygen.Data.B5$Treatment<-"B" ;
+
+names(Oxygen.Data.B5)[[1]]<-"Oxygen_Kpa"
+
+str(Oxygen.Data.B5)
+
+
+
+Oxygen.Data.B20<-O2.Data.1[,c(grep("B20cmO2",names(O2.Data.1)),which(names(O2.Data.1)== "Corrected.TIME" ))]  ;
+
+str(Oxygen.Data.B20)
+
+
+Oxygen.Data.B20$Depth_cm<-20 ;
+
+Oxygen.Data.B20$Treatment<-"B" ;
+
+names(Oxygen.Data.B20)[[1]]<-"Oxygen_Kpa" ;
+
+str(Oxygen.Data.B20)
+
+Oxygen.Data.B<-rbind(Oxygen.Data.B5,Oxygen.Data.B20) ;
+
+str(Oxygen.Data.B)
+
+
+###### Treatment C #######
+
+Oxygen.Data.C5<-O2.Data.1[,c(grep("B5cmO2",names(O2.Data.1)),which(names(O2.Data.1)== "Corrected.TIME" ))]  ;
+
+Oxygen.Data.C5$Depth_cm<-5 ;
+
+Oxygen.Data.C5$Treatment<-"C" ;
+
+names(Oxygen.Data.C5)[[1]]<-"Oxygen_Kpa"
+
+str(Oxygen.Data.C5)
+
+
+
+Oxygen.Data.C20<-O2.Data.1[,c(grep("C20cmO2",names(O2.Data.1)),which(names(O2.Data.1)== "Corrected.TIME" ))]  ;
+
+str(Oxygen.Data.C20)
+
+
+Oxygen.Data.C20$Depth_cm<-20 ;
+
+Oxygen.Data.C20$Treatment<-"C" ;
+
+names(Oxygen.Data.C20)[[1]]<-"Oxygen_Kpa" ;
+
+str(Oxygen.Data.C20)
+
+Oxygen.Data.C<-rbind(Oxygen.Data.C5,Oxygen.Data.C20) ;
+
+str(Oxygen.Data.C)
+
+
+
+##### combining all #### 
+
+
+Oxygen.Data<-rbind(Oxygen.Data.A5 , Oxygen.Data.A20 , Oxygen.Data.B5 , Oxygen.Data.B20 ,
+                   Oxygen.Data.C5 , Oxygen.Data.C20) ;
+
+str(Oxygen.Data);
+
+Oxygen.Data$FAC.Depth_cm<-as.factor(Oxygen.Data$Depth_cm) ;
+
+Oxygen.Data$FAC.Treatment<-as.factor(Oxygen.Data$Treatment) ;
+
+str(Oxygen.Data);
+
+
+
+
 
 
 
@@ -393,13 +476,15 @@ head(O2.Data.1.Temp_C)
 # 
 ###############################################################################################################
 
-head(O2.Data.1.O2_Kpa)
+str(Oxygen.Data)
 
-head(O2.Data.1.Temp_C)
+str(Temperature.Data)
 
-O2.Data.2<-merge(O2.Data.1.Temp_C,O2.Data.1.O2_Kpa, by="Corrected.TIME") ;
+str(Temperature.Data[Temperature.Data$Treatment != "Panel",])
 
-str(O2.Data.2)
+Oxygen.Temperature.Data<-merge(Temperature.Data[Temperature.Data$Treatment != "Panel",],Oxygen.Data) ;
+
+str(Oxygen.Temperature.Data)
 
 names(O2.Data.2)<-c("Corrected.TIME" , "Temperature" ,"Deg.C" , "Oxygen" , "Kpa") ;
 
