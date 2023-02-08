@@ -143,11 +143,34 @@ CampbellSci.files<-c("CR1000NEW_DataTableInfo.dat" , "CR1000NEW_Oxygen.dat" ,   
 
 Files.Directories<-list.files("./OxygenSensorsData2022_2023");
 
+Files.Directories
 
-O2.Data.1<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[5]],"\\",CampbellSci.files[[2]] ), header=F, skip=4) ;
+File.to.Download = 5
+
+###### Get the Block and the Cover crop type from the file name ####
+
+#### Adding the block  (Block.No) and cover crop  (C_Crop.Type) factors
+
+strsplit(x = Files.Directories[[File.to.Download]], split = "[[:digit:]]" ) [[1]] [2]
+
+C_Crop.Type<-strsplit(x = Files.Directories[[File.to.Download]], split = "[[:digit:]]" )[[1]] [2]   ;  
+
+C_Crop.Type
+
+regexpr(pattern = "[[:digit:]]" , text = Files.Directories[[File.to.Download]] )
 
 
-names(O2.Data.1)<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[1]],"\\",CampbellSci.files[[2]] ), header=F, skip=1,nrows=1) ;
+Block.No<-substr(x = Files.Directories[[File.to.Download]], start = regexpr(pattern = "[[:digit:]]" , text = Files.Directories[[File.to.Download]] ),
+       stop = regexpr(pattern = "[[:digit:]]" , text = Files.Directories[[File.to.Download]] ) ) ;
+
+Block.No
+
+### Read the data from where the Oxygen data is stored ###
+
+O2.Data.1<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]],"\\",CampbellSci.files[[2]] ), header=F, skip=4) ;
+
+
+names(O2.Data.1)<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]],"\\",CampbellSci.files[[2]] ), header=F, skip=1,nrows=1) ;
 
 head(O2.Data.1) 
 
@@ -164,7 +187,7 @@ O2.Data.1$TIME<-as.POSIXct(O2.Data.1$TIMESTAMP) ;
 length(O2.Data.1$TIME)
 
 
-plot(O2.Data.1$TIME, col = "BLUE")
+plot(O2.Data.1$TIME, col = "BLUE", main = Files.Directories[[File.to.Download]] )
 
 ### The first records have wrong the date 1999
 
@@ -176,7 +199,7 @@ head(O2.Data.1)
 
 names(O2.Data.1)
 
-plot(O2.Data.1$TIME,O2.Data.1$Corrected.TIME, col= "RED")
+plot(O2.Data.1$TIME,O2.Data.1$Corrected.TIME, col= "RED" , main = Files.Directories[[File.to.Download]])
 
 # #  Select temperature and Oxygen data according to the depth 5cm or 20 cm
 # 
@@ -186,13 +209,17 @@ plot(O2.Data.1$TIME,O2.Data.1$Corrected.TIME, col= "RED")
 # 
 # grep("20cmTemp",names(O2.Data.1))
 
-plot(O2.Data.1$Corrected.TIME,O2.Data.1$BattV_Min)
+plot(O2.Data.1$Corrected.TIME,O2.Data.1$BattV_Min, main = Files.Directories[[File.to.Download]])
 
-plot(O2.Data.1$Corrected.TIME,O2.Data.1$BattV_Min, xlim=c(as.POSIXct("2022-12-17 17:30:00"), as.POSIXct("2022-12-20 17:30:00")))
+plot(O2.Data.1$Corrected.TIME,O2.Data.1$BattV_Min, 
+     xlim=c(as.POSIXct("2022-12-17 17:30:00"), as.POSIXct("2022-12-20 17:30:00")),
+     main = Files.Directories[[File.to.Download]])
 
-plot(O2.Data.1$Corrected.TIME, O2.Data.1$PanelT)
+plot(O2.Data.1$Corrected.TIME, O2.Data.1$PanelT , main = Files.Directories[[File.to.Download]])
 
-plot(O2.Data.1$Corrected.TIME,O2.Data.1$PanelT, xlim=c(as.POSIXct("2022-12-17 17:30:00"), as.POSIXct("2022-12-29 17:30:00"))) ;
+plot(O2.Data.1$Corrected.TIME,O2.Data.1$PanelT, 
+     xlim=c(as.POSIXct("2022-12-17 17:30:00"), as.POSIXct("2022-12-29 17:30:00")),
+     main = Files.Directories[[File.to.Download]]) ;
 
 
 ###############################################################################################################
@@ -328,6 +355,8 @@ Temperature.Data$FAC.Depth_cm<-as.factor(Temperature.Data$Depth_cm) ;
 Temperature.Data$FAC.Treatment<-as.factor(Temperature.Data$Treatment) ;
 
 str(Temperature.Data);
+
+
 
 
 ###############################################################################################################
@@ -487,8 +516,15 @@ str(Data.Oxygen.Temperature)
 
 levels(Data.Oxygen.Temperature$FAC.Treatment)
 
-Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="Panel", ]
+# Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="Panel", ]
 
+#### Adding the block  (Block.No) and cover crop  (C_Crop.Type) factors
+
+Data.Oxygen.Temperature$Block<-as.factor(Block.No) ;
+
+Data.Oxygen.Temperature$C_Crop<-as.factor(C_Crop.Type) ;
+
+str(Data.Oxygen.Temperature)
 
 ###############################################################################################################
 #                  Plotting to visualize the data
@@ -501,7 +537,7 @@ par(mar = c(5, 4, 4, 4) + 0.3)
 
 
 plot(Temperature_C~Corrected.TIME, data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="Panel",],
-     col="BLUE", main= "Treatment B", ylim =c(-20,20)) ;
+     col="BLUE", main = paste("B" , Block.No , C_Crop.Type , "Treatment B" ), ylim =c(-20,20)) ;
 
 points(Temperature_C~Corrected.TIME, 
        data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
@@ -528,7 +564,7 @@ legend.1<-c("Panel T", "T°C 5 cm" , "T°C 20 cm" , "O2 5 cm" , "O2 20 cm"  )
 
 legend.2<-c("blank" , "blank" , "blank" , "solid" , "solid")
 
-legend.3<-c(1, 1, 1, NA , NA)
+legend.3<-c(16, 16, 16, NA , NA)
 
 legend.4<-c("BLUE", "RED" , "GREEN" ,"RED" , "GREEN")
 
@@ -541,7 +577,7 @@ par(mar = c(5, 4, 4, 4) + 0.3)
 
 
 plot(Temperature_C~Corrected.TIME, data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="Panel",],
-     col="BLUE", main= "Treatment C", ylim =c(-20,20)) ;
+     col="BLUE", main= paste("B" , Block.No , C_Crop.Type , "Treatment C" ), ylim =c(-20,20)) ;
 
 points(Temperature_C~Corrected.TIME, 
        data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
@@ -568,7 +604,7 @@ legend.1<-c("Panel T", "T°C 5 cm" , "T°C 20 cm" , "O2 5 cm" , "O2 20 cm"  )
 
 legend.2<-c("blank" , "blank" , "blank" , "solid" , "solid")
 
-legend.3<-c(1, 1, 1, NA , NA)
+legend.3<-c(16, 16, 16, NA , NA)
 
 legend.4<-c("BLUE", "RED" , "GREEN" ,"RED" , "GREEN")
 
@@ -629,7 +665,7 @@ Data.Oxygen.Temperature$Temp.Corrected.O2_Kpa<-Data.Oxygen.Temperature$Oxygen_Kp
 
 plot(Oxygen_Kpa~Corrected.TIME, 
      data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-     col="RED", ylim = c(5,15), main = "Treatment B") ;
+     col="RED", ylim = c(5,15), main = paste("B" , Block.No , C_Crop.Type , "Treatment B" )) ;
 points(Temp.Corrected.O2_Kpa~Corrected.TIME, 
      data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
      col="BLUE", ylim = c(5,15)) ;
@@ -658,7 +694,7 @@ legend(x = "topleft" , legend = legend.1, pch = legend.3 , col = legend.4, title
 
 plot(Oxygen_Kpa~Corrected.TIME, 
      data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-     col="RED", ylim = c(5,15), main = "Treatment C") ;
+     col="RED", ylim = c(5,15), main = paste("B" , Block.No , C_Crop.Type , "Treatment C" )) ;
 points(Temp.Corrected.O2_Kpa~Corrected.TIME, 
        data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
        col="BLUE", ylim = c(5,15)) ;
@@ -730,7 +766,7 @@ Data.Oxygen.Temperature$Calibrated.O2_Kpa<-(Data.Oxygen.Temperature$Temp.Correct
 
 plot(Oxygen_Kpa~Corrected.TIME, 
      data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-     col="RED", ylim = c(5,15), main = "Treatment B") ;
+     col="RED", ylim = c(5,15), main = paste("B" , Block.No , C_Crop.Type , "Treatment B" )) ;
 points(Calibrated.O2_Kpa~Corrected.TIME, 
        data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
        col="BLUE", ylim = c(5,15)) ;
@@ -759,7 +795,7 @@ legend(x = "topleft" , legend = legend.1, pch = legend.3 , col = legend.4, title
 
 plot(Oxygen_Kpa~Corrected.TIME, 
      data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-     col="RED", ylim = c(5,15), main = "Treatment C") ;
+     col="RED", ylim = c(5,15), main = paste("B" , Block.No , C_Crop.Type , "Treatment C" )) ;
 points(Calibrated.O2_Kpa~Corrected.TIME, 
        data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
        col="BLUE", ylim = c(5,15)) ;
