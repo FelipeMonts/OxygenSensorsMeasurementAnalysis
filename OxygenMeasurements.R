@@ -145,7 +145,15 @@ Files.Directories<-list.files("./OxygenSensorsData2022_2023");
 
 Files.Directories
 
+Files.Directories[[File.to.Download]]
+
 File.to.Download = 5
+
+Download.Dates<-list.files(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]]))
+
+File.Download.date = 1
+
+Download.Dates[[File.Download.date]]
 
 ###### Get the Block and the Cover crop type from the file name ####
 
@@ -167,10 +175,14 @@ Block.No
 
 ### Read the data from where the Oxygen data is stored ###
 
-O2.Data.1<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]],"\\",CampbellSci.files[[2]] ), header=F, skip=4) ;
 
 
-names(O2.Data.1)<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]],"\\",CampbellSci.files[[2]] ), header=F, skip=1,nrows=1) ;
+O2.Data.1<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]],
+                           "\\", Download.Dates[[File.Download.date]], "\\" ,CampbellSci.files[[2]] ), header=F, skip=4) ;
+
+
+names(O2.Data.1)<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]],
+                                  "\\", Download.Dates[[File.Download.date]], "\\" ,CampbellSci.files[[2]] ), header=F, skip=1,nrows=1) ;
 
 head(O2.Data.1) 
 
