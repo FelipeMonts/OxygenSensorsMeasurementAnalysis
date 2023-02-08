@@ -251,7 +251,7 @@ Temperature.Data.B20<-O2.Data.1[,c(grep("B20cmTemp",names(O2.Data.1)),which(name
 str(Temperature.Data.B20)
 
 
-Temperature.Data.B20$Depth_cm<-5 ;
+Temperature.Data.B20$Depth_cm<-20 ;
 
 Temperature.Data.B20$Treatment<-"B" ;
 
@@ -285,7 +285,7 @@ Temperature.Data.C20<-O2.Data.1[,c(grep("C20cmTemp",names(O2.Data.1)),which(name
 
 str(Temperature.Data.C20)
 
-Temperature.Data.C20$Depth_cm<-5 ;
+Temperature.Data.C20$Depth_cm<-20 ;
 
 Temperature.Data.C20$Treatment<-"C" ;
 
@@ -331,7 +331,7 @@ str(Temperature.Data);
 
 
 ###############################################################################################################
-#                           Processing Oxyigen Data
+#                           Processing Oxygen Data
 ###############################################################################################################
 
 str(O2.Data.1)
@@ -402,7 +402,7 @@ str(Oxygen.Data.B)
 
 ###### Treatment C #######
 
-Oxygen.Data.C5<-O2.Data.1[,c(grep("B5cmO2",names(O2.Data.1)),which(names(O2.Data.1)== "Corrected.TIME" ))]  ;
+Oxygen.Data.C5<-O2.Data.1[,c(grep("C5cmO2",names(O2.Data.1)),which(names(O2.Data.1)== "Corrected.TIME" ))]  ;
 
 Oxygen.Data.C5$Depth_cm<-5 ;
 
@@ -448,6 +448,132 @@ Oxygen.Data$FAC.Treatment<-as.factor(Oxygen.Data$Treatment) ;
 str(Oxygen.Data);
 
 
+###############################################################################################################
+#                  Merging Oxygen Data and Temperature Data
+###############################################################################################################
+
+
+str(Oxygen.Data);
+
+str(Temperature.Data);  ### temperature data has the panel temperature records as well.
+
+str(Temperature.Data[Temperature.Data$FAC.Treatment != "Panel" ,])
+
+
+Data.Oxygen.Temperature.1<-merge(Oxygen.Data, Temperature.Data[Temperature.Data$FAC.Treatment != "Panel" ,]) ;
+
+head(Data.Oxygen.Temperature.1)
+
+head(O2.Data.1)
+
+str(Data.Oxygen.Temperature.1)
+
+
+Temperature.Data.Panel.2<-Temperature.Data[Temperature.Data$FAC.Treatment == "Panel" ,] ;
+
+Temperature.Data.Panel.2$Oxygen_Kpa<-NA ;
+
+head(Temperature.Data.Panel.2)
+
+str(Temperature.Data.Panel.2)
+
+Data.Oxygen.Temperature<-rbind(Data.Oxygen.Temperature.1,Temperature.Data.Panel.2 )
+
+head(Data.Oxygen.Temperature)
+
+tail(Data.Oxygen.Temperature)
+
+str(Data.Oxygen.Temperature)
+
+levels(Data.Oxygen.Temperature$FAC.Treatment)
+
+Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="Panel", ]
+
+
+###############################################################################################################
+#                  Plotting to visualize the data
+###############################################################################################################
+
+
+####  Treatment B #####
+
+par(mar = c(5, 4, 4, 4) + 0.3)
+
+
+plot(Temperature_C~Corrected.TIME, data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="Panel",],
+     col="BLUE", main= "Treatment B", ylim =c(-20,20)) ;
+
+points(Temperature_C~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+       col="RED") ;
+
+points(Temperature_C~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
+       col="GREEN")
+
+
+par(new=T)
+
+plot(Oxygen_Kpa~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+        axes = F , bty = "n", xlab="" , ylab = "", lty= 1,  type = "l", col="RED", ylim = c(5,15)) ;
+axis( side = 4, at = NULL)
+mtext("Oxygen_Kpa", side=4, line=2)
+
+points(Oxygen_Kpa~Corrected.TIME, 
+     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
+     lty= 1,  type = "l" , col="GREEN") ;
+
+legend.1<-c("Panel T", "T°C 5 cm" , "T°C 20 cm" , "O2 5 cm" , "O2 20 cm"  )
+
+legend.2<-c("blank" , "blank" , "blank" , "solid" , "solid")
+
+legend.3<-c(1, 1, 1, NA , NA)
+
+legend.4<-c("BLUE", "RED" , "GREEN" ,"RED" , "GREEN")
+
+legend(x = "topleft" , legend = legend.1, lty = legend.2, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex=2.0)
+
+
+####  Treatment C  #####
+
+par(mar = c(5, 4, 4, 4) + 0.3)
+
+
+plot(Temperature_C~Corrected.TIME, data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="Panel",],
+     col="BLUE", main= "Treatment C", ylim =c(-20,20)) ;
+
+points(Temperature_C~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+       col="RED") ;
+
+points(Temperature_C~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
+       col="GREEN")
+
+
+par(new=T)
+
+plot(Oxygen_Kpa~Corrected.TIME, 
+     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+     axes = F , bty = "n", xlab="" , ylab = "", lty= 1,  type = "l", col="RED", ylim = c(5,15)) ;
+axis( side = 4, at = NULL)
+mtext("Oxygen_Kpa", side=4, line=2)
+
+points(Oxygen_Kpa~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
+       lty= 1,  type = "l" , col="GREEN") ;
+
+legend.1<-c("Panel T", "T°C 5 cm" , "T°C 20 cm" , "O2 5 cm" , "O2 20 cm"  )
+
+legend.2<-c("blank" , "blank" , "blank" , "solid" , "solid")
+
+legend.3<-c(1, 1, 1, NA , NA)
+
+legend.4<-c("BLUE", "RED" , "GREEN" ,"RED" , "GREEN")
+
+legend(x = "topleft" , legend = legend.1, lty = legend.2, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex=2.0 )
+
 
 
 
@@ -476,22 +602,15 @@ str(Oxygen.Data);
 # 
 ###############################################################################################################
 
-str(Oxygen.Data)
-
-str(Temperature.Data)
-
-str(Temperature.Data[Temperature.Data$Treatment != "Panel",])
-
-Oxygen.Temperature.Data<-merge(Temperature.Data[Temperature.Data$Treatment != "Panel",],Oxygen.Data) ;
-
-str(Oxygen.Temperature.Data)
-
-names(O2.Data.2)<-c("Corrected.TIME" , "Temperature" ,"Deg.C" , "Oxygen" , "Kpa") ;
-
-tail(O2.Data.2)
+str(Data.Oxygen.Temperature)
 
 
-#coorection Factors
+
+str(Data.Oxygen.Temperature[Data.Oxygen.Temperature$Treatment != "Panel",])
+
+
+
+#correction Factors
 
  C3 = -4.333e-6
  C2 = 1.896e-3
@@ -501,7 +620,67 @@ tail(O2.Data.2)
 
 
  
-O2.Data.2$Temp.Corected.O2_Kpa<-O2.Data.2$Kpa + (C3 * (O2.Data.2$Deg.C^3 )) + (C2 * (O2.Data.2$Deg.C^2 )) + (C1 * O2.Data.2$Deg.C) + C0 ;
+Data.Oxygen.Temperature$Temp.Corrected.O2_Kpa<-Data.Oxygen.Temperature$Oxygen_Kpa + 
+   (C3 * (Data.Oxygen.Temperature$Temperature_C^3 )) + (C2 * (Data.Oxygen.Temperature$Temperature_C^2 )) +
+   (C1 * Data.Oxygen.Temperature$Temperature_C) + C0  ;
+
+
+####  Checking Treatment B  #####
+
+plot(Oxygen_Kpa~Corrected.TIME, 
+     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+     col="RED", ylim = c(5,15), main = "Treatment B") ;
+points(Temp.Corrected.O2_Kpa~Corrected.TIME, 
+     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+     col="BLUE", ylim = c(5,15)) ;
+
+points(Oxygen_Kpa~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
+       col="MAGENTA", ylim = c(5,15)) ;
+
+points(Temp.Corrected.O2_Kpa~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
+       col="GREEN", ylim = c(5,15)) ;
+
+
+legend.1<-c("Oxygen_Kpa 5 cm", "Temp.Corrected.O2_Kpa 5 cm" , "Oxygen_Kpa 20 cm" , "Temp.Corrected.O2_Kpa 20 cm"  )
+
+legend.2<-c("blank" , "blank" , "blank" , "blank")
+
+legend.3<-c(16, 16, 16, 16)
+
+legend.4<-c( "RED" ,"BLUE", "MAGENTA" , "GREEN")
+
+legend(x = "topleft" , legend = legend.1, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0)
+
+
+####  Checking Treatment C  #####
+
+plot(Oxygen_Kpa~Corrected.TIME, 
+     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+     col="RED", ylim = c(5,15), main = "Treatment C") ;
+points(Temp.Corrected.O2_Kpa~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+       col="BLUE", ylim = c(5,15)) ;
+
+points(Oxygen_Kpa~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
+       col= "MAGENTA", ylim = c(5,15)) ;
+
+points(Temp.Corrected.O2_Kpa~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
+       col= "GREEN", ylim = c(5,15)) ;
+
+
+legend.1<-c("Oxygen_Kpa 5 cm", "Temp.Corrected.O2_Kpa 5 cm" , "Oxygen_Kpa 20 cm" , "Temp.Corrected.O2_Kpa 20 cm"  )
+
+legend.3<-c(16, 16, 16, 16)
+
+legend.4<-c( "RED" ,"BLUE", "MAGENTA" , "GREEN")
+
+legend(x = "topleft" , legend = legend.1, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0)
+
+
 
 ###############################################################################################################
 #                         Calibration of the data based on the calibration equation obtained from  
@@ -536,134 +715,118 @@ O2.Data.2$Temp.Corected.O2_Kpa<-O2.Data.2$Kpa + (C3 * (O2.Data.2$Deg.C^3 )) + (C
 # Multiple R-squared:  0.9979,	Adjusted R-squared:  0.9979 
 # F-statistic: 1.698e+05 on 1 and 363 DF,  p-value: < 2.2e-16
 # 
-# (Intercept)  S200Ox_kPa 
-#1.0475757   0.9166775 
+# (Intercept)  S200Ox_kPa
+#   1.0475757   0.9166775
+###############################################################################################################
 
 
 
-O2.Data.2$Calibrated.O2_Kpa<-(O2.Data.2$Temp.Corected.O2_Kpa * 0.9166775) + 1.0475757 ;
-
-plot(O2.Data.2$Corrected.TIME, O2.Data.2$Kpa, col="Blue") ;
-points(O2.Data.2$Corrected.TIME, O2.Data.2$Calibrated.O2_Kpa, col="RED");
-
-plot(O2.Data.2$Kpa,O2.Data.2$Calibrated.O2_Kpa, col="RED" )
-abline(b=1,a=0, col="Blue")
+str(Data.Oxygen.Temperature);
 
 
-plot(O2.Data.2$Corrected.TIME,O2.Data.2$Deg.C, col="MAGENTA" )
+Data.Oxygen.Temperature$Calibrated.O2_Kpa<-(Data.Oxygen.Temperature$Temp.Corrected.O2_Kpa * 0.9166775) + 1.0475757 ;
 
-names(O2.Data.2)
+####  Checking Treatment B  #####
 
-# ### Add the panel temperature to the data
+plot(Oxygen_Kpa~Corrected.TIME, 
+     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+     col="RED", ylim = c(5,15), main = "Treatment B") ;
+points(Calibrated.O2_Kpa~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+       col="BLUE", ylim = c(5,15)) ;
+
+points(Oxygen_Kpa~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
+       col="GREEN", ylim = c(5,15)) ;
+
+points(Calibrated.O2_Kpa~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
+       col="MAGENTA", ylim = c(5,15)) ;
+
+legend.1<-c("Temp.Corrected.O2_Kpa 5 cm", "Calibrated.O2_Kpa 5 cm" , "Temp.Corrected.O2_Kpa 20 cm", "Calibrated.O2_Kpa 20 cm" )
+
+legend.2<-c("blank" , "blank" , "blank" , "blank")
+
+legend.3<-c(16, 16, 16, 16)
+
+legend.4<-c( "RED" ,"BLUE", "MAGENTA" , "GREEN")
+
+legend(x = "topleft" , legend = legend.1, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0)
+
+
+
+####  Checking Treatment C  #####
+
+plot(Oxygen_Kpa~Corrected.TIME, 
+     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+     col="RED", ylim = c(5,15), main = "Treatment C") ;
+points(Calibrated.O2_Kpa~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+       col="BLUE", ylim = c(5,15)) ;
+
+points(Oxygen_Kpa~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
+       col="GREEN", ylim = c(5,15)) ;
+
+points(Calibrated.O2_Kpa~Corrected.TIME, 
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
+       col="MAGENTA", ylim = c(5,15)) ;
+
+
+
+legend.1<-c("Temp.Corrected.O2_Kpa 5 cm", "Calibrated.O2_Kpa 5 cm" , "Temp.Corrected.O2_Kpa 20 cm", "Calibrated.O2_Kpa 20 cm" )
+
+legend.2<-c("blank" , "blank" , "blank" , "blank")
+
+legend.3<-c(16, 16, 16, 16)
+
+legend.4<-c( "RED" ,"BLUE", "MAGENTA" , "GREEN")
+
+legend(x = "topleft" , legend = legend.1, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0)
+
+
+
+
+
+
+
+
+###############################################################################################################
+#                 Errors from long series of data
+###############################################################################################################
+
+
+
+
+
+
+
+
+
+
+# ########### There are some measurements with panel Temperature above 100 °C
 # 
-# head(O2.Data.1.Temp_C) 
+# O2.calibrated.Data[O2.calibrated.Data$PanelT >= 50,]
 # 
-# O2.Data.1.Temp_C[O2.Data.1.Temp_C$Measurement == "PanelT",]
+# max(O2.calibrated.Data$PanelT,na.rm=T) 
+# 
+# O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171,]
+# 
+# #### it seems that at PanelT == 105.8171 there is a maximum that signals an error
 # 
 # 
-# plot(O2.Data.1.Temp_C[O2.Data.1.Temp_C$Measurement == "PanelT",c("Corrected.TIME", "Value")])
+# plot(O2.calibrated.Data$Corrected.TIME,O2.calibrated.Data$PanelT)  ;
 # 
-# str(O2.Data.1.Temp_C)
+# O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171 & !is.na(O2.calibrated.Data$PanelT),]    ;
 # 
-# O2.Data.2$PanelT<-O2.Data.1.Temp_C[O2.Data.1.Temp_C$Measurement == "PanelT", c("Value")] ;
+# diff(O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171 & !is.na(O2.calibrated.Data$PanelT),c("PanelT")],lag=1)   ;
 # 
-# str(O2.Data.2$PanelT)
+# as.numeric(row.names(O2.calibrated.Data))  ;
 # 
-# head(O2.Data.2)
+# diff(as.numeric(row.names(O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171 & !is.na(O2.calibrated.Data$PanelT),]))) ;
 # 
-# plot(O2.Data.2$Corrected.TIME, O2.Data.2$PanelT, col="BLUE" )
+# #### the error occurs every 5059 records. It seems that at 5059 records the memory capacity is reached and there is a signal
+# #### that sets the PanelT to 105.8171 and adds to NA rows. Remove these records
 
-
-### Get ready the panel temperature PanelT for plotting
-names(O2.Data.1)
-
-str(O2.Data.1)
-
-Panel.T<-O2.Data.1[,c("Corrected.TIME", "PanelT")]
-
-str(Panel.T)
-
-plot(Panel.T[,c("Corrected.TIME", "PanelT")], col="GREEN") ;
-
-str(O2.Data.2[O2.Data.2$Temperature == "B3TriticaleB5cmTemp_Med",c("Corrected.TIME","Deg.C")])
-
-plot(Panel.T$PanelT,  O2.Data.2[O2.Data.2$Temperature == "B3TriticaleB5cmTemp_Med",c("Deg.C")] , col="BLUE") ;
-
-str
-
-####### There are a few measurements that exceed 20 Kpa
-
-plot(O2.Data.2[O2.Data.2$Calibrated.O2_Kpa >=25 ,c("Deg.C", "Calibrated.O2_Kpa")])
-
-plot(O2.Data.2[O2.Data.2$Calibrated.O2_Kpa <=22 ,c("Deg.C", "Calibrated.O2_Kpa")])
-
-plot(O2.Data.2[O2.Data.2$Temp.Corected.O2_Kpa >=25 ,c("Deg.C", "Calibrated.O2_Kpa")])
-
-plot(O2.Data.2[O2.Data.2$Temp.Corected.O2_Kpa <=22 ,c("Deg.C", "Calibrated.O2_Kpa")])
-
-plot(O2.Data.2[O2.Data.2$Kpa >=25 ,c("Deg.C", "Calibrated.O2_Kpa")])
-
-plot(O2.Data.2[O2.Data.2$Kpa <=22 ,c("Deg.C", "Calibrated.O2_Kpa")])
-
-# remove the data points that have O2 measurements above 21 kpa
-
-
-O2.calibrated.Data<-O2.Data.2[O2.Data.2$Kpa <= 25  &  O2.Data.2$Deg.C >= -20,] ;
-
-
-names(O2.calibrated.Data)
-
-head(O2.calibrated.Data)
-
-
-max(O2.calibrated.Data$Kpa, na.rm=T)
-
-O2.calibrated.Data$Percent.O2<-(O2.calibrated.Data$Calibrated.O2_Kpa/21)*100 ;
-
-plot(O2.calibrated.Data$Deg.C,O2.calibrated.Data$Percent.O2)
-
-plot(O2.calibrated.Data$PanelT,O2.calibrated.Data$Percent.O2)
-
-plot(O2.calibrated.Data[O2.calibrated.Data$PanelT >= 50,c("PanelT")],O2.calibrated.Data[O2.calibrated.Data$PanelT >= 50,c("Percent.O2")])
-
-
-##@# There are some measurements with panel Temperature above 100 °C
-
-O2.calibrated.Data[O2.calibrated.Data$PanelT >= 50,]
-
-max(O2.calibrated.Data$PanelT,na.rm=T) 
-
-O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171,]
-
-#### it seems that at PanelT == 105.8171 there is a maximum that signals an error
-
-
-plot(O2.calibrated.Data$Corrected.TIME,O2.calibrated.Data$PanelT)  ;
-
-O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171 & !is.na(O2.calibrated.Data$PanelT),]    ;
-
-diff(O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171 & !is.na(O2.calibrated.Data$PanelT),c("PanelT")],lag=1)   ;
-
-as.numeric(row.names(O2.calibrated.Data))  ;
-
-diff(as.numeric(row.names(O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171 & !is.na(O2.calibrated.Data$PanelT),]))) ;
-
-#### the error occurs every 5059 records. It seems that at 5059 records the memory capacity is reached and there is a signal
-#### that sets the PanelT to 105.8171 and adds to NA rows. Remove these records
-
-Remove.NA<-which(is.na(O2.calibrated.Data$Corrected.TIME)) ;
-
-Remove.MemCap<-which(O2.calibrated.Data$PanelT == 105.8171) ;
-
-O2.Clean.Data<-O2.calibrated.Data[!O2.calibrated.Data %in% Remove.NA | !O2.calibrated.Data %in% Remove.MemCap]
-
-
-plot(O2.Clean.Data$Corrected.TIME,O2.Clean.Data$Kpa, col = "BLUE") ;
-
-plot(O2.Clean.Data$Corrected.TIME,O2.Clean.Data$Percent.O2, col = "GREEN") ;
-
-plot(O2.Clean.Data$Corrected.TIME,O2.Clean.Data$PanelT , col = "RED" ) ;
-
-plot(O2.Clean.Data$Corrected.TIME,O2.Clean.Data$Deg.C, col = "MAGENTA")
 
 
