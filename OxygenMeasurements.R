@@ -131,7 +131,6 @@ setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors
 ###############################################################################################################
 
 
-
 ###############################################################################################################
 #                           Explore the files and directory and files with the data from Felipe's Downloads
 ###############################################################################################################
@@ -145,11 +144,15 @@ Files.Directories<-list.files("./OxygenSensorsData2022_2023");
 
 Files.Directories
 
+File.to.Download = 1
+
 Files.Directories[[File.to.Download]]
 
-File.to.Download = 5
 
-Download.Dates<-list.files(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]]))
+
+Download.Dates<-list.files(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]])) ;
+
+Download.Dates
 
 File.Download.date = 1
 
@@ -549,7 +552,7 @@ par(mar = c(5, 4, 4, 4) + 0.3)
 
 
 plot(Temperature_C~Corrected.TIME, data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="Panel",],
-     col="BLUE", main = paste("B" , Block.No , C_Crop.Type , "Treatment B" ), ylim =c(-20,20)) ;
+     col="BLUE", main = paste("B" , Block.No , C_Crop.Type , "Treatment B" ), ylim =c(-20,40)) ;
 
 points(Temperature_C~Corrected.TIME, 
        data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
@@ -589,7 +592,7 @@ par(mar = c(5, 4, 4, 4) + 0.3)
 
 
 plot(Temperature_C~Corrected.TIME, data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="Panel",],
-     col="BLUE", main= paste("B" , Block.No , C_Crop.Type , "Treatment C" ), ylim =c(-20,20)) ;
+     col="BLUE", main= paste("B" , Block.No , C_Crop.Type , "Treatment C" ), ylim =c(-20,40)) ;
 
 points(Temperature_C~Corrected.TIME, 
        data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
@@ -604,7 +607,7 @@ par(new=T)
 
 plot(Oxygen_Kpa~Corrected.TIME, 
      data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-     axes = F , bty = "n", xlab="" , ylab = "", lty= 1,  type = "l", col="RED", ylim = c(5,15)) ;
+     axes = F , bty = "n", xlab="" , ylab = "", lty= 1,  type = "l", col="RED", ylim = c(0,15)) ;
 axis( side = 4, at = NULL)
 mtext("Oxygen_Kpa", side=4, line=2)
 
@@ -677,7 +680,7 @@ Data.Oxygen.Temperature$Temp.Corrected.O2_Kpa<-Data.Oxygen.Temperature$Oxygen_Kp
 
 plot(Oxygen_Kpa~Corrected.TIME, 
      data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-     col="RED", ylim = c(5,15), main = paste("B" , Block.No , C_Crop.Type , "Treatment B" )) ;
+     col="RED", ylim = c(0,15), main = paste("B" , Block.No , C_Crop.Type , "Treatment B" )) ;
 points(Temp.Corrected.O2_Kpa~Corrected.TIME, 
      data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
      col="BLUE", ylim = c(5,15)) ;
@@ -706,7 +709,7 @@ legend(x = "topleft" , legend = legend.1, pch = legend.3 , col = legend.4, title
 
 plot(Oxygen_Kpa~Corrected.TIME, 
      data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-     col="RED", ylim = c(5,15), main = paste("B" , Block.No , C_Crop.Type , "Treatment C" )) ;
+     col="RED", ylim = c(0,15), main = paste("B" , Block.No , C_Crop.Type , "Treatment C" )) ;
 points(Temp.Corrected.O2_Kpa~Corrected.TIME, 
        data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
        col="BLUE", ylim = c(5,15)) ;
@@ -778,18 +781,18 @@ Data.Oxygen.Temperature$Calibrated.O2_Kpa<-(Data.Oxygen.Temperature$Temp.Correct
 
 plot(Oxygen_Kpa~Corrected.TIME, 
      data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-     col="RED", ylim = c(5,15), main = paste("B" , Block.No , C_Crop.Type , "Treatment B" )) ;
+     col="RED", ylim = c(0,15), main = paste("B" , Block.No , C_Crop.Type , "Treatment B" )) ;
 points(Calibrated.O2_Kpa~Corrected.TIME, 
        data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-       col="BLUE", ylim = c(5,15)) ;
+       col="BLUE") ;
 
 points(Oxygen_Kpa~Corrected.TIME, 
        data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
-       col="GREEN", ylim = c(5,15)) ;
+       col="GREEN") ;
 
 points(Calibrated.O2_Kpa~Corrected.TIME, 
        data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
-       col="MAGENTA", ylim = c(5,15)) ;
+       col="MAGENTA") ;
 
 legend.1<-c("Temp.Corrected.O2_Kpa 5 cm", "Calibrated.O2_Kpa 5 cm" , "Temp.Corrected.O2_Kpa 20 cm", "Calibrated.O2_Kpa 20 cm" )
 
@@ -807,7 +810,7 @@ legend(x = "topleft" , legend = legend.1, pch = legend.3 , col = legend.4, title
 
 plot(Oxygen_Kpa~Corrected.TIME, 
      data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-     col="RED", ylim = c(5,15), main = paste("B" , Block.No , C_Crop.Type , "Treatment C" )) ;
+     col="RED", ylim = c(0,15), main = paste("B" , Block.No , C_Crop.Type , "Treatment C" )) ;
 points(Calibrated.O2_Kpa~Corrected.TIME, 
        data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
        col="BLUE", ylim = c(5,15)) ;
@@ -835,46 +838,29 @@ legend(x = "topleft" , legend = legend.1, pch = legend.3 , col = legend.4, title
 
 
 
-
-
-
-
 ###############################################################################################################
-#                 Errors from long series of data
+#                         Writing the processed and clean data to an excel flie
 ###############################################################################################################
 
+Data.Oxygen.Temperature.Write<-Data.Oxygen.Temperature [,c("Corrected.TIME" , "Block" , "C_Crop", "FAC.Treatment" , "FAC.Depth_cm"  , "Temperature_C" , "Calibrated.O2_Kpa")] ;
+
+names(Data.Oxygen.Temperature.Write)[ which(names(Data.Oxygen.Temperature.Write) == "FAC.Depth_cm")]<-"Depth_cm" ;
+
+names(Data.Oxygen.Temperature.Write)[ which(names(Data.Oxygen.Temperature.Write) == "FAC.Treatment")]<-"Treatment" ;
+
+head(Data.Oxygen.Temperature.Write)
+
+str(Data.Oxygen.Temperature.Write)
+
+getwd()
+
+Files.Directories[[File.to.Download]]
+
+Sys.Date()
 
 
-
-
-
-
-
-
-
-# ########### There are some measurements with panel Temperature above 100 °C
-# 
-# O2.calibrated.Data[O2.calibrated.Data$PanelT >= 50,]
-# 
-# max(O2.calibrated.Data$PanelT,na.rm=T) 
-# 
-# O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171,]
-# 
-# #### it seems that at PanelT == 105.8171 there is a maximum that signals an error
-# 
-# 
-# plot(O2.calibrated.Data$Corrected.TIME,O2.calibrated.Data$PanelT)  ;
-# 
-# O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171 & !is.na(O2.calibrated.Data$PanelT),]    ;
-# 
-# diff(O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171 & !is.na(O2.calibrated.Data$PanelT),c("PanelT")],lag=1)   ;
-# 
-# as.numeric(row.names(O2.calibrated.Data))  ;
-# 
-# diff(as.numeric(row.names(O2.calibrated.Data[O2.calibrated.Data$PanelT == 105.8171 & !is.na(O2.calibrated.Data$PanelT),]))) ;
-# 
-# #### the error occurs every 5059 records. It seems that at 5059 records the memory capacity is reached and there is a signal
-# #### that sets the PanelT to 105.8171 and adds to NA rows. Remove these records
-
+write.csv( x = Data.Oxygen.Temperature.Write, 
+           file= paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]] , "\\ProcessedData\\",Files.Directories[[File.to.Download]], Sys.Date() ,".csv" ) ,
+            quote = F, row.names=F)  ;
 
 
