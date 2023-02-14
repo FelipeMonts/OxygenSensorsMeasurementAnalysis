@@ -137,7 +137,7 @@ setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors
 
 ### Read the Directories, files and data from the download directory where the Oxygen data is stored 
 
-CampbellSci.files<-c("CR1000NEW_DataTableInfo.dat" , "CR1000NEW_Oxygen.dat" ,       "CR1000NEW_Public.dat"  ,      "CR1000NEW_Status.dat" ) ;
+#CampbellSci.files<-c("CR1000NEW_DataTableInfo.dat" , "CR1000NEW_Oxygen.dat" ,       "CR1000NEW_Public.dat"  ,      "CR1000NEW_Status.dat" ) ;
 
 
 Files.Directories<-list.files("./OxygenSensorsData2022_2023");
@@ -154,9 +154,22 @@ Download.Dates<-list.files(paste0("./OxygenSensorsData2022_2023\\",Files.Directo
 
 Download.Dates
 
-File.Download.date = 1
+File.Download.date = 2
 
 Download.Dates[[File.Download.date]]
+
+
+##### Get the names of the files with the data in the directory ###
+
+Download.Data.files<-list.files(paste0("./OxygenSensorsData2022_2023\\", 
+                                       Files.Directories[[File.to.Download]] , "\\" ,Download.Dates[[File.Download.date]] ))
+
+Download.Data.files
+
+grep(pattern = "Oxygen" , Download.Data.files)
+
+Download.Oxygen.file<-Download.Data.files[grep(pattern = "Oxygen" , Download.Data.files)] ;
+
 
 ###### Get the Block and the Cover crop type from the file name ####
 
@@ -181,11 +194,11 @@ Block.No
 
 
 O2.Data.1<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]],
-                           "\\", Download.Dates[[File.Download.date]], "\\" ,CampbellSci.files[[2]] ), header=F, skip=4, na.strings = "NAN") ;
+                           "\\", Download.Dates[[File.Download.date]], "\\" , Download.Oxygen.file ), header=F, skip=4, na.strings = "NAN") ;
 
 
 names(O2.Data.1)<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]],
-                                  "\\", Download.Dates[[File.Download.date]], "\\" ,CampbellSci.files[[2]] ), header=F, skip=1,nrows=1) ;
+                                  "\\", Download.Dates[[File.Download.date]], "\\" , Download.Oxygen.file ), header=F, skip=1,nrows=1) ;
 
 head(O2.Data.1) 
 
@@ -226,15 +239,15 @@ plot(O2.Data.1$TIME,O2.Data.1$Corrected.TIME, col= "RED" , main = Files.Director
 
 plot(O2.Data.1$Corrected.TIME,O2.Data.1$BattV_Min, main = Files.Directories[[File.to.Download]])
 
-plot(O2.Data.1$Corrected.TIME,O2.Data.1$BattV_Min, 
-     xlim=c(as.POSIXct("2022-12-17 17:30:00"), as.POSIXct("2022-12-20 17:30:00")),
-     main = Files.Directories[[File.to.Download]])
+# plot(O2.Data.1$Corrected.TIME,O2.Data.1$BattV_Min, 
+#      xlim=c(as.POSIXct("2022-12-17 17:30:00"), as.POSIXct("2022-12-20 17:30:00")),
+#      main = Files.Directories[[File.to.Download]])
 
 plot(O2.Data.1$Corrected.TIME, O2.Data.1$PanelT , main = Files.Directories[[File.to.Download]])
 
-plot(O2.Data.1$Corrected.TIME,O2.Data.1$PanelT, 
-     xlim=c(as.POSIXct("2022-12-17 17:30:00"), as.POSIXct("2022-12-29 17:30:00")),
-     main = Files.Directories[[File.to.Download]]) ;
+# plot(O2.Data.1$Corrected.TIME,O2.Data.1$PanelT, 
+#      xlim=c(as.POSIXct("2022-12-17 17:30:00"), as.POSIXct("2022-12-29 17:30:00")),
+#      main = Files.Directories[[File.to.Download]]) ;
 
 
 ###############################################################################################################
@@ -851,7 +864,7 @@ legend.3<-c(16, 16, 16, 16)
 
 legend.4<-c( "RED" ,"BLUE", "MAGENTA" , "GREEN")
 
-legend(x = "bottomleft" , legend = legend.1, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 )
+#legend(x = "bottomleft" , legend = legend.1, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 )
 
 legend(x = "topleft" , legend = legend.1, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 )
 
@@ -879,7 +892,8 @@ Sys.Date()
 
 
 write.csv( x = Data.Oxygen.Temperature.Write, 
-           file= paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]] , "\\ProcessedData\\",Files.Directories[[File.to.Download]], Sys.Date() ,".csv" ) ,
+           file= paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]] ,
+                        "\\ProcessedData\\",Files.Directories[[File.to.Download]], Sys.Date() ,".csv" ) ,
             quote = F, row.names=F)  ;
 
 
