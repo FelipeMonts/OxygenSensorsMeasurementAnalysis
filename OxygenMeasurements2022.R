@@ -140,39 +140,29 @@ setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors
 #CampbellSci.files<-c("CR1000NEW_DataTableInfo.dat" , "CR1000NEW_Oxygen.dat" ,       "CR1000NEW_Public.dat"  ,      "CR1000NEW_Status.dat" ) ;
 
 
-Main.Directorys<-c("./OxygenSensorsData2021" , "./OxygenSensorsData2022_2023" ) ;
-
-MD=1
-
-Main.Directorys
-
-Main.Directorys[MD]
-
-#Files.Directories<-list.files("./OxygenSensorsData2022_2023");
-
-Files.Directories<-list.files(Main.Directorys[MD]);
+Files.Directories<-list.files("./OxygenSensorsData2022_2023");
 
 Files.Directories
 
-File.to.Download = 1
+File.to.Download = 5
 
 Files.Directories[[File.to.Download]]
 
 
 
-Download.Treatments<-list.files(paste0(Main.Directorys[MD],"\\",Files.Directories[[File.to.Download]])) ;
+Download.Dates<-list.files(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]])) ;
 
-Download.Treatments
+Download.Dates
 
-File.Download.Treatment = 1
+File.Download.date = 2
 
-Download.Treatments[[File.Download.Treatment]]
+Download.Dates[[File.Download.date]]
 
 
 ##### Get the names of the files with the data in the directory ###
 
-Download.Data.files<-list.files(paste0(Main.Directorys[MD], "\\",
-                                       Files.Directories[[File.to.Download]] , "\\" ,Download.Treatments[[File.Download.Treatment]] ))
+Download.Data.files<-list.files(paste0("./OxygenSensorsData2022_2023\\", 
+                                       Files.Directories[[File.to.Download]] , "\\" ,Download.Dates[[File.Download.date]] ))
 
 Download.Data.files
 
@@ -185,8 +175,6 @@ Download.Oxygen.file<-Download.Data.files[grep(pattern = "Oxygen" , Download.Dat
 
 #### Adding the block  (Block.No) and cover crop  (C_Crop.Type) factors
 
-### For Main.Directorys[MD], MD=1 , "./OxygenSensorsData2021", the naming pattern changes to 20210825Download from Block3Clover
-
 strsplit(x = Files.Directories[[File.to.Download]], split = "[[:digit:]]" ) [[1]] [2]
 
 C_Crop.Type<-strsplit(x = Files.Directories[[File.to.Download]], split = "[[:digit:]]" )[[1]] [2]   ;  
@@ -197,7 +185,7 @@ regexpr(pattern = "[[:digit:]]" , text = Files.Directories[[File.to.Download]] )
 
 
 Block.No<-substr(x = Files.Directories[[File.to.Download]], start = regexpr(pattern = "[[:digit:]]" , text = Files.Directories[[File.to.Download]] ),
-       stop = regexpr(pattern = "[[:digit:]]" , text = Files.Directories[[File.to.Download]] ) ) ;
+                 stop = regexpr(pattern = "[[:digit:]]" , text = Files.Directories[[File.to.Download]] ) ) ;
 
 Block.No
 
@@ -206,11 +194,11 @@ Block.No
 
 
 O2.Data.1<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]],
-                           "\\", Download.Treatments[[File.Download.Treatment]], "\\" , Download.Oxygen.file ), header=F, skip=4, na.strings = "NAN") ;
+                           "\\", Download.Dates[[File.Download.date]], "\\" , Download.Oxygen.file ), header=F, skip=4, na.strings = "NAN") ;
 
 
 names(O2.Data.1)<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]],
-                                  "\\", Download.Treatments[[File.Download.Treatment]], "\\" , Download.Oxygen.file ), header=F, skip=1,nrows=1) ;
+                                  "\\", Download.Dates[[File.Download.date]], "\\" , Download.Oxygen.file ), header=F, skip=1,nrows=1) ;
 
 head(O2.Data.1) 
 
@@ -386,7 +374,7 @@ str(Temperature.Data.Panel)
 
 
 Temperature.Data<-rbind(Temperature.Data.A5 , Temperature.Data.A20 , Temperature.Data.B5 , Temperature.Data.B20 ,
-                          Temperature.Data.C5 , Temperature.Data.C20 , Temperature.Data.Panel) ;
+                        Temperature.Data.C5 , Temperature.Data.C20 , Temperature.Data.Panel) ;
 
 str(Temperature.Data);
 
@@ -592,14 +580,14 @@ points(Temperature_C~Corrected.TIME,
 par(new=T)
 
 plot(Oxygen_Kpa~Corrected.TIME, 
-       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-        axes = F , bty = "n", xlab="" , ylab ="", lty= 1,  type = "l", col="RED", ylim = c(0,20), lwd = 3) ;
+     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+     axes = F , bty = "n", xlab="" , ylab ="", lty= 1,  type = "l", col="RED", ylim = c(0,20), lwd = 3) ;
 axis( side = 4, at = NULL)
 mtext("Oxygen Kpa", side=4, line=2)
 
 points(Oxygen_Kpa~Corrected.TIME, 
-     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
-     lty= 1,  type = "l" , col="GREEN", lwd = 3) ;
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
+       lty= 1,  type = "l" , col="GREEN", lwd = 3) ;
 
 legend.1<-c("Panel T", "T°C 5 cm" , "T°C 20 cm" , "O2 5 cm" , "O2 20 cm"  )
 
@@ -697,17 +685,17 @@ str(Data.Oxygen.Temperature[Data.Oxygen.Temperature$Treatment != "Panel",])
 
 #correction Factors
 
- C3 = -4.333e-6
- C2 = 1.896e-3
- C1 = -3.610e-2
- TC = 21 
- C0 = -((C3 * (TC^3)) + (C2 * (TC^2)) +(C1 * TC))  
+C3 = -4.333e-6
+C2 = 1.896e-3
+C1 = -3.610e-2
+TC = 21 
+C0 = -((C3 * (TC^3)) + (C2 * (TC^2)) +(C1 * TC))  
 
 
- 
+
 Data.Oxygen.Temperature$Temp.Corrected.O2_Kpa<-Data.Oxygen.Temperature$Oxygen_Kpa + 
-   (C3 * (Data.Oxygen.Temperature$Temperature_C^3 )) + (C2 * (Data.Oxygen.Temperature$Temperature_C^2 )) +
-   (C1 * Data.Oxygen.Temperature$Temperature_C) + C0  ;
+  (C3 * (Data.Oxygen.Temperature$Temperature_C^3 )) + (C2 * (Data.Oxygen.Temperature$Temperature_C^2 )) +
+  (C1 * Data.Oxygen.Temperature$Temperature_C) + C0  ;
 
 
 ####  Checking Treatment B  #####
@@ -716,8 +704,8 @@ plot(Oxygen_Kpa~Corrected.TIME,
      data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
      col="RED", ylim = c(0,20), main = paste("B" , Block.No , C_Crop.Type , "Treatment B" ), ylab = "O2 Kpa") ;
 points(Temp.Corrected.O2_Kpa~Corrected.TIME, 
-     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-     col="BLUE") ;
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+       col="BLUE") ;
 
 points(Oxygen_Kpa~Corrected.TIME, 
        data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
@@ -903,9 +891,8 @@ Files.Directories[[File.to.Download]]
 Sys.Date()
 
 
-write.csv( x = Data.Oxygen.Temperature.Write, 
-           file= paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]] ,
-                        "\\ProcessedData\\",Files.Directories[[File.to.Download]], Sys.Date() ,".csv" ) ,
-            quote = F, row.names=F)  ;
-
-
+# write.csv( x = Data.Oxygen.Temperature.Write, 
+#            file= paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]] ,
+#                         "\\ProcessedData\\",Files.Directories[[File.to.Download]], Sys.Date() ,".csv" ) ,
+#            quote = F, row.names=F)  ;
+# 
