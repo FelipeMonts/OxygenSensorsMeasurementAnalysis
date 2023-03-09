@@ -164,7 +164,7 @@ Download.Treatments<-list.files(paste0(Main.Directorys[MD],"\\",Files.Directorie
 
 Download.Treatments
 
-File.Download.Treatment = 1
+File.Download.Treatment = 2
 
 Download.Treatments[[File.Download.Treatment]]
 
@@ -185,19 +185,21 @@ Download.Oxygen.file<-Download.Data.files[grep(pattern = "Oxygen" , Download.Dat
 
 #### Adding the block  (Block.No) and cover crop  (C_Crop.Type) factors
 
-### For Main.Directorys[MD], MD=1 , "./OxygenSensorsData2021", the naming pattern changes to 20210825Download from Block3Clover
+Download.Treatments[[File.Download.Treatment]]
 
-strsplit(x = Files.Directories[[File.to.Download]], split = "[[:digit:]]" ) [[1]] [2]
+#strsplit(x = Download.Treatments[[File.Download.Treatment]], split = "B" ) [[1]] [2]
 
-C_Crop.Type<-strsplit(x = Files.Directories[[File.to.Download]], split = "[[:digit:]]" )[[1]] [2]   ;  
+substring(text = Download.Treatments[[File.Download.Treatment]], first = 3)
+
+C_Crop.Type<-substring(text = Download.Treatments[[File.Download.Treatment]], first = 3) ;  
 
 C_Crop.Type
 
-regexpr(pattern = "[[:digit:]]" , text = Files.Directories[[File.to.Download]] )
+regexpr(pattern = "[[:digit:]]" , text = Download.Treatments[[File.Download.Treatment]] )
 
 
-Block.No<-substr(x = Files.Directories[[File.to.Download]], start = regexpr(pattern = "[[:digit:]]" , text = Files.Directories[[File.to.Download]] ),
-       stop = regexpr(pattern = "[[:digit:]]" , text = Files.Directories[[File.to.Download]] ) ) ;
+Block.No<-substr(x = Download.Treatments[[File.Download.Treatment]], start = regexpr(pattern = "[[:digit:]]" , text = Download.Treatments[[File.Download.Treatment]] ),
+       stop = regexpr(pattern = "[[:digit:]]" , text = Download.Treatments[[File.Download.Treatment]] ) ) ;
 
 Block.No
 
@@ -205,11 +207,11 @@ Block.No
 
 
 
-O2.Data.1<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]],
+O2.Data.1<-read.csv(paste0(Main.Directorys[MD], "\\",Files.Directories[[File.to.Download]],
                            "\\", Download.Treatments[[File.Download.Treatment]], "\\" , Download.Oxygen.file ), header=F, skip=4, na.strings = "NAN") ;
 
 
-names(O2.Data.1)<-read.csv(paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]],
+names(O2.Data.1)<-read.csv(paste0(Main.Directorys[MD], "\\",Files.Directories[[File.to.Download]],
                                   "\\", Download.Treatments[[File.Download.Treatment]], "\\" , Download.Oxygen.file ), header=F, skip=1,nrows=1) ;
 
 head(O2.Data.1) 
@@ -613,7 +615,7 @@ legend.5<-c(1, 1, 1, 3, 3)
 
 # legend(x = "bottomleft" , legend = legend.1, lty = legend.2, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 , lwd = legend.5)
 
-legend(x = "topleft" , legend = legend.1, lty = legend.2, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 , lwd = legend.5)
+legend(x = "bottom" , legend = legend.1, lty = legend.2, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 , lwd = legend.5, ncol = 2)
 
 
 ####  Treatment C  #####
@@ -655,7 +657,7 @@ legend.4<-c("BLUE", "RED" , "GREEN" ,"RED" , "GREEN")
 
 legend.5<-c(1, 1, 1, 3, 3)
 
-legend(x = "bottomright" , legend = legend.1, lty = legend.2, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 , lwd = legend.5)
+legend(x = "bottom" , legend = legend.1, lty = legend.2, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 , lwd = legend.5, ncol = 2)
 
 # legend(x = "bottomleft" , legend = legend.1, lty = legend.2, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex=2.0 )
 
@@ -737,8 +739,7 @@ legend.3<-c(16, 16, 16, 16)
 legend.4<-c( "RED" ,"BLUE", "MAGENTA" , "GREEN")
 
 # legend(x = "bottomleft" , legend = legend.1, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 )
-
-legend(x = "topleft" , legend = legend.1, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0) 
+#legend(x = "bottom" , legend = legend.1, lty = legend.2, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 , lwd = legend.5, ncol = 3)
 
 
 
@@ -904,8 +905,8 @@ Sys.Date()
 
 
 write.csv( x = Data.Oxygen.Temperature.Write, 
-           file= paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]] ,
-                        "\\ProcessedData\\",Files.Directories[[File.to.Download]], Sys.Date() ,".csv" ) ,
+           file= paste0(Main.Directorys[MD], "\\",Files.Directories[[File.to.Download]] ,
+                        "\\ProcessedData\\",Files.Directories[[File.to.Download]], Block.No, C_Crop.Type, Sys.Date() ,".csv" ) ,
             quote = F, row.names=F)  ;
 
 
