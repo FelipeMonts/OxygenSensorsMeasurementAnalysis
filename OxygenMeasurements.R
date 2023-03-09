@@ -185,7 +185,7 @@ regexpr(pattern = "[[:digit:]]" , text = Files.Directories[[File.to.Download]] )
 
 
 Block.No<-substr(x = Files.Directories[[File.to.Download]], start = regexpr(pattern = "[[:digit:]]" , text = Files.Directories[[File.to.Download]] ),
-       stop = regexpr(pattern = "[[:digit:]]" , text = Files.Directories[[File.to.Download]] ) ) ;
+                 stop = regexpr(pattern = "[[:digit:]]" , text = Files.Directories[[File.to.Download]] ) ) ;
 
 Block.No
 
@@ -374,7 +374,7 @@ str(Temperature.Data.Panel)
 
 
 Temperature.Data<-rbind(Temperature.Data.A5 , Temperature.Data.A20 , Temperature.Data.B5 , Temperature.Data.B20 ,
-                          Temperature.Data.C5 , Temperature.Data.C20 , Temperature.Data.Panel) ;
+                        Temperature.Data.C5 , Temperature.Data.C20 , Temperature.Data.Panel) ;
 
 str(Temperature.Data);
 
@@ -580,14 +580,14 @@ points(Temperature_C~Corrected.TIME,
 par(new=T)
 
 plot(Oxygen_Kpa~Corrected.TIME, 
-       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-        axes = F , bty = "n", xlab="" , ylab ="", lty= 1,  type = "l", col="RED", ylim = c(0,20), lwd = 3) ;
+     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+     axes = F , bty = "n", xlab="" , ylab ="", lty= 1,  type = "l", col="RED", ylim = c(0,20), lwd = 3) ;
 axis( side = 4, at = NULL)
 mtext("Oxygen Kpa", side=4, line=2)
 
 points(Oxygen_Kpa~Corrected.TIME, 
-     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
-     lty= 1,  type = "l" , col="GREEN", lwd = 3) ;
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
+       lty= 1,  type = "l" , col="GREEN", lwd = 3) ;
 
 legend.1<-c("Panel T", "T°C 5 cm" , "T°C 20 cm" , "O2 5 cm" , "O2 20 cm"  )
 
@@ -685,17 +685,17 @@ str(Data.Oxygen.Temperature[Data.Oxygen.Temperature$Treatment != "Panel",])
 
 #correction Factors
 
- C3 = -4.333e-6
- C2 = 1.896e-3
- C1 = -3.610e-2
- TC = 21 
- C0 = -((C3 * (TC^3)) + (C2 * (TC^2)) +(C1 * TC))  
+C3 = -4.333e-6
+C2 = 1.896e-3
+C1 = -3.610e-2
+TC = 21 
+C0 = -((C3 * (TC^3)) + (C2 * (TC^2)) +(C1 * TC))  
 
 
- 
+
 Data.Oxygen.Temperature$Temp.Corrected.O2_Kpa<-Data.Oxygen.Temperature$Oxygen_Kpa + 
-   (C3 * (Data.Oxygen.Temperature$Temperature_C^3 )) + (C2 * (Data.Oxygen.Temperature$Temperature_C^2 )) +
-   (C1 * Data.Oxygen.Temperature$Temperature_C) + C0  ;
+  (C3 * (Data.Oxygen.Temperature$Temperature_C^3 )) + (C2 * (Data.Oxygen.Temperature$Temperature_C^2 )) +
+  (C1 * Data.Oxygen.Temperature$Temperature_C) + C0  ;
 
 
 ####  Checking Treatment B  #####
@@ -704,8 +704,8 @@ plot(Oxygen_Kpa~Corrected.TIME,
      data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
      col="RED", ylim = c(0,20), main = paste("B" , Block.No , C_Crop.Type , "Treatment B" ), ylab = "O2 Kpa") ;
 points(Temp.Corrected.O2_Kpa~Corrected.TIME, 
-     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-     col="BLUE") ;
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+       col="BLUE") ;
 
 points(Oxygen_Kpa~Corrected.TIME, 
        data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
@@ -894,6 +894,5 @@ Sys.Date()
 write.csv( x = Data.Oxygen.Temperature.Write, 
            file= paste0("./OxygenSensorsData2022_2023\\",Files.Directories[[File.to.Download]] ,
                         "\\ProcessedData\\",Files.Directories[[File.to.Download]], Sys.Date() ,".csv" ) ,
-            quote = F, row.names=F)  ;
-
+           quote = F, row.names=F)  ;
 
