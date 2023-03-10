@@ -142,9 +142,10 @@ setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors
 
 Main.Directorys<-c("./OxygenSensorsData2021" , "./OxygenSensorsData2022_2023" ) ;
 
-MD=1
-
 Main.Directorys
+
+MD=2
+
 
 Main.Directorys[MD]
 
@@ -164,7 +165,8 @@ Download.Treatments<-list.files(paste0(Main.Directorys[MD],"\\",Files.Directorie
 
 Download.Treatments
 
-File.Download.Treatment = 2
+File.Download.Treatment = 1
+
 
 Download.Treatments[[File.Download.Treatment]]
 
@@ -179,6 +181,8 @@ Download.Data.files
 grep(pattern = "Oxygen" , Download.Data.files)
 
 Download.Oxygen.file<-Download.Data.files[grep(pattern = "Oxygen" , Download.Data.files)] ;
+
+Download.Oxygen.file
 
 
 ###### Get the Block and the Cover crop type from the file name ####
@@ -738,7 +742,7 @@ legend.3<-c(16, 16, 16, 16)
 
 legend.4<-c( "RED" ,"BLUE", "MAGENTA" , "GREEN")
 
-# legend(x = "bottomleft" , legend = legend.1, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 )
+legend(x = "bottomleft" , legend = legend.1, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 )
 #legend(x = "bottom" , legend = legend.1, lty = legend.2, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 , lwd = legend.5, ncol = 3)
 
 
@@ -904,9 +908,9 @@ Files.Directories[[File.to.Download]]
 Sys.Date()
 
 
-write.csv( x = Data.Oxygen.Temperature.Write, 
-           file= paste0(Main.Directorys[MD], "\\",Files.Directories[[File.to.Download]] ,
-                        "\\ProcessedData\\",Files.Directories[[File.to.Download]], Block.No, C_Crop.Type, Sys.Date() ,".csv" ) ,
-            quote = F, row.names=F)  ;
+# write.csv( x = Data.Oxygen.Temperature.Write, 
+            file= paste0(Main.Directorys[MD], "\\",Files.Directories[[File.to.Download]] ,
+                         "\\ProcessedData\\",Files.Directories[[File.to.Download]], Block.No, C_Crop.Type, Sys.Date() ,".csv" ) ,
+             quote = F, row.names=F)  ;
 
 
