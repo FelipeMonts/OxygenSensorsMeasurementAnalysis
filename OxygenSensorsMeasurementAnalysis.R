@@ -49,15 +49,31 @@ setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors
 ###############################################################################################################
 
 
-## Read which files are available in the directory
+### The original download data was processed and cleaned. It is stored in processed data directories in the downloaded folders
 
-Files.Directories<-list.files(".\\OxygenSensorsData2022_2023");
 
-## get the CR1000NEW_Oxygen.dat files 
+Main.Directorys<-c("./OxygenSensorsData2021" , "./OxygenSensorsData2022_2023" ) ;
 
-Files.Directories[[1]]
+Main.Directorys
 
-paste0(Files.Directories[[1]],"\\CR1000NEW_Oxygen.dat")
+MD=1
+
+Main.Directorys[MD]
+
+
+Files.Directories<-list.files(Main.Directorys[MD]);
+
+Files.Directories
+
+File.to.Download = 1
+
+Files.Directories[[File.to.Download]]
+
+## Read which files are available in the ProcessedData directory
+
+list.files(paste0(Main.Directorys[MD],"\\",Files.Directories[[File.to.Download]], "\\" , "ProcessedData"))
+
+
 
 ###############################################################################################################
 #                           Read all the  excel files 

@@ -155,7 +155,7 @@ Files.Directories<-list.files(Main.Directorys[MD]);
 
 Files.Directories
 
-File.to.Download = 1
+File.to.Download = 3
 
 Files.Directories[[File.to.Download]]
 
@@ -165,7 +165,7 @@ Download.Treatments<-list.files(paste0(Main.Directorys[MD],"\\",Files.Directorie
 
 Download.Treatments
 
-File.Download.Treatment = 1
+File.Download.Treatment = 5
 
 
 Download.Treatments[[File.Download.Treatment]]
@@ -187,15 +187,10 @@ Download.Oxygen.file
 
 ###### Get the Block and the Cover crop type from the file name ####
 
-#### Adding the block  (Block.No) and cover crop  (C_Crop.Type) factors
 
-Download.Treatments[[File.Download.Treatment]]
+strsplit(x = Download.Treatments[[File.Download.Treatment]], split = "[[:digit:]]" ) [[1]] [2]
 
-#strsplit(x = Download.Treatments[[File.Download.Treatment]], split = "B" ) [[1]] [2]
-
-substring(text = Download.Treatments[[File.Download.Treatment]], first = 3)
-
-C_Crop.Type<-substring(text = Download.Treatments[[File.Download.Treatment]], first = 3) ;  
+C_Crop.Type<-strsplit(x = Download.Treatments[[File.Download.Treatment]], split = "[[:digit:]]" ) [[1]] [2] ;  
 
 C_Crop.Type
 
@@ -203,9 +198,11 @@ regexpr(pattern = "[[:digit:]]" , text = Download.Treatments[[File.Download.Trea
 
 
 Block.No<-substr(x = Download.Treatments[[File.Download.Treatment]], start = regexpr(pattern = "[[:digit:]]" , text = Download.Treatments[[File.Download.Treatment]] ),
-       stop = regexpr(pattern = "[[:digit:]]" , text = Download.Treatments[[File.Download.Treatment]] ) ) ;
+                 stop = regexpr(pattern = "[[:digit:]]" , text = Download.Treatments[[File.Download.Treatment]] ) ) ;
 
 Block.No
+
+
 
 ### Read the data from where the Oxygen data is stored ###
 
