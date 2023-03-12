@@ -118,7 +118,7 @@ for (i in Files[grep(".xlsx",Files)] ) {
   
   
   rm(Datalogger.Name, Datalogger.Variables, DataLogger.Data, Name.of.DataLogger);
-
+  
 }
 
 str(B1Clover)
@@ -446,7 +446,7 @@ dat.6<- cbind(dat.6.dat , dat.6.Signal);
 Plot.dat.1<-xyplot(Signal_B13SppNA5cmO2_Avg + Signal_B13SppNA20cmO2_Avg + Signal_B13SppNB5cmO2_Avg + Signal_B13SppNB20cmO2_Avg + Signal_B13SppNC5cmO2_Avg + Signal_B13SppNC20cmO2_Avg   ~TIME, data=dat.1, xlim=c(as.POSIXct("2021-06-24 18:00"),as.POSIXct("2021-06-24 20:00")),auto.key = T, type="l") ;
 
 Plot.dat.1
- 
+
 
 ## plotting dat.2 
 
