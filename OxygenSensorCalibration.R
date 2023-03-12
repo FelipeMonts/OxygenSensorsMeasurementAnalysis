@@ -349,7 +349,7 @@ coefficients(Calibration.O2SensorCalibration.1) ;
 # 1.3164205   0.8998665
 
 ###############################################################################################################
-#                          Mean, Median Sensor Temparature during Calibration
+#                          Mean, Median Sensor Temperature during Calibration
 ###############################################################################################################
 
 Calibration.T<-c(mean(O2SensorCalibration.data$Sensor_TC), median(O2SensorCalibration.data$Sensor_TC) , 
