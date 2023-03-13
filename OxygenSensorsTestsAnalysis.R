@@ -2,7 +2,7 @@
 # 
 # 
 # Program to Analyze and plot oxygen sensor data collected from the Apogee S-210 sensors deployed in the 
-# Strategic Tillage USda-Nifa funded project
+# Strategic Tillage USDA-Nifa funded project
 # 
 #    
 # 
@@ -40,6 +40,8 @@ setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors
 #                           load the libraries that are needed   
 ###############################################################################################################
 library(openxlsx)
+
+library(lattice)
 
 
 
@@ -116,16 +118,16 @@ for (j in c("1.dat" , "2.dat", "3.dat", "4.dat" ,"5.dat" ,"6.dat", "B4Triticale.
   
   ## read the dataloger names
   
-  Datalogger.Name<-read.csv(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\",j), header=F, nrows=1) ;
+  Datalogger.Name<-read.csv(paste0(getwd(), "\\" , Files.Directories[2] , "\\" ,j), header=F, nrows=1) ;
   
   ## read the dataloggers varaible names
   
-  Datalogger.Variables<-read.csv(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\",j), header=T, skip=1,nrows=1);
+  Datalogger.Variables<-read.csv(paste0(getwd(), "\\" , Files.Directories[2] , "\\" ,j), header=T, skip=1,nrows=1);
   names(Datalogger.Variables)
   
   
   ## read the data logger data
-  DataLogger.Data<-read.csv(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\",j), header=F, skip=4);
+  DataLogger.Data<-read.csv(paste0(getwd(), "\\" , Files.Directories[2] , "\\" ,j), header=F, skip=4);
   
   ## add the nmes of the variables to the datalogger data
   names(DataLogger.Data)<-names(Datalogger.Variables);
