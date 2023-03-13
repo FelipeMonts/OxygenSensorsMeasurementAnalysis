@@ -39,8 +39,7 @@ setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors
 ###############################################################################################################
 #                           load the libraries that are needed   
 ###############################################################################################################
-
-
+library(openxlsx)
 
 
 
@@ -52,26 +51,10 @@ setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors
 ### The original download data was processed and cleaned. It is stored in processed data directories in the downloaded folders
 
 
-Main.Directorys<-c("./OxygenSensorsData2021" , "./OxygenSensorsData2022_2023" ) ;
-
-Main.Directorys
-
-MD=1
-
-Main.Directorys[MD]
+Files.Directories<-list.files();
 
 
-Files.Directories<-list.files(Main.Directorys[MD]);
-
-Files.Directories
-
-File.to.Download = 1
-
-Files.Directories[[File.to.Download]]
-
-## Read which files are available in the ProcessedData directory
-
-list.files(paste0(Main.Directorys[MD],"\\",Files.Directories[[File.to.Download]], "\\" , "ProcessedData"))
+Tests.Files<-list.files(paste0(".\\",Files.Directories[2])) ;
 
 
 
@@ -79,22 +62,22 @@ list.files(paste0(Main.Directorys[MD],"\\",Files.Directories[[File.to.Download]]
 #                           Read all the  excel files 
 ###############################################################################################################
 
-# i=Files[grep(".xlsx",Files)][1]
+# i=Tests.Files[grep(".xlsx",Tests.Files)][1]
 
-for (i in Files[grep(".xlsx",Files)] ) {
+for (i in Tests.Files[grep(".xlsx",Tests.Files)]) {
   
   ## read the dataloger names
   
-  Datalogger.Name<-read.xlsx(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\",i), sheet=1, startRow = 1, colNames = F, rows=1, cols=6) ;
+  Datalogger.Name<-read.xlsx(paste0(getwd(), "\\" , Files.Directories[2] , "\\" , i), sheet=1, startRow = 1, colNames = F, rows=1, cols=6) ;
   
   ## read the dataloggers varaible names
   
-  Datalogger.Variables<-read.xlsx(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\",i), sheet=1, startRow = 2, colNames = T, rows=2) ;
+  Datalogger.Variables<-read.xlsx(paste0(getwd(), "\\" , Files.Directories[2] , "\\" , i), sheet=1, startRow = 2, colNames = T, rows=2) ;
   names(Datalogger.Variables)
   
   
   ## read the data logger data
-  DataLogger.Data<-read.xlsx(paste0("C:\\Users\\frm10\\The Pennsylvania State University\\StrategicTillageAndN2O - Documents\\Data\\O2SensorTesting\\",i), sheet=1, startRow = 5, colNames = F) ;
+  DataLogger.Data<-read.xlsx(paste0(getwd(), "\\" , Files.Directories[2] , "\\" , i), sheet=1, startRow = 5, colNames = F) ;
   
   ## add the nmes of the variables to the datalogger data
   names(DataLogger.Data)<-names(Datalogger.Variables);
