@@ -163,6 +163,40 @@ Plot.depth<-levels(O2.Data.2021$Depth_cm) ;
 
 Plot.date.range ; Plot.block ; Plot.crop ; Plot.treatment ; Plot.depth
 
+
+### Because there is only one panel temperature for each download (all treatments and depths in a crop) it is difficult to include panel temperature.
+### The panel temperature is stored as Treatment == "Panel"
+
+str(O2.Data.2021[O2.Data.2021$Treatment != "Panel" & O2.Data.2021$Depth_cm != "-100" , ])
+
+str(O2.Data.2021[O2.Data.2021$Treatment == "Panel" & O2.Data.2021$Depth_cm == "-100" , ])
+
+
+
+O2.Data.2021.Plot.1<-merge(O2.Data.2021[O2.Data.2021$Treatment != "Panel" & O2.Data.2021$Depth_cm != "-100" , ],
+           O2.Data.2021[O2.Data.2021$Treatment == "Panel" & O2.Data.2021$Depth_cm == "-100" , ],
+           by = c("Corrected.TIME", "Block" , "C_Crop"), all.x = T)  ;
+
+str(O2.Data.2021.Plot.1)
+
+names(O2.Data.2021.Plot.1)[c(1:7, 10)]
+
+
+O2.Data.2021.Plot<-O2.Data.2021.Plot.1[, names(O2.Data.2021.Plot.1)[c(1:7, 10)]]
+
+str(O2.Data.2021.Plot)
+
+head(O2.Data.2021.Plot)
+
+names(O2.Data.2021.Plot)[4:8]<-c("Treatment" , "Depth_cm" , "Temperature_C." , "Calibrated.O2_Kpa", "Panel_Temperature_C") 
+
+str(O2.Data.2021.Plot)
+
+
+
+str(merge(Plot.selected.data,Plot.selected.panel, by = c("Corrected.TIME", "Block" , "C_Crop"), all.x = T))
+
+
 Plot.selected.data<-O2.Data.2021[O2.Data.2021$Block == Plot.block[3] & O2.Data.2021$C_Crop == Plot.crop[2] &
                                    
                                    O2.Data.2021$Treatment == Plot.treatment[1] &
@@ -170,6 +204,8 @@ Plot.selected.data<-O2.Data.2021[O2.Data.2021$Block == Plot.block[3] & O2.Data.2
                                    O2.Data.2021$Depth_cm == Plot.depth[1] &
                                    
                                    O2.Data.2021$Corrected.TIME >= Plot.date.range[1] & O2.Data.2021$Corrected.TIME <= Plot.date.range[2],]
+
+
                                    
                                    
                                    
@@ -182,7 +218,7 @@ str(Plot.selected.data)
 Plot.selected.panel<-O2.Data.2021[O2.Data.2021$Block == Plot.block[3] & O2.Data.2021$C_Crop == Plot.crop[2] & O2.Data.2021$Treatment == Plot.treatment[4] &
                                     O2.Data.2021$Corrected.TIME >= Plot.date.range[1] & O2.Data.2021$Corrected.TIME <= Plot.date.range[2],]
 
-str(merge(Plot.selected.data,Plot.selected.panel, by = c("Corrected.TIME", "Block" , "C_Crop"), all.x = T))
+
 
 str(Plot.selected.panel)
 
