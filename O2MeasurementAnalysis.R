@@ -142,28 +142,6 @@ anyDuplicated(O2.Data.2021)
 
 any(duplicated(O2.Data.2021))
 
-
-###############################################################################################################
-#                           Plotting the data to explore
-###############################################################################################################
-
-
-
-####  Plot 1 #####
-
-Plot.date.range<-c(as.POSIXct("2018-01-01 11:30:00"),as.POSIXct("2021-12-31 11:30:00"))
-
-Plot.block<-levels(O2.Data.2021$Block) ;  
-
-Plot.crop<-levels(O2.Data.2021$C_Crop) ;
-
-Plot.treatment<-levels(O2.Data.2021$Treatment) ;
-
-Plot.depth<-levels(O2.Data.2021$Depth_cm) ;
-
-Plot.date.range ; Plot.block ; Plot.crop ; Plot.treatment ; Plot.depth
-
-
 ### Because there is only one panel temperature for each download (all treatments and depths in a crop) it is difficult to include panel temperature.
 ### The panel temperature is stored as Treatment == "Panel"
 
@@ -171,13 +149,16 @@ str(O2.Data.2021[O2.Data.2021$Treatment != "Panel" & O2.Data.2021$Depth_cm != "-
 
 str(O2.Data.2021[O2.Data.2021$Treatment == "Panel" & O2.Data.2021$Depth_cm == "-100" , ])
 
-
+### Merge the data without panel temperature with panel temperature. The idea is that each record date will have associated its panel temperature.
 
 O2.Data.2021.Plot.1<-merge(O2.Data.2021[O2.Data.2021$Treatment != "Panel" & O2.Data.2021$Depth_cm != "-100" , ],
-           O2.Data.2021[O2.Data.2021$Treatment == "Panel" & O2.Data.2021$Depth_cm == "-100" , ],
-           by = c("Corrected.TIME", "Block" , "C_Crop"), all.x = T)  ;
+                           O2.Data.2021[O2.Data.2021$Treatment == "Panel" & O2.Data.2021$Depth_cm == "-100" , ],
+                           by = c("Corrected.TIME", "Block" , "C_Crop"), all.x = T)  ;
 
 str(O2.Data.2021.Plot.1)
+
+
+### simplify columns, get rid of redundant columns
 
 names(O2.Data.2021.Plot.1)[c(1:7, 10)]
 
@@ -188,81 +169,205 @@ str(O2.Data.2021.Plot)
 
 head(O2.Data.2021.Plot)
 
-names(O2.Data.2021.Plot)[4:8]<-c("Treatment" , "Depth_cm" , "Temperature_C." , "Calibrated.O2_Kpa", "Panel_Temperature_C") 
+
+### Correct column names
+
+
+names(O2.Data.2021.Plot)[4:8]<-c("Treatment" , "Depth_cm" , "Temperature_C" , "Calibrated.O2_Kpa", "Panel_Temperature_C") 
 
 str(O2.Data.2021.Plot)
 
 
+### check if data merge correctly
 
-str(merge(Plot.selected.data,Plot.selected.panel, by = c("Corrected.TIME", "Block" , "C_Crop"), all.x = T))
+str(O2.Data.2021)
 
+str(O2.Data.2021[O2.Data.2021$Block == "3" & O2.Data.2021$Treatment == "Panel" & O2.Data.2021$C_Crop == "Triticale" , c("Temperature_C")])
 
-Plot.selected.data<-O2.Data.2021[O2.Data.2021$Block == Plot.block[3] & O2.Data.2021$C_Crop == Plot.crop[2] &
-                                   
-                                   O2.Data.2021$Treatment == Plot.treatment[1] &
-                                   
-                                   O2.Data.2021$Depth_cm == Plot.depth[1] &
-                                   
-                                   O2.Data.2021$Corrected.TIME >= Plot.date.range[1] & O2.Data.2021$Corrected.TIME <= Plot.date.range[2],]
+str(O2.Data.2021.Plot[O2.Data.2021.Plot$Block == "3" &  O2.Data.2021.Plot$C_Crop == "Triticale" &
+                        O2.Data.2021.Plot$Treatment == "A" &  O2.Data.2021.Plot$Depth_cm == "20", c("Panel_Temperature_C") ])
 
-
-                                   
-                                   
-                                   
-                                   
-                                 
-
+plot(O2.Data.2021.Plot[O2.Data.2021.Plot$Block == "1" &  O2.Data.2021.Plot$C_Crop == "3Spp" &
+                         O2.Data.2021.Plot$Treatment == "A" &  O2.Data.2021.Plot$Depth_cm == "20", c("Panel_Temperature_C") ],
+     O2.Data.2021[O2.Data.2021$Block == "1" & O2.Data.2021$Treatment == "Panel" & O2.Data.2021$C_Crop == "3Spp" , c("Temperature_C")])
                         
+
+
+
+
+###############################################################################################################
+#                           Plotting the data to explore
+###############################################################################################################
+
+
+
+
+####  Plot Data selection  #####
+
+
+levels(O2.Data.2021.Plot$Block) ;  
+
+levels(O2.Data.2021.Plot$C_Crop) ;
+
+levels(O2.Data.2021.Plot$Treatment) ;
+
+Block.sel ="1" 
+
+C_Crop.sel = "Clover" 
+
+Treatment.sel = "B"
+
+
+Plot.selected.data<-O2.Data.2021.Plot[O2.Data.2021.Plot$Block == Block.sel & 
+                                        
+                                        O2.Data.2021.Plot$C_Crop == C_Crop.sel &
+
+                                        O2.Data.2021.Plot$Treatment == Treatment.sel ,
+                                      
+                                      c("Corrected.TIME" , "Depth_cm" , "Temperature_C" , "Calibrated.O2_Kpa" ,"Panel_Temperature_C")]
+
+
 str(Plot.selected.data)
+                                  
 
-Plot.selected.panel<-O2.Data.2021[O2.Data.2021$Block == Plot.block[3] & O2.Data.2021$C_Crop == Plot.crop[2] & O2.Data.2021$Treatment == Plot.treatment[4] &
-                                    O2.Data.2021$Corrected.TIME >= Plot.date.range[1] & O2.Data.2021$Corrected.TIME <= Plot.date.range[2],]
+#### Plot 1 to identify range ### 
+
+
+plot(Panel_Temperature_C~Corrected.TIME, data=Plot.selected.data , col="BLUE", ylab = "Temperature °C" ,
+     xlab = "Date" ,  main = paste0("Block-", Block.sel, "-", C_Crop.sel, "-" , Treatment.sel ))  ;
+
+
+#### Plot zoom in ### 
 
 
 
-str(Plot.selected.panel)
+summary(Plot.selected.data)
+
+
+Plot.date.range<-c(min(Plot.selected.data$Corrected.TIME), max(Plot.selected.data$Corrected.TIME)) ;
+
+
+#Plot.date.range<-c(as.POSIXct("2018-08-09 00:30:00"),as.POSIXct("2021-12-31 11:30:00")) ;
+
+
+
+Plot.selected.data<-O2.Data.2021.Plot[O2.Data.2021.Plot$Block == Block.sel & 
+                                        
+                                        O2.Data.2021.Plot$C_Crop == C_Crop.sel &
+                                        
+                                        O2.Data.2021.Plot$Treatment == Treatment.sel & 
+                                        
+                                        O2.Data.2021.Plot$Corrected.TIME >= Plot.date.range[1] &
+                                        
+                                        O2.Data.2021.Plot$Corrected.TIME <= Plot.date.range[2],
+                                      
+                                      c("Corrected.TIME" , "Depth_cm" , "Temperature_C" , "Calibrated.O2_Kpa" ,"Panel_Temperature_C")]
+
+
+
+Range.T<-c(min(min(Plot.selected.data$Temperature_C,na.rm = T), min(Plot.selected.data$Panel_Temperature_C,na.rm = T)),
+           max(max(Plot.selected.data$Temperature_C,na.rm = T), max(Plot.selected.data$Panel_Temperature_C,na.rm = T)) ) ;
+
+Range.O2<-c(min(min(Plot.selected.data$Calibrated.O2_Kpa,na.rm = T), min(Plot.selected.data$Calibrated.O2_Kpa,na.rm = T)),
+           max(max(Plot.selected.data$Calibrated.O2_Kpa,na.rm = T), max(Plot.selected.data$Calibrated.O2_Kpa,na.rm = T)) ) ;
+
+##### Composing the Plot double Y axis ####
 
 par(mar = c(5, 4, 4, 4) + 0.3)
 
 
-plot(Temperature_C~Corrected.TIME, data=Plot.selected.data<-O2.Data.2021[O2.Data.2021$Block == Plot.block[3] & O2.Data.2021$C_Crop == Plot.crop[2] & O2.Data.2021$Treatment == Plot.treatment[2] &
-                                                                           O2.Data.2021$Corrected.TIME >= Plot.date.range[1] & O2.Data.2021$Corrected.TIME <= Plot.date.range[2],],
-     col="BLUE", main = paste("B" , Block.No , C_Crop.Type , "Treatment B" ), ylim =c(-20,40) , ylab = "Temperature °C" ,
-     xlab = "Date") ;
+plot(Panel_Temperature_C~Corrected.TIME, data=Plot.selected.data[Plot.selected.data$Depth_cm == "5" ,] ,
+     
+     type = "l" , lwd = 4 ,col="MAGENTA", ylab = "Temperature °C" ,  xlab = "Date", ylim = Range.T , xlim = Plot.date.range,
+     
+     main = paste0("Block-", Block.sel, "-", C_Crop.sel, "-" , Treatment.sel ) ) ;
 
-points(Temperature_C~Corrected.TIME, 
-       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-       col="RED") ;
+points(Temperature_C~Corrected.TIME, data=Plot.selected.data[Plot.selected.data$Depth_cm == "5" , ]  , type = "l" , lwd = 4 , col="RED") ;
 
-points(Temperature_C~Corrected.TIME, 
-       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
-       col="GREEN")
+points(Temperature_C~Corrected.TIME, data=Plot.selected.data[Plot.selected.data$Depth_cm == "20" , ] , type = "l" , lwd = 4 , col="BLUE") ;
 
 
 par(new=T)
 
-plot(Oxygen_Kpa~Corrected.TIME, 
-     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-     axes = F , bty = "n", xlab="" , ylab ="", lty= 1,  type = "l", col="RED", ylim = c(0,20), lwd = 3) ;
-axis( side = 4, at = NULL)
+plot(Calibrated.O2_Kpa~Corrected.TIME,  data=Plot.selected.data[Plot.selected.data$Depth_cm == "5" ,],
+     
+     axes = F , bty = "n", xlab="" , ylab ="" , col="RED",  ylim = Range.O2, pch = 16, cex=2) ;
+
+axis( side = 4, at = NULL) ;
+
 mtext("Oxygen Kpa", side=4, line=2)
 
-points(Oxygen_Kpa~Corrected.TIME, 
-       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
-       lty= 1,  type = "l" , col="GREEN", lwd = 3) ;
+points(Calibrated.O2_Kpa~Corrected.TIME,  data=Plot.selected.data[Plot.selected.data$Depth_cm == "20" ,], col="BLUE", pch = 16, cex=2) ;
+
+### forming the legend ##
 
 legend.1<-c("Panel T", "T°C 5 cm" , "T°C 20 cm" , "O2 5 cm" , "O2 20 cm"  )
 
-legend.2<-c("blank" , "blank" , "blank" , "solid" , "solid")
+legend.2<-c("solid" , "solid" , "solid" , "blank" , "blank" ) 
 
-legend.3<-c(16, 16, 16, NA , NA)
+legend.3<-c(NA, NA, NA, 16, 16)
 
-legend.4<-c("BLUE", "RED" , "GREEN" ,"RED" , "GREEN")
+legend.4<-c("MAGENTA", "RED" , "BLUE" ,"RED" , "BLUE")
 
-legend.5<-c(1, 1, 1, 3, 3)
+legend.5<-c(2, 2, 2, 3, 3)
 
-# legend(x = "bottomleft" , legend = legend.1, lty = legend.2, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 , lwd = legend.5)
+# legend(x = "bottomleft" , legend = legend.1, lty = legend.2,  pch = legend.3 , col = legend.4, 
+#        pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, ncol = 2)
 
-legend(x = "bottom" , legend = legend.1, lty = legend.2, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 , lwd = legend.5, ncol = 2)
+legend(x = "bottomleft" , legend = legend.1, lty = legend.2,  pch = legend.3 , col = legend.4, 
+       pt.cex= 2.0 , lwd = legend.5, bty = "n", ncol = 2)
 
+#### Multiple panels only one Y axis ####
+
+
+
+par(mfrow = c(2,1))
+
+
+### Temperature Plot  ###
+
+
+plot(Panel_Temperature_C~Corrected.TIME, data=Plot.selected.data[Plot.selected.data$Depth_cm == "5" ,] ,
+     
+     type = "l" , lwd = 4 ,col="MAGENTA", xlab = NA, ylab = "Temperature °C" , ylim = Range.T , xlim = Plot.date.range,
+     
+     main = paste0("Block-", Block.sel, "-", C_Crop.sel, "-" , Treatment.sel ) ) ;
+
+
+points(Temperature_C~Corrected.TIME, data=Plot.selected.data[Plot.selected.data$Depth_cm == "5" , ]  , type = "l" , lwd = 4 , col="RED") ;
+
+points(Temperature_C~Corrected.TIME, data=Plot.selected.data[Plot.selected.data$Depth_cm == "20" , ] , type = "l" , lwd = 4 , col="BLUE") ;
+
+axis(1,labels = F)
+
+
+### O2  PLot   ###
+
+
+plot(Calibrated.O2_Kpa~Corrected.TIME,  data=Plot.selected.data[Plot.selected.data$Depth_cm == "5" ,],
+     
+      bty = "o", xlab="Date" , ylab ="O2 Kpa" , col="RED",  ylim = Range.O2, pch = 16, cex=2) ;
+
+
+mtext("Oxygen Kpa", side=4, line=2)
+
+points(Calibrated.O2_Kpa~Corrected.TIME,  data=Plot.selected.data[Plot.selected.data$Depth_cm == "20" ,], col="BLUE", pch = 16, cex=2) ;
+
+### forming the legend ##
+
+legend.1<-c("Panel T", "T°C 5 cm" , "T°C 20 cm" , "O2 5 cm" , "O2 20 cm"  )
+
+legend.2<-c("solid" , "solid" , "solid" , "blank" , "blank" ) 
+
+legend.3<-c(NA, NA, NA, 16, 16)
+
+legend.4<-c("MAGENTA", "RED" , "BLUE" ,"RED" , "BLUE")
+
+legend.5<-c(2, 2, 2, 3, 3)
+
+# legend(x = "bottomleft" , legend = legend.1, lty = legend.2,  pch = legend.3 , col = legend.4, 
+#        pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, ncol = 2)
+
+legend(x = "bottomleft" , legend = legend.1, lty = legend.2,  pch = legend.3 , col = legend.4, 
+       pt.cex= 2.0 , lwd = legend.5, bty = "n", ncol = 2)
 
