@@ -110,7 +110,7 @@ for (i in Files.to.Read) {
 
 str(O2.Data.2021)
 
-### some of the crop nmeas are 3spp and others are 3Spp
+### some of the crop names are 3spp and others are 3Spp
 
 str(O2.Data.2021[O2.Data.2021$C_Crop == "3spp",])
 
@@ -191,8 +191,6 @@ plot(O2.Data.2021.Plot[O2.Data.2021.Plot$Block == "1" &  O2.Data.2021.Plot$C_Cro
                          O2.Data.2021.Plot$Treatment == "A" &  O2.Data.2021.Plot$Depth_cm == "20", c("Panel_Temperature_C") ],
      O2.Data.2021[O2.Data.2021$Block == "1" & O2.Data.2021$Treatment == "Panel" & O2.Data.2021$C_Crop == "3Spp" , c("Temperature_C")])
                         
-
-
 
 
 ###############################################################################################################
@@ -379,9 +377,8 @@ plot(Panel_Temperature_C~Corrected.TIME, data=Plot.selected.data[Plot.selected.d
      
      type = "l" , lwd = 4 ,col="MAGENTA", xlab = NA, ylab = "Temperature °C" , ylim = Range.T , xlim = Plot.date.range ,
      
-     tck = 1,  cex.axis = 1.5 , cex.lab = 1.5 , main = paste0("Block-", Block.sel, "-", C_Crop.sel, "-" , Treatment.sel ) ) ;
+     tck = 1,  cex.axis = 1.5 , cex.lab = 1.5 , main = paste0("Block-", Block.sel, "-", C_Crop.sel, "-" , Treatment.sel ) , format = "%Y-%m-%d" ) ;
 
-axis(1, labels = F , tck = 1)
 
 
 
@@ -399,7 +396,9 @@ par(mar = c(5, 4, 1 , 4) + 0.1)
 
 plot(Calibrated.O2_Kpa~Corrected.TIME,  data=Plot.selected.data[Plot.selected.data$Depth_cm == "5" ,],
      
-      bty = "o", xlab="Date" , ylab ="O2 Kpa" , col="RED",  ylim = Range.O2, type = "l", lwd = 4,  tck = 1 ,cex.axis = 1.5 , cex.lab = 1.5 ) ;
+      bty = "o", xlab="Date" , ylab ="O2 Kpa" , col="RED",  ylim = Range.O2, type = "l", lwd = 4,  tck = 1 ,cex.axis = 1.5 ,
+     
+     cex.lab = 1.5  ,format = "%Y-%m-%d" ) ;
 
 points(Calibrated.O2_Kpa~Corrected.TIME,  data=Plot.selected.data[Plot.selected.data$Depth_cm == "20" ,], col="BLUE", type = "l", lwd = 4) ;
 
@@ -422,3 +421,16 @@ legend.5<-c( 3, 3 , 3)
 legend(x = "bottomleft" , legend = legend.1, lty = legend.2, col = legend.4, 
        pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, cex =1.2)
 
+
+
+
+###############################################################################################################
+#                           Write the compiled and processed data into a csv file
+###############################################################################################################
+
+
+write.csv( x = O2.Data.2021.Plot,  file= paste0(Main.Directorys[MD], "\\", Files.Directories[[File.to.Download]] , "\\" , 
+                                                
+                                                "CompiledData" , Files.Directories[[File.to.Download]] , 
+                                                
+                                                Sys.Date() ,".csv" ) , quote = F, row.names=F)  ;
