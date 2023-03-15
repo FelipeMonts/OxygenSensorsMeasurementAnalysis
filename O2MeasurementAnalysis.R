@@ -39,7 +39,6 @@ setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors
 ###############################################################################################################
 #                           load the libraries that are needed   
 ###############################################################################################################
-library(lattice)
 
 
 
@@ -65,7 +64,7 @@ Files.Directories<-list.files(Main.Directorys[MD]);
 
 Files.Directories
 
-File.to.Download = 1
+File.to.Download = 3
 
 Files.Directories[[File.to.Download]]
 
@@ -86,10 +85,10 @@ Files.to.Read[Read.File.No]
 
 # Initiate the data frame
 
-O2.Data.2021<-data.frame( Corrected.TIME = character(), Block = integer() , C_Crop = character() , Treatment = character(), Depth_cm = integer() , 
+O2.Data.2021.0<-data.frame( Corrected.TIME = character(), Block = integer() , C_Crop = character() , Treatment = character(), Depth_cm = integer() , 
                            Temperature_C = double() , Calibrated.O2_Kpa = double()  ) ;
 
-str(O2.Data.2021)
+str(O2.Data.2021.0)
 
 # i = Files.to.Read[2]
 
@@ -98,47 +97,56 @@ for (i in Files.to.Read) {
   O2.Data.2021.1<-read.csv(file= paste0(Main.Directorys[MD],"\\",Files.Directories[[File.to.Download]], "\\" , "ProcessedData" ,"\\", i),
            header = T) ;
   
-  O2.Data.2021.2<-rbind(O2.Data.2021, O2.Data.2021.1) ;
+  O2.Data.2021.2<-rbind(O2.Data.2021.0, O2.Data.2021.1) ;
   
   
-  O2.Data.2021<-O2.Data.2021.2 ;
+  O2.Data.2021.0<-O2.Data.2021.2 ;
   
   rm(O2.Data.2021.2,O2.Data.2021.1 ) ;
   
   
 }
 
-str(O2.Data.2021)
+str(O2.Data.2021.0)
 
 ### some of the crop names are 3spp and others are 3Spp
 
-str(O2.Data.2021[O2.Data.2021$C_Crop == "3spp",])
+str(O2.Data.2021.0[O2.Data.2021.0$C_Crop == "3spp",])
 
-str(O2.Data.2021[O2.Data.2021$C_Crop == "3Spp",])
+str(O2.Data.2021.0[O2.Data.2021.0$C_Crop == "3Spp",])
 
-O2.Data.2021[O2.Data.2021$C_Crop == "3spp", c("C_Crop")]<- "3Spp" ;
+O2.Data.2021.0[O2.Data.2021.0$C_Crop == "3spp", c("C_Crop")]<- "3Spp" ;
 
 
 #### Give each column the adequate format
 
-O2.Data.2021[,c("Corrected.TIME")]<-as.POSIXct(O2.Data.2021[,c("Corrected.TIME")]) ;
+O2.Data.2021.0[,c("Corrected.TIME")]<-as.POSIXct(O2.Data.2021.0[,c("Corrected.TIME")]) ;
 
 
-O2.Data.2021$Block<-as.factor(O2.Data.2021$Block) ;
+O2.Data.2021.0$Block<-as.factor(O2.Data.2021.0$Block) ;
 
-O2.Data.2021$C_Crop<-as.factor(O2.Data.2021$C_Crop) ;
+O2.Data.2021.0$C_Crop<-as.factor(O2.Data.2021.0$C_Crop) ;
 
-O2.Data.2021$Treatment<-as.factor(O2.Data.2021$Treatment) ;
+O2.Data.2021.0$Treatment<-as.factor(O2.Data.2021.0$Treatment) ;
 
-O2.Data.2021$Depth_cm<-as.factor(O2.Data.2021$Depth_cm) ;
+O2.Data.2021.0$Depth_cm<-as.factor(O2.Data.2021.0$Depth_cm) ;
 
 
-str(O2.Data.2021)
+str(O2.Data.2021.0)
 
 
 ##### check for duplicated data 
 
-anyDuplicated(O2.Data.2021)
+anyDuplicated(O2.Data.2021.0)
+
+any(duplicated(O2.Data.2021.0))
+
+O2.Data.2021.0[which(duplicated(O2.Data.2021.0)),]
+
+#### Select Only unique data  ####
+
+O2.Data.2021<-unique(O2.Data.2021.0) ;
+
 
 any(duplicated(O2.Data.2021))
 
