@@ -1,8 +1,8 @@
 ##############################################################################################################
 # 
 # 
-# Program to compile  oxygen sensor data collected from the Apogee S-210 sensors deployed in the 
-#  Strategic Tillage USda-Nifa funded project
+# Program to Analyze and plot oxygen sensor data collected from the Apogee S-210 sensors deployed in the 
+# Strategic Tillage USda-Nifa funded project
 # 
 #    
 # 
@@ -55,7 +55,7 @@ Main.Directorys<-c("./OxygenSensorsData2021" , "./OxygenSensorsData2022_2023" ) 
 
 Main.Directorys
 
-MD=2
+MD=1
 
 Main.Directorys[MD]
 
@@ -64,19 +64,12 @@ Files.Directories<-list.files(Main.Directorys[MD]);
 
 Files.Directories
 
-File.to.Download = 3
+File.to.Download = 1
 
 Files.Directories[[File.to.Download]]
 
-## Read which files are available in the ProcessedData directory
 
-Files.to.Read<-list.files(paste0(Main.Directorys[MD],"\\",Files.Directories[[File.to.Download]], "\\" , "ProcessedData")) ;
 
-Files.to.Read
-
-Read.File.No=1
-
-Files.to.Read[Read.File.No]
 
 
 ###############################################################################################################
@@ -85,120 +78,57 @@ Files.to.Read[Read.File.No]
 
 # Initiate the data frame
 
-O2.Data.2021.0<-data.frame( Corrected.TIME = character(), Block = integer() , C_Crop = character() , Treatment = character(), Depth_cm = integer() , 
-                           Temperature_C = double() , Calibrated.O2_Kpa = double()  ) ;
+Data.2021.0<-data.frame( Corrected.TIME = character(), Block = integer() , C_Crop = character() , Treatment = character(), Depth_cm = integer() , 
+                           Temperature_C = double() , Calibrated.O2_Kpa = double() , Panel_Temperature_C = double()) ;
 
-str(O2.Data.2021.0)
+str(Data.2021.0)
 
-# i = Files.to.Read[2]
+# i = Files.Directories [1]
 
-for (i in Files.to.Read) {
+for (i in Files.Directories) {
   
-  O2.Data.2021.1<-read.csv(file= paste0(Main.Directorys[MD],"\\",Files.Directories[[File.to.Download]], "\\" , "ProcessedData" ,"\\", i),
+  ## Read which files are available in the ProcessedData directory
+  
+  Files.to.Read<-list.files(paste0(Main.Directorys[MD],"\\",i)) ;
+  
+  Files.to.Read
+  
+  Read.File.No<-grep(pattern = ".csv" , Files.to.Read)
+  
+  Files.to.Read[Read.File.No] ; print(Files.to.Read[Read.File.No])
+  
+  
+  Data.2021.1<-read.csv(file= paste0(Main.Directorys[MD],"\\",i, "\\" , Files.to.Read[Read.File.No]),
            header = T) ;
   
-  O2.Data.2021.2<-rbind(O2.Data.2021.0, O2.Data.2021.1) ;
+  Data.2021.2<-rbind(Data.2021.0, Data.2021.1) ;
   
   
-  O2.Data.2021.0<-O2.Data.2021.2 ;
+  Data.2021.0<-Data.2021.2 ;
   
-  rm(O2.Data.2021.2,O2.Data.2021.1 ) ;
+  rm(Data.2021.2,Data.2021.1 , Files.to.Read , Read.File.No ) ;
   
   
 }
 
-str(O2.Data.2021.0)
-
-### some of the crop names are 3spp and others are 3Spp
-
-str(O2.Data.2021.0[O2.Data.2021.0$C_Crop == "3spp",])
-
-str(O2.Data.2021.0[O2.Data.2021.0$C_Crop == "3Spp",])
-
-O2.Data.2021.0[O2.Data.2021.0$C_Crop == "3spp", c("C_Crop")]<- "3Spp" ;
-
+str(Data.2021.0)
 
 #### Give each column the adequate format
 
-O2.Data.2021.0[,c("Corrected.TIME")]<-as.POSIXct(O2.Data.2021.0[,c("Corrected.TIME")]) ;
+Data.2021.0[,c("Corrected.TIME")]<-as.POSIXct(Data.2021.0[,c("Corrected.TIME")]) ;
 
 
-O2.Data.2021.0$Block<-as.factor(O2.Data.2021.0$Block) ;
+Data.2021.0$Block<-as.factor(Data.2021.0$Block) ;
 
-O2.Data.2021.0$C_Crop<-as.factor(O2.Data.2021.0$C_Crop) ;
+Data.2021.0$C_Crop<-as.factor(Data.2021.0$C_Crop) ;
 
-O2.Data.2021.0$Treatment<-as.factor(O2.Data.2021.0$Treatment) ;
+Data.2021.0$Treatment<-as.factor(Data.2021.0$Treatment) ;
 
-O2.Data.2021.0$Depth_cm<-as.factor(O2.Data.2021.0$Depth_cm) ;
-
-
-str(O2.Data.2021.0)
+Data.2021.0$Depth_cm<-as.factor(Data.2021.0$Depth_cm) ;
 
 
-##### check for duplicated data 
+str(Data.2021.0)
 
-anyDuplicated(O2.Data.2021.0)
-
-any(duplicated(O2.Data.2021.0))
-
-O2.Data.2021.0[which(duplicated(O2.Data.2021.0)),]
-
-#### Select Only unique data  ####
-
-O2.Data.2021<-unique(O2.Data.2021.0) ;
-
-
-any(duplicated(O2.Data.2021))
-
-### Because there is only one panel temperature for each download (all treatments and depths in a crop) it is difficult to include panel temperature.
-### The panel temperature is stored as Treatment == "Panel"
-
-str(O2.Data.2021[O2.Data.2021$Treatment != "Panel" & O2.Data.2021$Depth_cm != "-100" , ])
-
-str(O2.Data.2021[O2.Data.2021$Treatment == "Panel" & O2.Data.2021$Depth_cm == "-100" , ])
-
-### Merge the data without panel temperature with panel temperature. The idea is that each record date will have associated its panel temperature.
-
-O2.Data.2021.Plot.1<-merge(O2.Data.2021[O2.Data.2021$Treatment != "Panel" & O2.Data.2021$Depth_cm != "-100" , ],
-                           O2.Data.2021[O2.Data.2021$Treatment == "Panel" & O2.Data.2021$Depth_cm == "-100" , ],
-                           by = c("Corrected.TIME", "Block" , "C_Crop"), all.x = T)  ;
-
-str(O2.Data.2021.Plot.1)
-
-
-### simplify columns, get rid of redundant columns
-
-names(O2.Data.2021.Plot.1)[c(1:7, 10)]
-
-
-O2.Data.2021.Plot<-O2.Data.2021.Plot.1[, names(O2.Data.2021.Plot.1)[c(1:7, 10)]]
-
-str(O2.Data.2021.Plot)
-
-head(O2.Data.2021.Plot)
-
-
-### Correct column names
-
-
-names(O2.Data.2021.Plot)[4:8]<-c("Treatment" , "Depth_cm" , "Temperature_C" , "Calibrated.O2_Kpa", "Panel_Temperature_C") 
-
-str(O2.Data.2021.Plot)
-
-
-### check if data merge correctly
-
-str(O2.Data.2021)
-
-str(O2.Data.2021[O2.Data.2021$Block == "3" & O2.Data.2021$Treatment == "Panel" & O2.Data.2021$C_Crop == "Triticale" , c("Temperature_C")])
-
-str(O2.Data.2021.Plot[O2.Data.2021.Plot$Block == "3" &  O2.Data.2021.Plot$C_Crop == "Triticale" &
-                        O2.Data.2021.Plot$Treatment == "A" &  O2.Data.2021.Plot$Depth_cm == "20", c("Panel_Temperature_C") ])
-
-plot(O2.Data.2021.Plot[O2.Data.2021.Plot$Block == "3" &  O2.Data.2021.Plot$C_Crop == "Triticale" &
-                         O2.Data.2021.Plot$Treatment == "A" &  O2.Data.2021.Plot$Depth_cm == "20", c("Panel_Temperature_C") ],
-     O2.Data.2021[O2.Data.2021$Block == "3" & O2.Data.2021$Treatment == "Panel" & O2.Data.2021$C_Crop == "Triticale" , c("Temperature_C")])
-                        
 
 
 ###############################################################################################################
@@ -211,24 +141,24 @@ plot(O2.Data.2021.Plot[O2.Data.2021.Plot$Block == "3" &  O2.Data.2021.Plot$C_Cro
 ####  Plot Data selection  #####
 
 
-levels(O2.Data.2021.Plot$Block) ;  
+levels(Data.2021.0$Block) ;  
 
-levels(O2.Data.2021.Plot$C_Crop) ;
+levels(Data.2021.0$C_Crop) ;
 
-levels(O2.Data.2021.Plot$Treatment) ;
+levels(Data.2021.0$Treatment) ;
 
-Block.sel ="3" 
+Block.sel ="1" 
 
 C_Crop.sel = "Clover" 
 
 Treatment.sel = "B"
 
 
-Plot.selected.data<-O2.Data.2021.Plot[O2.Data.2021.Plot$Block == Block.sel & 
+Plot.selected.data<-Data.2021.0[Data.2021.0$Block == Block.sel & 
                                         
-                                        O2.Data.2021.Plot$C_Crop == C_Crop.sel &
+                                        Data.2021.0$C_Crop == C_Crop.sel &
 
-                                        O2.Data.2021.Plot$Treatment == Treatment.sel ,
+                                        Data.2021.0$Treatment == Treatment.sel ,
                                       
                                       c("Corrected.TIME" , "Depth_cm" , "Temperature_C" , "Calibrated.O2_Kpa" ,"Panel_Temperature_C")]
 
@@ -259,15 +189,15 @@ Plot.date.range<-c(min(Plot.selected.data$Corrected.TIME), max(Plot.selected.dat
 
 
 
-Plot.selected.data<-O2.Data.2021.Plot[O2.Data.2021.Plot$Block == Block.sel & 
+Plot.selected.data<-Data.2021.0[Data.2021.0$Block == Block.sel & 
                                         
-                                        O2.Data.2021.Plot$C_Crop == C_Crop.sel &
+                                        Data.2021.0$C_Crop == C_Crop.sel &
                                         
-                                        O2.Data.2021.Plot$Treatment == Treatment.sel & 
+                                        Data.2021.0$Treatment == Treatment.sel & 
                                         
-                                        O2.Data.2021.Plot$Corrected.TIME >= Plot.date.range[1] &
+                                        Data.2021.0$Corrected.TIME >= Plot.date.range[1] &
                                         
-                                        O2.Data.2021.Plot$Corrected.TIME <= Plot.date.range[2],
+                                        Data.2021.0$Corrected.TIME <= Plot.date.range[2],
                                       
                                       c("Corrected.TIME" , "Depth_cm" , "Temperature_C" , "Calibrated.O2_Kpa" ,"Panel_Temperature_C")]
 
@@ -394,7 +324,7 @@ par(mfrow = c(2,1), mar = c(2, 4, 4 , 4) + 0.1 , mgp = c(2, .6, 0))
 ### Temperature Plot  ###
 
 
-plot(Panel_Temperature_C~Corrected.TIME, data=Plot.selected.data[Plot.selected.data$Depth_cm == "5" ,] ,
+plot(Panel_Temperature_C~Corrected.TIME, data=Plot.selected.data[Plot.selected.data$Depth_cm == "20" ,] ,
      
      type = "l" , lwd = 4 ,col="MAGENTA", xlab = NA, ylab = "Temperature °C" , ylim = Range.T , xlim = Plot.date.range ,
      
@@ -449,9 +379,7 @@ legend(x = "bottomleft" , legend = legend.1, lty = legend.2, col = legend.4,
 #                           Write the compiled and processed data into a csv file
 ###############################################################################################################
 
+#  write.csv( x = Data.2021.0,  file= paste0(Main.Directorys[MD], "\\" , "Data2021_Proc" , 
+                                           as.character.Date(Sys.Date(),format = "%Y_%m_%d") ,".csv" ) ,
+            quote = F, row.names=F)  ;
 
-# write.csv( x = O2.Data.2021.Plot,  file= paste0(Main.Directorys[MD], "\\", Files.Directories[[File.to.Download]] , "\\" , 
-                                                
-                                                "CompiledData" , Files.Directories[[File.to.Download]] , 
-                                                
-                                                Sys.Date() ,".csv" ) , quote = F, row.names=F)  ;
