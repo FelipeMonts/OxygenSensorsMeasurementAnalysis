@@ -268,8 +268,12 @@ Plot.selected.data<-O2.Data.2021.Plot[O2.Data.2021.Plot$Block == Block.sel &
 Range.T<-c(min(min(Plot.selected.data$Temperature_C,na.rm = T), min(Plot.selected.data$Panel_Temperature_C,na.rm = T)),
            max(max(Plot.selected.data$Temperature_C,na.rm = T), max(Plot.selected.data$Panel_Temperature_C,na.rm = T)) ) ;
 
-Range.O2<-c(min(min(Plot.selected.data$Calibrated.O2_Kpa,na.rm = T), min(Plot.selected.data$Calibrated.O2_Kpa,na.rm = T)),
-           max(max(Plot.selected.data$Calibrated.O2_Kpa,na.rm = T), max(Plot.selected.data$Calibrated.O2_Kpa,na.rm = T)) ) ;
+# Range.O2<-c(min(min(Plot.selected.data$Calibrated.O2_Kpa,na.rm = T), min(Plot.selected.data$Calibrated.O2_Kpa,na.rm = T)),
+#            max(max(Plot.selected.data$Calibrated.O2_Kpa,na.rm = T), max(Plot.selected.data$Calibrated.O2_Kpa,na.rm = T)) ) ;
+
+
+Range.O2<-c(0,20)
+
 
 ##### Composing the Plot double Y axis ####
 
@@ -319,55 +323,102 @@ legend(x = "bottomleft" , legend = legend.1, lty = legend.2,  pch = legend.3 , c
 
 #### Multiple panels only one Y axis ####
 
+# #### From stackoverflow https://stackoverflow.com/questions/45546085/how-to-create-a-multiple-plots-having-same-x-axis
+# 
+# set.seed(32273438)
+# A1 <- rnorm(100)
+# B1 <- rnorm(100)
+# B2 <- rnorm(100)
+# B3 <- rnorm(100)
+# 
+# par(mfcol = c(3, 1), mar = numeric(4), oma = c(4, 4, .5, .5), 
+#     mgp = c(2, .6, 0))
+# plot(A1, B1, axes = FALSE)
+# axis(2L)
+# box()
+# plot(A1, B2, axes = FALSE)
+# axis(2L)
+# box()
+# plot(A1, B3, axes = FALSE)
+# axis(1L)
+# axis(2L)
+# box()
+# mtext("A1", side = 1, outer = TRUE, line = 2.2)
+# mtext("B", side = 2, outer = TRUE, line = 2.2)
+# 
+# 
+# ##### Other option  ##### 
+# 
+# par(mar=c(6,6,4,4))
+# layout(matrix(1:3, ncol = 1), widths = 1, heights = c(2.3,2,2.3), respect = FALSE)
+# par(mar = c(0, 4.1, 4.1, 2.1))
+# plot(B1,A1,xaxt='n')
+# par(mar = c(0, 4.1, 0, 2.1))
+# plot(B2,A1,xaxt='n')
+# par(mar = c(4.1, 4.1, 0, 2.1))
+# plot(B3,A1)
+# 
+###### Also manipulating the axis tick marks and labels  https://r-charts.com/base-r/axes/ 
 
 
-par(mfrow = c(2,1))
 
+# par(mfcol = c(2,1), mar = numeric(4), oma = c(4, 4, .5, .5), mgp = c(2, .6, 0))
+# 
+# par(mfrow = c(2,1), mar = numeric(4) )
+# 
+# par(mfrow = c(2,1), oma = c(4, 4, .5, .5))
+# 
+# par(mfrow = c(2,1), mgp = c(2, .6, 0) )
+
+par(mfrow = c(2,1), mar = c(2, 4, 4 , 4) + 0.1 , mgp = c(2, .6, 0))
 
 ### Temperature Plot  ###
 
 
 plot(Panel_Temperature_C~Corrected.TIME, data=Plot.selected.data[Plot.selected.data$Depth_cm == "5" ,] ,
      
-     type = "l" , lwd = 4 ,col="MAGENTA", xlab = NA, ylab = "Temperature °C" , ylim = Range.T , xlim = Plot.date.range,
+     type = "l" , lwd = 4 ,col="MAGENTA", xlab = NA, ylab = "Temperature °C" , ylim = Range.T , xlim = Plot.date.range ,
      
-     main = paste0("Block-", Block.sel, "-", C_Crop.sel, "-" , Treatment.sel ) ) ;
+     tck = 1,  cex.axis = 1.5 , cex.lab = 1.5 , main = paste0("Block-", Block.sel, "-", C_Crop.sel, "-" , Treatment.sel ) ) ;
+
+axis(1, labels = F , tck = 1)
+
 
 
 points(Temperature_C~Corrected.TIME, data=Plot.selected.data[Plot.selected.data$Depth_cm == "5" , ]  , type = "l" , lwd = 4 , col="RED") ;
 
 points(Temperature_C~Corrected.TIME, data=Plot.selected.data[Plot.selected.data$Depth_cm == "20" , ] , type = "l" , lwd = 4 , col="BLUE") ;
 
-axis(1,labels = F)
+
 
 
 ### O2  PLot   ###
 
+par(mar = c(5, 4, 1 , 4) + 0.1) 
+
 
 plot(Calibrated.O2_Kpa~Corrected.TIME,  data=Plot.selected.data[Plot.selected.data$Depth_cm == "5" ,],
      
-      bty = "o", xlab="Date" , ylab ="O2 Kpa" , col="RED",  ylim = Range.O2, pch = 16, cex=2) ;
+      bty = "o", xlab="Date" , ylab ="O2 Kpa" , col="RED",  ylim = Range.O2, type = "l", lwd = 4,  tck = 1 ,cex.axis = 1.5 , cex.lab = 1.5 ) ;
+
+points(Calibrated.O2_Kpa~Corrected.TIME,  data=Plot.selected.data[Plot.selected.data$Depth_cm == "20" ,], col="BLUE", type = "l", lwd = 4) ;
 
 
-mtext("Oxygen Kpa", side=4, line=2)
 
-points(Calibrated.O2_Kpa~Corrected.TIME,  data=Plot.selected.data[Plot.selected.data$Depth_cm == "20" ,], col="BLUE", pch = 16, cex=2) ;
 
 ### forming the legend ##
 
-legend.1<-c("Panel T", "T°C 5 cm" , "T°C 20 cm" , "O2 5 cm" , "O2 20 cm"  )
+legend.1<-c("Panel T", "5 cm" , "20 cm" )
 
-legend.2<-c("solid" , "solid" , "solid" , "blank" , "blank" ) 
+legend.2<-c("solid" , "solid" , "solid") 
 
-legend.3<-c(NA, NA, NA, 16, 16)
+legend.4<-c("MAGENTA", "RED" , "BLUE" )
 
-legend.4<-c("MAGENTA", "RED" , "BLUE" ,"RED" , "BLUE")
-
-legend.5<-c(2, 2, 2, 3, 3)
+legend.5<-c( 3, 3 , 3)
 
 # legend(x = "bottomleft" , legend = legend.1, lty = legend.2,  pch = legend.3 , col = legend.4, 
 #        pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, ncol = 2)
 
-legend(x = "bottomleft" , legend = legend.1, lty = legend.2,  pch = legend.3 , col = legend.4, 
-       pt.cex= 2.0 , lwd = legend.5, bty = "n", ncol = 2)
+legend(x = "bottomleft" , legend = legend.1, lty = legend.2, col = legend.4, 
+       pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, cex =1.2)
 
