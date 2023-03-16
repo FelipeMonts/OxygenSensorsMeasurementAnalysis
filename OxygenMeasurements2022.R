@@ -114,12 +114,17 @@
 ###############################################################################################################
 
 
-#      set the working directory
+#######   set the working directory
 
 # readClipboard() Willow Rock Spring\\SkyCap_SelectionTrial\\DataCollection") ;
 # #
 
 setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors") ;
+
+
+######  store the default graphics parameters 
+
+def.par<-par()
 
 ###############################################################################################################
 #                            Install the packages that are needed                       
@@ -252,17 +257,53 @@ plot(O2.Data.1$TIME,O2.Data.1$Corrected.TIME, col= "RED" , main = Files.Director
 # 
 # grep("20cmTemp",names(O2.Data.1))
 
-plot(O2.Data.1$Corrected.TIME,O2.Data.1$BattV_Min, main = Files.Directories[[File.to.Download]])
 
-# plot(O2.Data.1$Corrected.TIME,O2.Data.1$BattV_Min, 
-#      xlim=c(as.POSIXct("2022-12-17 17:30:00"), as.POSIXct("2022-12-20 17:30:00")),
-#      main = Files.Directories[[File.to.Download]])
 
-plot(O2.Data.1$Corrected.TIME, O2.Data.1$PanelT , main = Files.Directories[[File.to.Download]])
 
-# plot(O2.Data.1$Corrected.TIME,O2.Data.1$PanelT, 
-#      xlim=c(as.POSIXct("2022-12-17 17:30:00"), as.POSIXct("2022-12-29 17:30:00")),
-#      main = Files.Directories[[File.to.Download]]) ;
+###############################################################################################################
+#   Plot the battery and the panel temperature to explore equipment malfunction
+###############################################################################################################
+
+par(mfrow = c(2,1), mar = c(2, 4, 4 , 4) + 0.1 , mgp = c(2, .6, 0))
+
+### Temperature Plot  ###
+
+
+plot(BattV_Min~Corrected.TIME, data = O2.Data.1 ,  type = "l" , lwd = 4 ,col="MAGENTA", 
+     
+     xlab = NA, ylab = "BattV_Min" ,tck = 1,  cex.axis = 1.5 ,    cex.lab = 1.5 , 
+     
+     main = Download.Treatments[[File.Download.Treatment]] , format = "%Y-%m-%d" ) ;
+
+
+### O2  PLot   ###
+
+par(mar = c(5, 4, 1 , 4) + 0.1) 
+
+
+plot(PanelT~Corrected.TIME,  data = O2.Data.1 ,  bty = "o", xlab="Date" , ylab ="PanelT_C" , 
+     
+     col="RED", type = "l", lwd = 4,  tck = 1 ,cex.axis = 1.5 , cex.lab = 1.5  ,format = "%Y-%m-%d" ) ;
+
+
+
+
+
+### forming the legend ##
+
+legend.1<-c("BattV_Mi", "PanelT_C" )
+
+legend.2<-c("solid" , "solid" ) 
+
+legend.4<-c("MAGENTA", "RED" )
+
+legend.5<-c( 3, 3)
+
+# legend(x = "bottomleft" , legend = legend.1, lty = legend.2,  pch = legend.3 , col = legend.4, 
+#        pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, ncol = 2)
+
+legend(x = "bottomleft" , legend = legend.1, lty = legend.2, col = legend.4, 
+       pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, cex =1.2)
 
 
 ###############################################################################################################
@@ -576,92 +617,118 @@ str(Data.Oxygen.Temperature)
 
 ####  Treatment B #####
 
-par(mar = c(5, 4, 4, 4) + 0.3)
+par(mfrow = c(2,1), mar = c(2, 4, 4 , 4) + 0.1 , mgp = c(2, .6, 0))
+
+### Temperature Plot  ###
 
 
-plot(Temperature_C~Corrected.TIME, data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="Panel",],
-     col="BLUE", main = paste("B" , Block.No , C_Crop.Type , "Treatment B" ), ylim =c(-20,40) , ylab = "Temperature °C" ,
-     xlab = "Date") ;
+plot(Temperature_C~Corrected.TIME, data = Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="Panel",]
+     
+     ,  type = "l" , lwd = 4 , col="MAGENTA",  xlab = NA, ylab = "Temperature °C" ,  tck = 1,  cex.axis = 1.5 , 
+     
+     cex.lab = 1.5 ,  ylim =c(-20,40) ,  main = paste("B" , Block.No , C_Crop.Type , "Treatment B" ) , format = "%Y-%m-%d" ) ;
 
-points(Temperature_C~Corrected.TIME, 
-       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-       col="RED") ;
+points(Temperature_C~Corrected.TIME, col="RED" , type = "l", lwd = 4 ,
+       
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",] ) ;
 
-points(Temperature_C~Corrected.TIME, 
-       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
-       col="GREEN")
+points(Temperature_C~Corrected.TIME, col="BLUE" , type = "l", lwd = 4,
+       
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",] ) ;
+
+### forming the legend ##
+
+legend.1<-c("PanelT_C" , "5 cm"  , "20 cm")
+
+legend.2<-c("solid" , "solid", "solid" ) 
+
+legend.4<-c("MAGENTA", "RED" , "BLUE")
+
+legend.5<-c( 3, 3 , 3)
+
+# legend(x = "bottomleft" , legend = legend.1, lty = legend.2,  pch = legend.3 , col = legend.4, 
+#        pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, ncol = 2)
+
+legend(x = "top" , legend = legend.1, lty = legend.2, col = legend.4, 
+       pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, cex =1.2)
 
 
-par(new=T)
 
-plot(Oxygen_Kpa~Corrected.TIME, 
-       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-        axes = F , bty = "n", xlab="" , ylab ="", lty= 1,  type = "l", col="RED", ylim = c(0,20), lwd = 3) ;
-axis( side = 4, at = NULL)
-mtext("Oxygen Kpa", side=4, line=2)
 
-points(Oxygen_Kpa~Corrected.TIME, 
-     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
-     lty= 1,  type = "l" , col="GREEN", lwd = 3) ;
 
-legend.1<-c("Panel T", "T°C 5 cm" , "T°C 20 cm" , "O2 5 cm" , "O2 20 cm"  )
+### O2  PLot   ###
 
-legend.2<-c("blank" , "blank" , "blank" , "solid" , "solid")
+par(mar = c(5, 4, 1 , 4) + 0.1) 
 
-legend.3<-c(16, 16, 16, NA , NA)
 
-legend.4<-c("BLUE", "RED" , "GREEN" ,"RED" , "GREEN")
+plot(Oxygen_Kpa~Corrected.TIME, bty = "o", xlab="Date" , ylab ="Oxygen Kpa" ,  col="RED", type = "l", lwd = 4, ylim = c(0,20),
+     
+     tck = 1 ,cex.axis = 1.5 , cex.lab = 1.5  , format = "%Y-%m-%d" ,
+     
+     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",] ) ;
 
-legend.5<-c(1, 1, 1, 3, 3)
+points(Oxygen_Kpa~Corrected.TIME, col="BLUE", type = "l", lwd = 4,
+       
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",] ) ;
 
-# legend(x = "bottomleft" , legend = legend.1, lty = legend.2, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 , lwd = legend.5)
 
-legend(x = "bottom" , legend = legend.1, lty = legend.2, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 , lwd = legend.5, ncol = 2)
+
 
 
 ####  Treatment C  #####
 
-par(mar = c(5, 4, 4, 4) + 0.3)
+
+par(mfrow = c(2,1), mar = c(2, 4, 4 , 4) + 0.1 , mgp = c(2, .6, 0))
+
+### Temperature Plot  ###
 
 
-plot(Temperature_C~Corrected.TIME, data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="Panel",],
-     col="BLUE", main= paste("B" , Block.No , C_Crop.Type , "Treatment C" ), ylim =c(-20,40), ylab = "Temperature °C") ;
+plot(Temperature_C~Corrected.TIME, data = Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="Panel",]
+     
+     ,  type = "l" , lwd = 4 , col="MAGENTA",  xlab = NA, ylab = "Temperature °C" ,  tck = 1,  cex.axis = 1.5 , 
+     
+     cex.lab = 1.5 ,  ylim =c(-20,40) ,  main = paste("B" , Block.No , C_Crop.Type , "Treatment B" ) , format = "%Y-%m-%d" ) ;
 
-points(Temperature_C~Corrected.TIME, 
-       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-       col="RED") ;
+points(Temperature_C~Corrected.TIME, col="RED" , type = "l", lwd = 4 ,
+       
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",]) ;
 
-points(Temperature_C~Corrected.TIME, 
-       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
-       col="GREEN")
+points(Temperature_C~Corrected.TIME, col="BLUE" , type = "l", lwd = 4,
+       
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",] ) ;
+
+### forming the legend ##
+
+legend.1<-c("PanelT_C" , "5 cm"  , "20 cm")
+
+legend.2<-c("solid" , "solid", "solid" ) 
+
+legend.4<-c("MAGENTA", "RED" , "BLUE")
+
+legend.5<-c( 3, 3 , 3)
+
+# legend(x = "bottomleft" , legend = legend.1, lty = legend.2,  pch = legend.3 , col = legend.4, 
+#        pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, ncol = 2)
+
+legend(x = "top" , legend = legend.1, lty = legend.2, col = legend.4, 
+       pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, cex =1.2)
 
 
-par(new=T)
 
-plot(Oxygen_Kpa~Corrected.TIME, 
-     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
-     axes = F , bty = "n", xlab="" , ylab = "", lty= 1,  type = "l", col="RED", ylim = c(0,15), lwd = 3) ;
-axis( side = 4, at = NULL)
-mtext("Oxygen_Kpa", side=4, line=2)
+### O2  PLot   ###
 
-points(Oxygen_Kpa~Corrected.TIME, 
-       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",],
-       lty= 1,  type = "l" , col="GREEN") ;
+par(mar = c(5, 4, 1 , 4) + 0.1) 
 
-legend.1<-c("Panel T", "T°C 5 cm" , "T°C 20 cm" , "O2 5 cm" , "O2 20 cm"  )
 
-legend.2<-c("blank" , "blank" , "blank" , "solid" , "solid")
+plot(Oxygen_Kpa~Corrected.TIME, bty = "o", xlab="Date" , ylab ="Oxygen Kpa" ,  col="RED", type = "l", lwd = 4, ylim = c(0,20),
+     
+     tck = 1 ,cex.axis = 1.5 , cex.lab = 1.5  , format = "%Y-%m-%d" ,
+     
+     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",] ) ;
 
-legend.3<-c(16, 16, 16, NA , NA)
-
-legend.4<-c("BLUE", "RED" , "GREEN" ,"RED" , "GREEN") 
-
-legend.5<-c(1, 1, 1, 3, 3)
-
-legend(x = "bottom" , legend = legend.1, lty = legend.2, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 , lwd = legend.5, ncol = 2)
-
-# legend(x = "bottomleft" , legend = legend.1, lty = legend.2, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex=2.0 )
-
+points(Oxygen_Kpa~Corrected.TIME, col="BLUE", type = "l", lwd = 4,
+       
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",] ) ;
 
 
 
@@ -715,11 +782,15 @@ Data.Oxygen.Temperature$Temp.Corrected.O2_Kpa<-Data.Oxygen.Temperature$Oxygen_Kp
 
 ####  Checking Treatment B  #####
 
+
+
+
 plot(Oxygen_Kpa~Corrected.TIME, 
-     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment == "B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
      col="RED", ylim = c(0,20), main = paste("B" , Block.No , C_Crop.Type , "Treatment B" ), ylab = "O2 Kpa") ;
+
 points(Temp.Corrected.O2_Kpa~Corrected.TIME, 
-     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
+     data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment == "B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",],
      col="BLUE") ;
 
 points(Oxygen_Kpa~Corrected.TIME, 
@@ -881,6 +952,138 @@ legend.4<-c( "RED" ,"BLUE", "MAGENTA" , "GREEN")
 #legend(x = "bottomleft" , legend = legend.1, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 )
 
 legend(x = "topleft" , legend = legend.1, pch = legend.3 , col = legend.4, title = "Legend" , pt.cex= 2.0 )
+
+
+###############################################################################################################
+#                         Final plot with the temperature corrected and calibrated O2 Data
+###############################################################################################################
+
+
+
+#### Treatment B  #####
+
+par(mfrow = c(2,1), mar = c(2, 4, 4 , 4) + 0.1 , mgp = c(2, .6, 0))
+
+
+plot(Oxygen_Kpa~Corrected.TIME, data = Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment == "B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",]
+     
+     ,  type = "l" , lwd = 4 , col="MAGENTA",  xlab = NA, ylab = "Oxygen Kpa" ,  tck = 1,  cex.axis = 1.5 , 
+     
+     cex.lab = 1.5  ,  main = paste("B" , Block.No , C_Crop.Type , "Treatment B" ) , format = "%Y-%m-%d" ) ;
+
+
+points(Temp.Corrected.O2_Kpa~Corrected.TIME, col="BLUE" , type = "l", lwd = 4 ,
+       
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",]) ;
+
+
+points(Calibrated.O2_Kpa~Corrected.TIME, col="RED" , type = "l", lwd = 4,
+       
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",] ) ;
+
+
+
+### forming the legend ##
+
+legend.1<-c("Raw Data" , "Temp Corrected"  , "Calibrated")
+
+legend.2<-c("solid" , "solid", "solid" ) 
+
+legend.4<-c("MAGENTA", "BLUE" ,"RED")
+
+legend.5<-c( 3, 3 , 3)
+
+# legend(x = "bottomleft" , legend = legend.1, lty = legend.2,  pch = legend.3 , col = legend.4, 
+#        pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, ncol = 2)
+
+legend(x = "topleft" , legend = legend.1, lty = legend.2, col = legend.4, 
+       pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, cex =1.2)
+
+
+par(mar = c(5, 4, 1 , 4) + 0.1) 
+
+
+plot(Oxygen_Kpa~Corrected.TIME, data = Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment == "B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",]
+     
+     ,  type = "l" , lwd = 4 , col="MAGENTA",  xlab = "Date", ylab = "Oxygen Kpa" ,  tck = 1,  cex.axis = 1.5 , 
+     
+     cex.lab = 1.5  , format = "%Y-%m-%d" ) ;
+
+
+points(Temp.Corrected.O2_Kpa~Corrected.TIME, col="BLUE" , type = "l", lwd = 4 ,
+       
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",]) ;
+
+
+points(Calibrated.O2_Kpa~Corrected.TIME, col="RED" , type = "l", lwd = 4,
+       
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="B" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",] ) ;
+
+
+
+
+#### Treatment C  #####
+
+
+par(mfrow = c(2,1), mar = c(2, 4, 4 , 4) + 0.1 , mgp = c(2, .6, 0))
+
+
+plot(Oxygen_Kpa~Corrected.TIME, data = Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment == "C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",]
+     
+     ,  type = "l" , lwd = 4 , col="MAGENTA",  xlab = NA, ylab = "Oxygen Kpa" ,  tck = 1,  cex.axis = 1.5 , 
+     
+     cex.lab = 1.5  ,  main = paste("B" , Block.No , C_Crop.Type , "Treatment C" ) , format = "%Y-%m-%d" ) ;
+
+
+points(Temp.Corrected.O2_Kpa~Corrected.TIME, col="BLUE" , type = "l", lwd = 4 ,
+       
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",]) ;
+
+
+points(Calibrated.O2_Kpa~Corrected.TIME, col="RED" , type = "l", lwd = 4,
+       
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="5",] ) ;
+
+
+
+### forming the legend ##
+
+legend.1<-c("Raw Data" , "Temp Corrected"  , "Calibrated")
+
+legend.2<-c("solid" , "solid", "solid" ) 
+
+legend.4<-c("MAGENTA", "BLUE" ,"RED")
+
+legend.5<-c( 3, 3 , 3)
+
+# legend(x = "bottomleft" , legend = legend.1, lty = legend.2,  pch = legend.3 , col = legend.4, 
+#        pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, ncol = 2)
+
+legend(x = "topleft" , legend = legend.1, lty = legend.2, col = legend.4, 
+       pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, cex =1.2)
+
+
+par(mar = c(5, 4, 1 , 4) + 0.1) 
+
+
+plot(Oxygen_Kpa~Corrected.TIME, data = Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment == "C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",]
+     
+     ,  type = "l" , lwd = 4 , col="MAGENTA",  xlab = "Date", ylab = "Oxygen Kpa" ,  tck = 1,  cex.axis = 1.5 , 
+     
+     cex.lab = 1.5  , format = "%Y-%m-%d" ) ;
+
+
+points(Temp.Corrected.O2_Kpa~Corrected.TIME, col="BLUE" , type = "l", lwd = 4 ,
+       
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",]) ;
+
+
+points(Calibrated.O2_Kpa~Corrected.TIME, col="RED" , type = "l", lwd = 4,
+       
+       data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",] ) ;
+
+
+
 
 
 
