@@ -264,6 +264,14 @@ plot(O2.Data.1$TIME,O2.Data.1$Corrected.TIME, col= "RED" , main = Files.Director
 #   Plot the battery and the panel temperature to explore equipment malfunction
 ###############################################################################################################
 
+pdf( file = paste0(Main.Directorys[MD], "\\",Files.Directories[[File.to.Download]] , "\\ProcessedData\\",
+                   
+                   Files.Directories[[File.to.Download]], Block.No, C_Crop.Type, as.character.Date(Sys.Date(),format = "%Y_%m_%d") ,".pdf" ),
+     
+     paper = "USr", width = 10, height = 8 , onefile = T)  ;
+
+
+
 par(mfrow = c(2,1), mar = c(2, 4, 4 , 4) + 0.1 , mgp = c(2, .6, 0))
 
 ### Temperature Plot  ###
@@ -305,7 +313,7 @@ plot(PanelT~Corrected.TIME,  data = O2.Data.1 ,  bty = "o", xlab="Date" , ylab =
 
 
 
-
+# dev.off()
 
 
 
@@ -676,7 +684,7 @@ points(Oxygen_Kpa~Corrected.TIME, col="BLUE", type = "l", lwd = 4,
 
 
 
-
+# dev.off() 
 
 ####  Treatment C  #####
 
@@ -1100,6 +1108,9 @@ points(Calibrated.O2_Kpa~Corrected.TIME, col="RED" , type = "l", lwd = 4,
        
        data=Data.Oxygen.Temperature[Data.Oxygen.Temperature$FAC.Treatment =="C" &  Data.Oxygen.Temperature$FAC.Depth_cm =="20",] ) ;
 
+
+
+dev.off() 
 
 
 
