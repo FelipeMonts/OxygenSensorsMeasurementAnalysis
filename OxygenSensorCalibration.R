@@ -203,163 +203,456 @@ setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors
 ###############################################################################################################
 #                           load the libraries that are needed   
 ###############################################################################################################
-library(openxlsx) ;
+#library(openxlsx) ;
+
+
+# ####################################################################################################################
+# #                           Explore the files and directory and files with the data Oxygen calibration files in 2021
+# ####################################################################################################################
+# 
+# ### working with the O2SensorCalibration.xlsx file
+# 
+# O2SensorCalibration.data<-read.xlsx(xlsxFile = ".\\O2SensorTesting\\Calibration\\O2SensorCalibration.xlsx", sheet= "CR1000_Oxygen_FM202301" , startRow = 1 , colNames = TRUE) ;
+# 
+# head(O2SensorCalibration.data)
+# tail(O2SensorCalibration.data)
+# 
+# ### There is an error in the time stamp after 12:59 pm. It changes to 1:00 AM
+# 
+# O2SensorCalibration.data[O2SensorCalibration.data$Time >= 0.54 & O2SensorCalibration.data$Time <= 0.55,] ;
+# 
+# ### The error starts after Time 0.5414931, row no 310
+# 
+# length(O2SensorCalibration.data$Time)
+# 
+# O2SensorCalibration.data$Time[310:length(O2SensorCalibration.data$Time) ]
+# 
+# O2SensorCalibration.data$Time[311:length(O2SensorCalibration.data$Time) ]
+# 
+# #### correcting the time stamp
+# 
+# O2SensorCalibration.data$CorrectedTime<-NA ;
+# 
+# O2SensorCalibration.data$CorrectedTime[1:310]<-O2SensorCalibration.data$Time[1:310];
+# 
+# O2SensorCalibration.data$CorrectedTime[311:length(O2SensorCalibration.data$Time)]<-O2SensorCalibration.data$Time[311:length(O2SensorCalibration.data$Time)]+0.55 ;
+# 
+# ###############################################################################################################
+# #                           Explore the data
+# ###############################################################################################################
+# 
+# ### O2SensorCalibration.xlsx data
+# 
+# plot(S200Ox_kPa~CorrectedTime, data=O2SensorCalibration.data, col="BLUE") ;
+# points(OXYBaseOx_kPa~CorrectedTime, data=O2SensorCalibration.data, col="RED") ;
+# 
+# plot(OXYBaseOx_kPa~S200Ox_kPa, data=O2SensorCalibration.data, col="BLUE") ;
+# #text(O2SensorCalibration.data$OXYBaseOx_kPa, O2SensorCalibration.data$S200Ox_kPa,labels=O2SensorCalibration.data$CorrectedTime.h) ;
+# 
+
+# ####################################################################################################################
+# #                           Explore the files and files with the data Oxygen calibration files in 2023
+# ####################################################################################################################
+
+
+Calibration.Data.Dir <- list.files(".\\OxygenSensorsData2022_2023\\Calibration2023\\CalibrationData")  ;
+
+Calibration.Data.Dir
+
+### get the data in the Oxygen data table 
+
+CR1000X.Tables <- list.files(paste0(".\\OxygenSensorsData2022_2023\\Calibration2023\\CalibrationData", "\\" , Calibration.Data.Dir[1]))
+
+CR1000X.Tables
+
+grep(pattern = "Oxygen" , CR1000X.Tables)
+
+CR1000X.Tables[grep(pattern = "Oxygen" , CR1000X.Tables)]
+
+CR1000X.Oxygen.Names <- read.csv(file = paste0(".\\OxygenSensorsData2022_2023\\Calibration2023\\CalibrationData", "\\" ,
+                                         
+                                         Calibration.Data.Dir[1], "\\", CR1000X.Tables[grep(pattern = "Oxygen" , CR1000X.Tables)]), 
+                           
+                           skip = 1, header = F , nrows = 1);
+
+
+CR1000X.Oxygen.0321 <- read.csv(file = paste0(".\\OxygenSensorsData2022_2023\\Calibration2023\\CalibrationData", "\\" ,
+                                               
+                                               Calibration.Data.Dir[1], "\\", CR1000X.Tables[grep(pattern = "Oxygen" , CR1000X.Tables)]), 
+                                 
+                                 skip = 4, header = F );
+
+
+CR1000X.Oxygen.0324 <- read.csv(file = paste0(".\\OxygenSensorsData2022_2023\\Calibration2023\\CalibrationData", "\\" ,
+                                              
+                                              Calibration.Data.Dir[2], "\\", CR1000X.Tables[grep(pattern = "Oxygen" , CR1000X.Tables)]), 
+                                
+                                skip = 4, header = F );
+
+
+#####  "20230328" - Calibration.Data.Dir[3] is the Zero data and is raw data not medians
+
+CR1000X.Oxygen.0328 <- read.csv(file = paste0(".\\OxygenSensorsData2022_2023\\Calibration2023\\CalibrationData", "\\" ,
+                                              
+                                              Calibration.Data.Dir[3], "\\", CR1000X.Tables[grep(pattern = "Oxygen" , CR1000X.Tables)]), 
+                                
+                                skip = 4, header = F );
+
+
+CR1000X.Oxygen.0329 <- read.csv(file = paste0(".\\OxygenSensorsData2022_2023\\Calibration2023\\CalibrationData", "\\" ,
+                                              
+                                              Calibration.Data.Dir[4], "\\", CR1000X.Tables[grep(pattern = "Oxygen" , CR1000X.Tables)]), 
+                                
+                                skip = 4, header = F );
+
+##### Explore the zero data "20230328" - Calibration.Data.Dir[3] 
+
+CR1000X.Zero.Names <- read.csv(file = paste0(".\\OxygenSensorsData2022_2023\\Calibration2023\\CalibrationData", "\\" ,
+                                               
+                                               Calibration.Data.Dir[3], "\\", CR1000X.Tables[grep(pattern = "Oxygen" , CR1000X.Tables)]), 
+                                 
+                                 skip = 1, header = F , nrows = 1);
+
+CR1000X.Zero <- CR1000X.Oxygen.0328 ;
+
+
+names(CR1000X.Zero) <- CR1000X.Zero.Names  ;
+
+head(CR1000X.Zero)
+
+str(CR1000X.Zero)
+
+summary(CR1000X.Zero)
+
+
+##### Explore the Zero Temperature data in a plot #####
+
+head(CR1000X.Zero[, c(4, 6, 8, 10, 12, 14, 16 , 18 , 21)])
+
+T.range <- range(CR1000X.Zero[, c(4, 6, 8, 10, 12, 14, 16 , 18, 21)]) ;
+
+T.range
+
+
+plot(S210_1_TC ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4 ,col = 1, ylab = "Temperature °C" , ylim = T.range );
+
+points(S210_2_TC ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4, col = 2) ;
+
+points(S210_3_TC ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4, col = 3) ;
+
+points(S210_4_TC ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4, col = 4) ;
+
+points(S210_5_TC ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4, col = 5) ;
+
+points(S210_6_TC ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4, col = 6) ;
+
+points(S210_7_TC ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4, col = 7) ;
+
+points(OXYBaseTemp ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4, col = 8) ;
+
+points(PanelT ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4, col = "RED" );
+
+
+##### Explore the Zero Oxygen  data in a plot #####
+
+
+head(CR1000X.Zero[, c(5, 7, 9, 11, 13, 15 , 17 , 22)]) 
+
+O2.range <- range(CR1000X.Zero[, c(5, 7, 9, 11, 13, 15 , 17 , 22)]) ;
+
+
+plot(S210_1_Smv ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4 ,col = 1, ylab = "O2 mV - Pa"  , ylim = O2.range );
+
+points(S210_2_Smv ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4, col = 2) ;
+
+points(S210_3_Smv ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4, col = 3) ;
+
+points(S210_4_Smv ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4, col = 4) ;
+
+points(S210_5_Smv ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4, col = 5) ;
+
+points(S210_6_Smv ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4, col = 6) ;
+
+points(S210_7_Smv ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4, col = 7) ;
+
+points(OXYBaseOxygen ~ RECORD, data = CR1000X.Zero,  type = "l" , lwd = 4, col = 8) ;
+
+
+
+#### combine all data series ##
+
+
+CR1000X.Oxygen <- rbind(CR1000X.Oxygen.0321, CR1000X.Oxygen.0324 , CR1000X.Oxygen.0328 , CR1000X.Oxygen.0329) ;
+
+
+names(CR1000X.Oxygen) <- CR1000X.Oxygen.Names ;
+
+#### Time stamp as date ###
+
+CR1000X.Oxygen$TIME<-as.POSIXct(CR1000X.Oxygen$TIMESTAMP) ;
+
+
+head(CR1000X.Oxygen)
+
+str(CR1000X.Oxygen)
+
+summary(CR1000X.Oxygen)
+
+#### Add an universal record No  ######
+
+dim(CR1000X.Oxygen)
+
+CR1000X.Oxygen$Record.Number <- seq(1, dim(CR1000X.Oxygen)[[1]] ) ;
+
+##### Explore the Temperature data in a plot #####
+
+head(CR1000X.Oxygen[, c(6, 8, 10, 12, 14, 16 , 18 , 21)])
+
+T.range <- range(CR1000X.Oxygen[, c(6, 8, 10, 12, 14, 16 , 18, 21)]) ;
+
+
+plot(S210_1_TC_Med ~ Record.Number, data = CR1000X.Oxygen,  type = "l" , lwd = 4 ,col = 1, ylab = "Temperature °C" , ylim = T.range );
+
+points(S210_2_TC_Med ~ Record.Number, data = CR1000X.Oxygen,  type = "l" , lwd = 4, col = 2) ;
+
+points(S210_3_TC_Med ~ Record.Number, data = CR1000X.Oxygen,  type = "l" , lwd = 4, col = 3) ;
+
+points(S210_4_TC_Med ~ Record.Number, data = CR1000X.Oxygen,  type = "l" , lwd = 4, col = 4) ;
+
+points(S210_5_TC_Med ~ Record.Number, data = CR1000X.Oxygen,  type = "l" , lwd = 4, col = 5) ;
+
+points(S210_6_TC_Med ~ Record.Number, data = CR1000X.Oxygen,  type = "l" , lwd = 4, col = 6) ;
+
+points(S210_7_TC_Med ~ Record.Number, data = CR1000X.Oxygen,  type = "l" , lwd = 4, col = 7) ;
+
+points(OXYBaseTemp_Med ~ Record.Number, data = CR1000X.Oxygen,  type = "l" , lwd = 4, col = 8) ;
+
+
+
+##### S210 vs Oxybase Temperature ####
+
+
+plot(S210_1_TC_Med ~ OXYBaseTemp_Med, data = CR1000X.Oxygen  ,col = 1,  xlab = "Oxybase Temperature °C" , ylab = "S-210 Temperature °C" , ylim = T.range );
+
+points(S210_2_TC_Med ~ OXYBaseTemp_Med, data = CR1000X.Oxygen,   col = 2) ;
+
+points(S210_3_TC_Med ~ OXYBaseTemp_Med, data = CR1000X.Oxygen,   col = 3) ;
+
+points(S210_4_TC_Med ~ OXYBaseTemp_Med, data = CR1000X.Oxygen,   col = 4) ;
+
+points(S210_5_TC_Med ~ OXYBaseTemp_Med, data = CR1000X.Oxygen,   col = 5) ;
+
+points(S210_6_TC_Med ~ OXYBaseTemp_Med, data = CR1000X.Oxygen,   col = 6) ;
+
+points(S210_7_TC_Med ~ OXYBaseTemp_Med, data = CR1000X.Oxygen,   col = 7) ;
+
+
+
+
+
+
+##### Explore the Oxygen data in a plot #####
+
+head(CR1000X.Oxygen[, c(5, 7, 9, 11, 13, 15 , 17 , 22)])
+
+O2.range <- range(CR1000X.Oxygen[, c(5, 7, 9, 11, 13, 15 , 17 , 22)]) ;
+
+
+plot(S210_1_Smv_Med ~ Record.Number, data = CR1000X.Oxygen,  type = "l" , lwd = 4 ,col = 1, ylab = "O2 mV - Pa"  , ylim = O2.range );
+
+points(S210_2_Smv_Med ~ Record.Number, data = CR1000X.Oxygen,  type = "l" , lwd = 4, col = 2) ;
+
+points(S210_3_Smv_Med ~ Record.Number, data = CR1000X.Oxygen,  type = "l" , lwd = 4, col = 3) ;
+
+points(S210_4_Smv_Med ~ Record.Number, data = CR1000X.Oxygen,  type = "l" , lwd = 4, col = 4) ;
+
+points(S210_5_Smv_Med ~ Record.Number, data = CR1000X.Oxygen,  type = "l" , lwd = 4, col = 5) ;
+
+points(S210_6_Smv_Med ~ Record.Number, data = CR1000X.Oxygen,  type = "l" , lwd = 4, col = 6) ;
+
+points(S210_7_Smv_Med ~ Record.Number, data = CR1000X.Oxygen,  type = "l" , lwd = 4, col = 7) ;
+
+points(OXYBaseOxygen_Med ~ Record.Number, data = CR1000X.Oxygen,  type = "l" , lwd = 4, col = 8) ;
+
+
+
+##### S210 vs Oxybase O2 ####
+
+
+
+plot(S210_1_Smv_Med ~ OXYBaseOxygen_Med, data = CR1000X.Oxygen  ,col = 1, xlab = "Oxybase O2 Pa" , ylab = "S210 mV" , ylim = O2.range );
+
+points(S210_2_Smv_Med ~ OXYBaseOxygen_Med, data = CR1000X.Oxygen,   col = 2) ;
+
+points(S210_3_Smv_Med ~ OXYBaseOxygen_Med, data = CR1000X.Oxygen,   col = 3) ;
+
+points(S210_4_Smv_Med ~ OXYBaseOxygen_Med, data = CR1000X.Oxygen,   col = 4) ;
+
+points(S210_5_Smv_Med ~ OXYBaseOxygen_Med, data = CR1000X.Oxygen,   col = 5) ;
+
+points(S210_6_Smv_Med ~ OXYBaseOxygen_Med, data = CR1000X.Oxygen,   col = 6) ;
+
+points(S210_7_Smv_Med ~ OXYBaseOxygen_Med, data = CR1000X.Oxygen,   col = 7) ;
 
 
 ###############################################################################################################
-#                           Explore the files and directory and files with the data Oxygen calibration files
+#                          Correct Measurements for temperature 
 ###############################################################################################################
 
-### working with the O2SensorCalibration.xlsx file
 
-O2SensorCalibration.data<-read.xlsx(xlsxFile = ".\\O2SensorTesting\\Calibration\\O2SensorCalibration.xlsx", sheet= "CR1000_Oxygen_FM202301" , startRow = 1 , colNames = TRUE) ;
 
-head(O2SensorCalibration.data)
-tail(O2SensorCalibration.data)
-
-### There is an error in the time stamp after 12:59 pm. It changes to 1:00 AM
-
-O2SensorCalibration.data[O2SensorCalibration.data$Time >= 0.54 & O2SensorCalibration.data$Time <= 0.55,] ;
-
-### The error starts after Time 0.5414931, row no 310
-
-length(O2SensorCalibration.data$Time)
-
-O2SensorCalibration.data$Time[310:length(O2SensorCalibration.data$Time) ]
-
-O2SensorCalibration.data$Time[311:length(O2SensorCalibration.data$Time) ]
-
-#### correcting the time stamp
-
-O2SensorCalibration.data$CorrectedTime<-NA ;
-
-O2SensorCalibration.data$CorrectedTime[1:310]<-O2SensorCalibration.data$Time[1:310];
-
-O2SensorCalibration.data$CorrectedTime[311:length(O2SensorCalibration.data$Time)]<-O2SensorCalibration.data$Time[311:length(O2SensorCalibration.data$Time)]+0.55 ;
-
-###############################################################################################################
-#                           Explore the data
-###############################################################################################################
-
-### O2SensorCalibration.xlsx data
-
-plot(S200Ox_kPa~CorrectedTime, data=O2SensorCalibration.data, col="BLUE") ;
-points(OXYBaseOx_kPa~CorrectedTime, data=O2SensorCalibration.data, col="RED") ;
-
-plot(OXYBaseOx_kPa~S200Ox_kPa, data=O2SensorCalibration.data, col="BLUE") ;
-#text(O2SensorCalibration.data$OXYBaseOx_kPa, O2SensorCalibration.data$S200Ox_kPa,labels=O2SensorCalibration.data$CorrectedTime.h) ;
 
 
 ###############################################################################################################
-#                          start the calibration process; OXYBaseOx_kPa~S200Ox_kPa
+#                          start the calibration process
 ###############################################################################################################
+
+# pull all the data of the S210 sensors into one variable for the regression
+
+str(CR1000X.Oxygen)
+
+O2SensorCalibration.data <- CR1000X.Oxygen[, c( "Record.Number" , "S210_1_Smv_Med" , "S210_1_TC_Med" , "OXYBaseOxygen_Med")] ;
+
+O2SensorCalibration.data[seq(569+1,2*569),] <- CR1000X.Oxygen[, c( "Record.Number" , "S210_2_Smv_Med" , "S210_2_TC_Med" , "OXYBaseOxygen_Med")] ;
+
+O2SensorCalibration.data[seq(2*569+1,3*569),] <- CR1000X.Oxygen[, c( "Record.Number" , "S210_3_Smv_Med" , "S210_3_TC_Med" , "OXYBaseOxygen_Med")] ;
+
+O2SensorCalibration.data[seq(3*569+1,4*569),] <- CR1000X.Oxygen[, c( "Record.Number" , "S210_4_Smv_Med" , "S210_4_TC_Med" , "OXYBaseOxygen_Med")] ;
+
+O2SensorCalibration.data[seq(4*569+1,5*569),] <- CR1000X.Oxygen[, c( "Record.Number" , "S210_5_Smv_Med" , "S210_5_TC_Med" , "OXYBaseOxygen_Med")] ;
+
+O2SensorCalibration.data[seq(5*569+1,6*569),] <- CR1000X.Oxygen[, c( "Record.Number" , "S210_6_Smv_Med" , "S210_6_TC_Med" , "OXYBaseOxygen_Med")] ;
+
+O2SensorCalibration.data[seq(6*569+1,7*569),] <- CR1000X.Oxygen[, c( "Record.Number" , "S210_7_Smv_Med" , "S210_7_TC_Med" , "OXYBaseOxygen_Med")] ;
+
+
+str(O2SensorCalibration.data)
+
+#### check the pulled data ###
+
+plot(S210_1_Smv_Med ~ Record.Number , data = O2SensorCalibration.data)
+
+plot(OXYBaseOxygen_Med ~ Record.Number , data = O2SensorCalibration.data)
+
+plot(OXYBaseOxygen_Med ~ S210_1_Smv_Med , data = O2SensorCalibration.data)
+
+
+
+#### discard points that are clearly out of range  ###
+
+
+O2SensorCalibration.data$Distance <- O2SensorCalibration.data$OXYBaseOxygen_Med - O2SensorCalibration.data$S210_1_Smv_Med ;
+
+plot(Distance~ Record.Number , data = O2SensorCalibration.data)
+
+points(Distance~ Record.Number , data = O2SensorCalibration.data[O2SensorCalibration.data$Distance >=-0.5 & O2SensorCalibration.data$Distance <= 8.5, ], col = 4)
+
+
+plot(OXYBaseOxygen_Med ~ S210_1_Smv_Med ,  data = O2SensorCalibration.data[O2SensorCalibration.data$Distance >=-0.5 & O2SensorCalibration.data$Distance <= 8.5, ], col = 4 )
 
 ### Do linear regression analysis on OXYBaseOx_kPa~S200Ox_kPa. 
 ### What do we need to do to S200Ox_kPa measurements to approach the "true" O2  concentration OXYBaseOx_kPa
 
-Calibration.O2SensorCalibration<-lm(OXYBaseOx_kPa~S200Ox_kPa, data=O2SensorCalibration.data) ;
+Calibration.O2SensorCalibration<-lm(OXYBaseOxygen_Med ~ S210_1_Smv_Med, data = O2SensorCalibration.data[O2SensorCalibration.data$Distance >=-0.5 & O2SensorCalibration.data$Distance <= 8.5, ]) ;
 
 summary(Calibration.O2SensorCalibration)
 
 # Call:
-#   lm(formula = OXYBaseOx_kPa ~ S200Ox_kPa, data = O2SensorCalibration.data)
+#   lm(formula = OXYBaseOxygen_Med ~ S210_1_Smv_Med, data = O2SensorCalibration.data[O2SensorCalibration.data$Distance >= 
+#                                                                                      -0.5 & O2SensorCalibration.data$Distance <= 8.5, ])
 # 
 # Residuals:
 #   Min      1Q  Median      3Q     Max 
-# -7.1051 -0.3399 -0.1920  0.2735  5.6823 
+# -6.9815 -0.2468 -0.0461  0.1578  6.0594 
 # 
 # Coefficients:
 #   Estimate Std. Error t value Pr(>|t|)    
-# (Intercept) 1.316421   0.073197   17.98   <2e-16 ***
-#   S200Ox_kPa  0.899866   0.005375  167.41   <2e-16 ***
+# (Intercept)    -0.224683   0.021660  -10.37   <2e-16 ***
+#   S210_1_Smv_Med  1.632383   0.002389  683.32   <2e-16 ***
 #   ---
 #   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 # 
-# Residual standard error: 0.8958 on 376 degrees of freedom
-# Multiple R-squared:  0.9868,	Adjusted R-squared:  0.9867 
-# F-statistic: 2.803e+04 on 1 and 376 DF,  p-value: < 2.2e-16
+# Residual standard error: 0.5518 on 3724 degrees of freedom
+# Multiple R-squared:  0.9921,	Adjusted R-squared:  0.9921 
+# F-statistic: 4.669e+05 on 1 and 3724 DF,  p-value: < 2.2e-16
+
 
 coefficients(Calibration.O2SensorCalibration) ;
 
-
-# (Intercept)  S200Ox_kPa 
-# 1.3164205   0.8998665 
-
+# (Intercept) S210_1_Smv_Med 
+# -0.2246829      1.6323828 
 
 
-abline(a=1.30346, b=0.8998665, col="RED", lwd=3) ;
+
+abline(a=-0.2246829, b=1.6323828, col="RED", lwd=3) ;
 
 #### Removing the points that are farthest away from the 1:1 line to improve the calibration 
 
 
 head(O2SensorCalibration.data)
 
+
 ### Add the fitted values to the data frame
 
-O2SensorCalibration.data$Fitted.1<-1.3164205 + (O2SensorCalibration.data$S200Ox_kPa*0.8998665)  ;
+O2SensorCalibration.data$Fitted.1 <- -0.2246829 + (O2SensorCalibration.data$S210_1_Smv_Med*1.6323828)  ;
 
-points(O2SensorCalibration.data$S200Ox_kPa,O2SensorCalibration.data$Fitted.1, col="BLUE", cex=3) ;
+points(O2SensorCalibration.data$S210_1_Smv_Med,O2SensorCalibration.data$Fitted.1, col="RED") ;
+
+
 
 ### calculate the distance between the measurements and the fitted line
 
-O2SensorCalibration.data$Distance.Fitted.1<-abs(O2SensorCalibration.data$OXYBaseOx_kPa - O2SensorCalibration.data$Fitted.1) ;
 
-points(O2SensorCalibration.data$S200Ox_kPa,O2SensorCalibration.data$Distance.Fitted.1, col="GREEN") ;
+O2SensorCalibration.data$Distance.Fitted.1 <- abs(O2SensorCalibration.data$OXYBaseOxygen_Med - O2SensorCalibration.data$Fitted.1) ;
 
-### select the points that are within 2 KPa fomr the fitted line
+points(O2SensorCalibration.data$S210_1_Smv_Med,O2SensorCalibration.data$Distance.Fitted.1, col="GREEN") ;
 
-O2SensorCalibration.data[O2SensorCalibration.data$Distance.Fitted.1<=2,]
+### select the points that are within 2 KPa from the fitted line
 
-plot(OXYBaseOx_kPa~S200Ox_kPa, data=O2SensorCalibration.data, col="BLUE") ;
 
-abline(a=1.30346, b=0.8998665, col="RED", lwd=3) ;
+summary(O2SensorCalibration.data[O2SensorCalibration.data$Distance.Fitted.1<=2,])
 
-points(O2SensorCalibration.data[O2SensorCalibration.data$Distance.Fitted.1<=2,c("S200Ox_kPa", "Fitted.1" )], pch=3, col="GREEN", cex=2)
+
+O2SensorCalibration.data[O2SensorCalibration.data$Distance.Fitted.1<=2,c("S210_1_Smv_Med", "Fitted.1" )]
+
+
+points(OXYBaseOxygen_Med ~ S210_1_Smv_Med, data =  O2SensorCalibration.data[O2SensorCalibration.data$Distance.Fitted.1<=1,c("S210_1_Smv_Med", "OXYBaseOxygen_Med" , "Distance.Fitted.1")], col= "RED") ;
 
 ### Do linear regression analysis on OXYBaseOx_kPa~S200Ox_kPa with only the points that are closer to the 1:1 line. 
+
 ### This eliminate points that are take long to equillibrate between the two sensors, have measurement issues (bubbles), Outliers.
 
-Calibration.O2SensorCalibration.1<-lm(OXYBaseOx_kPa~S200Ox_kPa, data=O2SensorCalibration.data[O2SensorCalibration.data$Distance.Fitted.1<=2,]) ;
+Calibration.O2SensorCalibration.1<-lm(OXYBaseOxygen_Med ~ S210_1_Smv_Med, data=O2SensorCalibration.data[O2SensorCalibration.data$Distance.Fitted.1<=1,c("S210_1_Smv_Med", "OXYBaseOxygen_Med" , "Distance.Fitted.1")]) ;
 
 summary(Calibration.O2SensorCalibration.1)
 
 # Call:
-#   lm(formula = OXYBaseOx_kPa ~ S200Ox_kPa, data = O2SensorCalibration.data[O2SensorCalibration.data$Distance.Fitted.1 <= 
-#                                                                              2, ])
+#   lm(formula = OXYBaseOxygen_Med ~ S210_1_Smv_Med, data = O2SensorCalibration.data[O2SensorCalibration.data$Distance.Fitted.1 <= 
+#                                                                                      1, c("S210_1_Smv_Med", "OXYBaseOxygen_Med", "Distance.Fitted.1")])
 # 
 # Residuals:
 #   Min       1Q   Median       3Q      Max 
-# -1.50333 -0.12941 -0.08941  0.16644  1.73414 
+# -0.96337 -0.25073 -0.00597  0.15220  0.97735 
 # 
 # Coefficients:
 #   Estimate Std. Error t value Pr(>|t|)    
-# (Intercept) 1.047576   0.030636   34.19   <2e-16 ***
-#   S200Ox_kPa  0.916677   0.002225  412.03   <2e-16 ***
+# (Intercept)    -0.302291   0.012594     -24   <2e-16 ***
+#   S210_1_Smv_Med  1.641138   0.001387    1183   <2e-16 ***
 #   ---
 #   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 # 
-# Residual standard error: 0.3631 on 363 degrees of freedom
-# Multiple R-squared:  0.9979,	Adjusted R-squared:  0.9979 
-# F-statistic: 1.698e+05 on 1 and 363 DF,  p-value: < 2.2e-16
-# 
+# Residual standard error: 0.3192 on 3663 degrees of freedom
+# Multiple R-squared:  0.9974,	Adjusted R-squared:  0.9974 
+# F-statistic: 1.399e+06 on 1 and 3663 DF,  p-value: < 2.2e-16
+
 
 coefficients(Calibration.O2SensorCalibration.1) ;
 
-# (Intercept)  S200Ox_kPa 
-# 1.3164205   0.8998665
+# (Intercept) S210_1_Smv_Med 
+# -0.3022907      1.6411377 
 
-###############################################################################################################
-#                          Mean, Median Sensor Temperature during Calibration
-###############################################################################################################
 
-Calibration.T<-c(mean(O2SensorCalibration.data$Sensor_TC), median(O2SensorCalibration.data$Sensor_TC) , 
-                 mean(O2SensorCalibration.data$SensorTC2), median(O2SensorCalibration.data$SensorTC2) ,
-                 mean(O2SensorCalibration.data$OXYBaseTemp) , median(O2SensorCalibration.data$OXYBaseTemp) ,
-                 mean(O2SensorCalibration.data$PTemp) , median(O2SensorCalibration.data$PTemp) )
-
-print(Calibration.T)
-
-plot(Calibration.T, col="RED",pch=19)                 
+abline(a=-0.3022907, b=1.6411377, col=1, lwd=3) ;
                  
 TC.Deg.C<-mean(Calibration.T[c(2,4,8)])
 
