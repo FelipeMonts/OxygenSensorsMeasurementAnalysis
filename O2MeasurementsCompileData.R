@@ -85,7 +85,7 @@ Files.Directories<-list.files(Main.Directorys[MD]);
 
 Files.Directories
 
-File.to.Download = 1
+File.to.Download = 3
 
 Files.Directories[[File.to.Download]]
 
@@ -95,17 +95,13 @@ Files.to.Read<-list.files(paste0(Main.Directorys[MD],"\\",Files.Directories[[Fil
 
 Files.to.Read
 
-Read.File.No=1
+Read.Files <- grep(".csv",  x = Files.to.Read) ;
 
-Files.to.Read[Read.File.No]
+Files.to.Read[Read.Files]
 
-###############################################################################################################
-#                           Read files with  erroneous date and correect the date
-###############################################################################################################
+Read.Files
 
-# For the 20210825_Download B1 clover and B4 3SppN have the correct date. Data from these files will be used to
-# correct the data from the other files
-
+Files.to.Read[Read.Files[[6]]]
 
 
 
@@ -120,12 +116,13 @@ O2.Data.2021.0<-data.frame( Corrected.TIME = character(), Block = integer() , C_
 
 str(O2.Data.2021.0)
 
-# i = Files.to.Read[2]
+# i = Read.Files[[6]]
 
-for (i in Files.to.Read) {
+for (i in Read.Files) {
   
-  O2.Data.2021.1<-read.csv(file= paste0(Main.Directorys[MD],"\\",Files.Directories[[File.to.Download]], "\\" , "ProcessedData" ,"\\", i),
-           header = T) ;
+  O2.Data.2021.1<-read.csv(file= paste0(Main.Directorys[MD],"\\",Files.Directories[[File.to.Download]], "\\",
+                                        
+                                        "ProcessedData" ,"\\", Files.to.Read[i]), header = T) ;
   
   O2.Data.2021.2<-rbind(O2.Data.2021.0, O2.Data.2021.1) ;
   
@@ -247,7 +244,7 @@ levels(O2.Data.2021.Plot$C_Crop) ;
 
 levels(O2.Data.2021.Plot$Treatment) ;
 
-Block.sel ="3" 
+Block.sel ="1" 
 
 C_Crop.sel = "Clover" 
 
@@ -480,8 +477,9 @@ legend(x = "bottomleft" , legend = legend.1, lty = legend.2, col = legend.4,
 ###############################################################################################################
 
 
-# write.csv( x = O2.Data.2021.Plot,  file= paste0(Main.Directorys[MD], "\\", Files.Directories[[File.to.Download]] , "\\" , 
+ write.csv( x = O2.Data.2021.Plot,  file= paste0(Main.Directorys[MD], "\\", Files.Directories[[File.to.Download]] , "\\" , 
                                                 
                                                 "CompiledData" , Files.Directories[[File.to.Download]] , 
                                                 
                                                 Sys.Date() ,".csv" ) , quote = F, row.names=F)  ;
+

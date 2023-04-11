@@ -119,10 +119,10 @@
 # readClipboard()  ;
 # #
 
-# setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors") ;
+ setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors") ;
 
 
-setwd("C:\\Users\\frm10\\Downloads\\") ;
+
 
 ######  store the default graphics parameters 
 
@@ -172,7 +172,7 @@ Download.Treatments<-list.files(paste0(Main.Directorys[MD],"\\",Files.Directorie
 
 Download.Treatments
 
-File.Download.Treatment = 2
+File.Download.Treatment = 8
 
 
 Download.Treatments[[File.Download.Treatment]]
@@ -279,12 +279,12 @@ plot(O2.Data.1$TIME,O2.Data.1$Corrected.TIME, col= "RED" , main = Files.Director
 #   Plot the battery and the panel temperature to explore equipment malfunction
 ###############################################################################################################
 
-# pdf( file = paste0(Main.Directorys[MD], "\\",Files.Directories[[File.to.Download]] , "\\ProcessedData\\",
-# 
-#                    Files.Directories[[File.to.Download]], Block.No, C_Crop.Type, as.character.Date(Sys.Date(),format = "%Y_%m_%d") ,".pdf" ),
-# 
-#      paper = "USr", width = 10, height = 8 , onefile = T)  ;
-# 
+pdf( file = paste0(Main.Directorys[MD], "\\",Files.Directories[[File.to.Download]] , "\\ProcessedData\\",
+
+                   Files.Directories[[File.to.Download]], Block.No, C_Crop.Type, as.character.Date(Sys.Date(),format = "%Y_%m_%d") ,".pdf" ),
+
+     paper = "USr", width = 10, height = 8 , onefile = T)  ;
+
 
 
 par(mfrow = c(2,1), mar = c(2, 4, 4 , 4) + 0.1 , mgp = c(2, .6, 0))
@@ -1317,7 +1317,7 @@ points(Temp.Corrected.O2_Kpa~Corrected.TIME, col="BLUE" , type = "l", lwd = 4 ,
 
 
 
-#dev.off() 
+dev.off() 
 
 
 
@@ -1344,7 +1344,7 @@ Files.Directories[[File.to.Download]]
 Sys.Date()
 
 
-# write.csv( x = Data.Oxygen.Temperature.Write,
+ write.csv( x = Data.Oxygen.Temperature.Write,
             file= paste0(Main.Directorys[MD], "\\",Files.Directories[[File.to.Download]] ,
                          "\\ProcessedData\\",Files.Directories[[File.to.Download]], Block.No, C_Crop.Type, Sys.Date() ,".csv" ) ,
              quote = F, row.names=F)  ;
