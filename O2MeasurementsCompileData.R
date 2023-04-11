@@ -48,14 +48,35 @@ setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors
 ###############################################################################################################
 
 
-### The original download data was processed and cleaned. It is stored in processed data directories in the downloaded folders
+# The original download data was processed and cleaned using the  OxygenMeasurementsProcessing.R code 
+# D:\Felipe\Current_Projects\CCC Based Experiments\StrategicTillage_NitrogenLosses_OrganicCoverCrops\
+# DataAnalysis\RCode\OxygenSensorsMeasurementAnalysis\OxygenMeasurementsProcessing.R. 
+# The data is stored in processed data directories in the downloaded folders.
+# 
+# B3Triticale has a probelm with the date. it is registered as 1999 -##- ## and needs
+# to be corrected  
+# 
+# B4Triticale has a probelm with the date. it is registered as 1999 -##- ## and needs
+# to be corrected  
+# 
+# B4Clover has a probelm with the date. it is registered as 2018 -##- ## and needs
+# to be corrected  
+# 
+# B33Spp has a probelm with the date. it is registered as 2018 -##- ## and needs
+# to be corrected  
+#   
+# 
+# Based on preeliminary data quality control, the following data sets were not included.
+# 
+# 20210825_Download13Spp: block 1 3SppN probelms with the power. Battery voltage is out of range and was interrupted.
+
 
 
 Main.Directorys<-c("./OxygenSensorsData2021" , "./OxygenSensorsData2022_2023" ) ;
 
 Main.Directorys
 
-MD=2
+MD=1
 
 Main.Directorys[MD]
 
@@ -64,7 +85,7 @@ Files.Directories<-list.files(Main.Directorys[MD]);
 
 Files.Directories
 
-File.to.Download = 3
+File.to.Download = 1
 
 Files.Directories[[File.to.Download]]
 
@@ -77,6 +98,15 @@ Files.to.Read
 Read.File.No=1
 
 Files.to.Read[Read.File.No]
+
+###############################################################################################################
+#                           Read files with  erroneous date and correect the date
+###############################################################################################################
+
+# For the 20210825_Download B1 clover and B4 3SppN have the correct date. Data from these files will be used to
+# correct the data from the other files
+
+
 
 
 ###############################################################################################################
