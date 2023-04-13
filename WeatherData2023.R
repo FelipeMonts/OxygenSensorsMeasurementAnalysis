@@ -43,7 +43,7 @@
 
 # C:\Users\frm10\Downloads\Weather data
 
-setwd("C:\\Users\\frm10\\Downloads\\Weather data") ;  
+setwd("C:\\Users\\frm10\\OneDrive - The Pennsylvania State University\\O2Sensors") ;
 
 
 
@@ -265,11 +265,16 @@ lines(University.Park.Temp.Pcp$Date.Year.Month,University.Park.Temp.Pcp$MIN_C, c
 
 invisible(dev.off())
 
+
+
+
 ###############################################################################################################
 #                       NRCS Station at Rock Springs  station No 2036 
 ###############################################################################################################
 
-RockSrpings.NRCS.1<-read.csv(file = "RockSprings2036_2020_2023.csv", skip = 68,  header = T)
+getwd()
+
+RockSrpings.NRCS.1<-read.csv(file = "WeatherData\\RockSprings2036_2020_2023.csv", skip = 68,  header = T)
 
 head(RockSrpings.NRCS.1)
 
@@ -340,3 +345,11 @@ points(Soil.Temperature.Observed..20in..degF. ~ Date.Time, type = "l", data = Ro
 
 points(Soil.Temperature.Observed..40in..degF. ~ Date.Time, type = "l", data = RockSrpings.NRCS.1, col = "RED")
 
+
+
+################################################################################################################ 
+#  write the cured weather data
+################################################################################################################ 
+
+
+write.csv( x = RockSrpings.NRCS.1 , file = "WeatherData\\RockSrpings.NRCS.1.csv" , quote = F, row.names = F) ;

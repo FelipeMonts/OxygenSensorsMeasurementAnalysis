@@ -93,14 +93,14 @@ Data.Files
 # 
 # 20210903_Download43Spp
 # 
-# These can be used as reference to aling the other data sest with the correct date
+# These can be used as reference to align the other data sets with the correct date
 # 
 # 
 ################################################################################
 
 
 ###################################################
-###           B1.Clover - Used as Refference
+###           B1.Clover - Used as Reference
 ###################################################
 
 
@@ -583,8 +583,151 @@ write.csv( x = B4.Triticale.write,
 
 
 
+###############################################################################################################
+#   B3 Triticale 22 -23 has errors in the data
+#    The dates in the downloads previous to 20230309
+#    By tying the data series for all the downloads together for B3 Triticale and regressing the date from the latest
+#    measurement to the first, the time series dates will be corrected
+###############################################################################################################
+
+###################################################
+###         B3.Triticale.2023
+###################################################
+
+
+
+B3.Triticale.2023.1 <- read.csv(file = "OxygenSensorsData2022_2023\\20230213_Download\\ProcessedData\\20230213_Download3Triticale2023-04-11.csv") ;
+
+
+str(B3.Triticale.2023.1)
+
+
+B3.Triticale.2023 <- B3.Triticale.2023.1[B3.Triticale.2023.1$Treatment == "Panel" , c("Corrected.TIME" , "Temperature_C")]
+
+
+B3.Triticale.2023$index<-seq(1,dim(B3.Triticale.2023)[[1]])
+
+str(B3.Triticale.2023)
+
+
+
+
+###################################################
+###         B4.Fallow.2023
+###################################################
+
+
+
+B4.Fallow.2023.1 <- read.csv(file = "OxygenSensorsData2022_2023\\20230213_Download\\ProcessedData\\20230213_Download4Fallow2023-04-11.csv") ;
+
+
+str(B4.Fallow.2023.1)
+
+
+B4.Fallow.2023 <- B4.Fallow.2023.1[B4.Fallow.2023.1$Treatment == "Panel" , c("Corrected.TIME" , "Temperature_C")]
+
+
+B4.Fallow.2023$index<-seq(1,dim(B4.Fallow.2023)[[1]])
+
+str(B4.Fallow.2023)
+
+##################################################################
+###       B3.Triticale.2023  aligned  B4.Fallow.2023
+##################################################################
+
+
+
+B3.Triticale.2023_B4.Fallow.2023 <-  dtw(x = B3.Triticale.2023$Temperature_C, 
+                               
+                               y = B4.Fallow.2023$Temperature_C,
+                               
+                               keep=TRUE,step=asymmetric,
+                               
+                               open.end=TRUE,open.begin=TRUE)
+
+
+
+
+plot(B3.Triticale.2023_B4.Fallow.2023,type="two",off=50) 
+
+
+str(B3.Triticale.2023_B4.Fallow.2023)
+
+B3.Triticale.2023_B4.Fallow.2023$index1
+
+B3.Triticale.2023_B4.Fallow.2023$index2
+
+
+
+plot(x = B4.Fallow.2023$index , y = B4.Fallow.2023$Temperature_C, type = "l" , col = "BLUE"  )
+
+points(x = B3.Triticale.2023$index , y = B3.Triticale.2023$Temperature_C, type = "l" , col = "GREEN"  )
+
+
+###### Aligned series
+
+B3.Triticale.2023$index.A <- B3.Triticale.2023$index + B3.Triticale.2023_B4.Fallow.2023$index2[[1]]+1
+
+points(x = B3.Triticale.2023$index.A , y =B3.Triticale.2023$Temperature_C, type = "l" , col = "RED"  )
+
+
+######## Correct the time stamp
+
+head(B3.Triticale.2023)
+
+head(B4.Fallow.2023)
+
+
+
+B3.Triticale.2023$Corrected.TIME <- as.POSIXct(B3.Triticale.2023$Corrected.TIME) ;
+
+B4.Fallow.2023$Corrected.TIME <- as.POSIXct(B4.Fallow.2023$Corrected.TIME) ;
+
+
+Time.shift <- B4.Fallow.2023[B3.Triticale.2023$index.A [[1]] , c("Corrected.TIME")] -
+  
+  B3.Triticale.2023[B3.Triticale.2023$index [[1]] , c("Corrected.TIME")]
+  
+
+
+B3.Triticale.2023$True.Time<-as.POSIXct(B3.Triticale.2023$Corrected.TIME) + Time.shift 
+
+
+
+######## check Correct the time stamp 
+
+plot(x = B3.Triticale.2023$True.Time , y = B3.Triticale.2023$Temperature_C, type = "l" , col = "BLUE")
+
+points(x = B4.Fallow.2023$Corrected.TIME, B4.Fallow.2023$Temperature_C, type = "l" ,  col = "RED")
 
 
 
 
 
+
+
+
+
+
+
+
+######## Write the time aligned data series in the corrected file #############################################
+
+
+str(B3.Triticale.2023.1)
+
+B3.Triticale.2023.1$True.Time <- as.POSIXct(B3.Triticale.2023.1$Corrected.TIME)  + Time.shift ;
+
+B3.Triticale.2023.write <- B3.Triticale.2023.1[, c( "Corrected.TIME" , "Block" , "C_Crop" , "Treatment" , "Depth_cm" , "Temperature_C", "Calibrated.O2_Kpa") ] ;
+
+B3.Triticale.2023.write$Corrected.TIME <- B3.Triticale.2023.1$True.Time ;
+
+
+str(B3.Triticale.2023.write)
+
+
+write.csv( x = B3.Triticale.2023.write,
+           
+           file = "OxygenSensorsData2022_2023\\20230213_Download\\ProcessedData\\20230213_Download3Triticale2023-04-11.csv" ,
+           
+           quote = F, row.names=F)  ;

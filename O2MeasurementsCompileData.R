@@ -76,7 +76,7 @@ Main.Directorys<-c("./OxygenSensorsData2021" , "./OxygenSensorsData2022_2023" ) 
 
 Main.Directorys
 
-MD=1
+MD=2
 
 Main.Directorys[MD]
 
@@ -85,7 +85,7 @@ Files.Directories<-list.files(Main.Directorys[MD]);
 
 Files.Directories
 
-File.to.Download = 3
+File.to.Download = 2
 
 Files.Directories[[File.to.Download]]
 
@@ -101,7 +101,7 @@ Files.to.Read[Read.Files]
 
 Read.Files
 
-Files.to.Read[Read.Files[[6]]]
+Files.to.Read[Read.Files[[1]]]
 
 
 
@@ -116,7 +116,7 @@ O2.Data.2021.0<-data.frame( Corrected.TIME = character(), Block = integer() , C_
 
 str(O2.Data.2021.0)
 
-# i = Read.Files[[6]]
+# i = Read.Files[[3]]
 
 for (i in Read.Files) {
   
@@ -244,9 +244,9 @@ levels(O2.Data.2021.Plot$C_Crop) ;
 
 levels(O2.Data.2021.Plot$Treatment) ;
 
-Block.sel ="1" 
+Block.sel ="3" 
 
-C_Crop.sel = "Clover" 
+C_Crop.sel = "Triticale" 
 
 Treatment.sel = "B"
 
@@ -482,4 +482,8 @@ legend(x = "bottomleft" , legend = legend.1, lty = legend.2, col = legend.4,
                                                 "CompiledData" , Files.Directories[[File.to.Download]] , 
                                                 
                                                 Sys.Date() ,".csv" ) , quote = F, row.names=F)  ;
+
+
+
+
 
