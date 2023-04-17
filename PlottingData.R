@@ -65,7 +65,65 @@ str(Weather.data)
 
 ##################### Get the data in the correct data classes  #######################################################
 
-Weather.data$Date.Time <- as.POSIXct(Weather.data$Date.Time) ;
+Weather.data$Date.Time <- as.POSIXct(Weather.data$Date.Time) ; 
+
+ 
+# ################################  Scale volumetric soil moisture ranges #################################### 
+# 
+# 
+# 
+# Range.2pct <- range(Weather.data.2021 $ Soil.Moisture.Percent..2in..pct., na.rm = T)
+# 
+# ((Range.2pct[1] + 7) - Range.2pct[1]) / (Range.2pct[2] - Range.2pct[1])
+# 
+# 
+# 
+################################  Function to Min-Max scale a variable  #################################### 
+
+# Min.Max.Scale <- function (x, ...) {
+#   
+#   low <- min(x , na.rm = T ) 
+#   
+#   high <- max(x , na.rm = T )
+#   
+#   scaled.x.all <- (x - low ) / ( high - low)
+#   
+#   return (scaled.x.all ) 
+#   
+# }
+# 
+# #### Test ####
+# 
+# Min.Max.Scale ( x = Weather.data.2021 $ Soil.Moisture.Percent..2in..pct.)
+
+
+################################ Set max and min Moisture form the complete data series  ########################### 
+
+Range.Soil.5cm <- range(Weather.data$Soil.Moisture.Percent..2in..pct., na.rm = T) ;
+
+
+Weather.data$Soil.Moisture.Sat.5cm <- (Weather.data$Soil.Moisture.Percent..2in..pct. - Range.Soil.5cm [1]) /
+  
+                                       (Range.Soil.5cm [2] - Range.Soil.5cm [1]) ;
+
+
+
+
+###### There is no data for the 20 cm depth ( 8 in)   is approximated by the average between 4 in and 20 in ####
+
+Weather.data$Soil.Moisture.Percent.20cm <- 
+  
+  rowMeans( Weather.data [ , c( "Soil.Moisture.Percent..4in..pct." ,  "Soil.Moisture.Percent..20in..pct." ) ] , na.rm = T ) ;
+
+Range.Soil.20cm <- range(Weather.data$Soil.Moisture.Percent.20cm, na.rm = T) ;
+
+Weather.data$Soil.Moisture.Sat.20cm <- (Weather.data$Soil.Moisture.Percent.20cm - Range.Soil.20cm [1]) /
+  
+  (Range.Soil.20cm [2] - Range.Soil.20cm [1]) ;
+
+
+str(Weather.data)
+
 
 
 ###############################################################################################################
@@ -624,7 +682,7 @@ plot(Cumm.Prec ~ Date.Time , data = Weather.data.2021 , xlim = Weather.Date.Rang
      
      lwd = 5 , col = "MAGENTA" ,  cex= 1.5, cex.lab = 2.0,
      
-     ylab = "Precipitation Acumulation in" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
+     ylab = "Precipitationin" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
 
 
 ###############################################################################################################
@@ -635,7 +693,7 @@ plot(Precipitation.Increment..in. ~ Date.Time ,data = Weather.data.2021 , xlim =
      
      type = "h", lwd = 10 , col = "MAGENTA" ,  cex= 1.5, cex.lab = 2.0,
      
-     ylab = "Precipitation in" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
+     ylab = "Precipitation in/h" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
 
 grid(col = "BLACK")
 
@@ -645,12 +703,6 @@ grid(col = "BLACK")
 
 
 str(Weather.data.2021)
-
-###### There is no date for the 20 cm depth ( 8 in)   is approximated by the average between 4 in and 20 in ####
-
-Weather.data.2021$Soil.Moisture.Percent.20cm <- 
-  
-  rowMeans( Weather.data.2021 [ , c( "Soil.Moisture.Percent..4in..pct." ,  "Soil.Moisture.Percent..20in..pct." ) ] , na.rm = T ) ;
 
 
 
@@ -686,45 +738,6 @@ grid( col = "BLACK")
 
 str(Weather.data.2021)
 
-################################  Scale volumetric soil moisture ranges #################################### 
-
-
-
-Range.2pct <- range(Weather.data.2021 $ Soil.Moisture.Percent..2in..pct., na.rm = T)
-
-((Range.2pct[1] + 7) - Range.2pct[1]) / (Range.2pct[2] - Range.2pct[1])
-
-
-
-################################  Function to Min-Max scale a variable  #################################### 
-
-Min.Max.Scale <- function (x, ...) {
-  
-  low <- min(x , na.rm = T ) 
-  
-  high <- max(x , na.rm = T )
-  
-  scaled.x.all <- (x - low ) / ( high - low)
-  
-  return (scaled.x.all ) 
-  
-}
-
-#### Test ####
-
-Min.Max.Scale ( x = Weather.data.2021 $ Soil.Moisture.Percent..2in..pct.)
-
-
-
-################################  Calculate saturation moisture percentage  #################################### 
-
-Weather.data.2021$Soil.Moisture.Sat.5cm <- Min.Max.Scale ( x = Weather.data.2021$Soil.Moisture.Percent..2in..pct.) ;
-
-Weather.data.2021$Soil.Moisture.Sat.20cm <- Min.Max.Scale ( x = Weather.data.2021$Soil.Moisture.Percent.20cm) ;
-
-Weather.data.2021$Soil.Moisture.Sat.50cm <- Min.Max.Scale ( x = Weather.data.2021$Soil.Moisture.Percent..20in..pct.) ;
-
-
 
 
 ####################################### Plot  ################################################
@@ -741,11 +754,6 @@ plot(Soil.Moisture.Sat.5cm ~ Date.Time , data = Weather.data.2021 , xlim = Weath
 points(Soil.Moisture.Sat.20cm ~ Date.Time , data = Weather.data.2021 ,  type = "b" ,
        
        col = "BLUE" , cex = 2 , pch = 17 ) ;
-
-points(Soil.Moisture.Sat.50cm ~ Date.Time ,data = Weather.data.2021 ,  type = "b" ,
-       
-       col = "BROWN", cex = 2 , pch = 17 ) ;
-
 
 grid( col = "BLACK")
 
@@ -822,37 +830,39 @@ legend(x = "topleft" , legend = legend.1, lty = legend.2, col = legend.4,
 
 
 
-# ########################### Plot Precipitation  Accumulation ################################################
-# 
-# par (mar = c(0, 6, 1 , 2) + 0.1)
-# 
-# 
-# plot(Cumm.Prec ~ Date.Time , data = Weather.data.2021 , xlim = Weather.Date.Range , type = "l"  ,
-# 
-#      lwd = 5 , col = "MAGENTA" ,  cex= 1.5, cex.lab = 2.0,
-# 
-#      ylab = "Precipitation in" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
-# 
-# grid(col = "BLACK")
-# 
+########################### Plot Precipitation  Accumulation ################################################
 
-########################### Plot Precipitation  ################################################
+par (mar = c(0, 6, 1 , 2) + 0.1)
 
-plot(Precipitation.Increment..in. ~ Date.Time ,data = Weather.data.2021 , xlim = Weather.Date.Range ,
 
-     type = "h", lwd = 10 , col = "MAGENTA" ,  cex= 1.5, cex.lab = 2.0,
+plot(Cumm.Prec ~ Date.Time , data = Weather.data.2021 , xlim = Weather.Date.Range , type = "l"  ,
+
+     lwd = 5 , col = "MAGENTA" ,  cex= 1.5, cex.lab = 2.0,
 
      ylab = "Precipitation in" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
 
 grid(col = "BLACK")
 
 
+# ########################### Plot Precipitation  ################################################
+# 
+# par (mar = c(0, 6, 1 , 2) + 0.1)
+# 
+# plot(Precipitation.Increment..in. ~ Date.Time ,data = Weather.data.2021 , xlim = Weather.Date.Range ,
+# 
+#      type = "h", lwd = 10 , col = "MAGENTA" ,  cex= 1.5, cex.lab = 2.0,
+# 
+#      ylab = "Precipitation in" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
+# 
+# grid(col = "BLACK")
+# 
+# 
 ########################### Plot Soil Moisture  ################################################
 
 
 plot(Soil.Moisture.Sat.5cm ~ Date.Time , data = Weather.data.2021 , xlim = Weather.Date.Range , 
      
-     ylim = c(0 , 1) , type = "b" , col = "RED" , cex = 2 , cex.lab = 2.0, pch = 17,
+     ylim = c(0.2 , 0.8) , type = "b" , col = "RED" , cex = 2 , cex.lab = 2.0, pch = 17,
      
      ylab = "Soil Moisture" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
 
@@ -862,6 +872,7 @@ points(Soil.Moisture.Sat.20cm ~ Date.Time , data = Weather.data.2021 ,  type = "
        
        col = "BLUE" , cex = 2 , pch = 17 ) ;
 
+grid( col = "BLACK")
 
 grid( col = "BLACK")
 
