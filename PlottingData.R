@@ -306,144 +306,425 @@ xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Da
 str(Plot.Data.4 )
 
 
+Plot.Data.5 <- Plot.Data.4 [ Plot.Data.4$Block == "3" &  Plot.Data.4$C_Crop == "Triticale" ,  ] ;
+
+str(Plot.Data.5 )
+
+
+Plot.Data.5 <- droplevels( x = Plot.Data.5) ;
+
+levels(Plot.Data.5$Combined.Factors)
+
+str(Plot.Data.5 )
+
+
+Date.Range.2021.6 <- as.POSIXct(c(min(Plot.Data.5$Corrected.TIME) , max(Plot.Data.5$Corrected.TIME) + (60*60*24*0))) ;
 
 
 
-
-
-
-+################## Select the core data to plot ##########################################################
-
-str(Data.2021)
-
-Block = "4"
-
-C_Crop = "Triticale"
-
-
-Sensor.Temperature.data.1 <- Data.2021[ Data.2021$Block == Block & Data.2021$C_Crop == C_Crop & Data.2021$Treatment == "B" ,] ;
-
-########################  Plot the data  ##########################################################
-
-Temperature.Range.3 <- c(19,46) ;
-
-Date.Range.2021.3 <- as.POSIXct(c("2021-08-20 00:00:00", "2021-08-28 00:00:00")) ;
-
-
-
-Plot.1 <- xyplot(Temperature_C ~ Corrected.TIME, groups =  Depth_cm ,  data = Sensor.Temperature.data.1 , type = "l",
+xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.5 , 
        
-        xlim = Date.Range.2021.3 , ylim = Temperature.Range.3 , auto.key = T, main = paste0("Block -", Block ,C_Crop ))  ;
+       xlim = Date.Range.2021.6, ylim = Temperature.Range.1  , type = "p" , pch = 17, 
+       
+       col = fill.colors[1:4] , main = "2021",
+       
+       
+       key = list(space = "right", adj = 1,
+                  
+                  text = list(levels(Plot.Data.5$Combined.Factors)),
+                  
+                  points = list(pch = 17, col = fill.colors[1:4]  ))) ;
 
 
-Plot.1
+
+########################### Data.2021  without B3 Triticale  ################################################
+
+str(Plot.Data.4 )
+
+
+Plot.Data.6 <- Plot.Data.4 [ !(Plot.Data.4$Block == "3" &  Plot.Data.4$C_Crop == "Triticale") ,  ] ;
+
+str(Plot.Data.6 )
+
+
+
+Plot.Data.6 <- droplevels( x = Plot.Data.6) ;
+
+levels(Plot.Data.6$Combined.Factors)
+
+str(Plot.Data.6 )
+
+
+
+xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.6 ,   type = "p" , pch = 17, 
+       
+       col = fill.colors[1:12] , main = "2021",
+       
+              key = list(space = "right", adj = 1,
+                  
+                  text = list(levels(Plot.Data.6$Combined.Factors)),
+                  
+                  points = list(pch = 17, col = fill.colors[1:12]  ))) ;
+
 
 
 ###############################################################################################################
 #                          Plot O2 
 ###############################################################################################################
 
-
-str(Data.2021)
-
-Date.Range.2021.1 <- as.POSIXct(c(min(Data.2021$Corrected.TIME) , max(Data.2021$Corrected.TIME) + (60*60*24*0))) ;
-
-Date.Range.2021.3 <- as.POSIXct(c("2021-08-20 00:00:00", "2021-08-28 00:00:00")) ;
-
-O2.Range.1 <- c(min(Data.2021$Calibrated.O2_Kpa , na.rm = T) , max(Data.2021$Calibrated.O2_Kpa , na.rm = T)) ;
-
-O2.Range.2 <- c(0,30) ;
-
-fill.colors <- colors()[1:18] ;
+str(Plot.Data.6 )
 
 
-########################  Plot the data  ##########################################################
-
-Data.2021$Grouped.Factors <- as.factor(paste(Data.2021$Block, Data.2021$C_Crop, Data.2021$Treatment, Data.2021$Depth_cm )) ;
-
-
-xyplot(Calibrated.O2_Kpa ~ Corrected.TIME, 
+xyplot(Calibrated.O2_Kpa ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.6 ,   type = "p" , pch = 17, 
        
-       groups = Grouped.Factors,  data = Data.2021 ,  xlim = Date.Range.2021.1, ylim = O2.Range.2  , type = "p" , pch = 15, col = fill.colors,
-       
+       col = fill.colors[1:12] , main = "2021",
        
        key = list(space = "right", adj = 1,
                   
-                  text = list(levels(Data.2021$Grouped.Factors)),
+                  text = list(levels(Plot.Data.6$Combined.Factors)),
                   
-                  points = list(pch = 15 , col = fill.colors))) ;
+                  points = list(pch = 17, col = fill.colors[1:12]  ))) ;
 
 
 
 
-################## Add new data to the plot with the package lattice extra ##########################################################
+########################### Factors not to plot  because there are issues with the data ########################
+# 
+# 2021 Data.2021
+# 
+# B4 Clover -> problems with the power (battery)
+# 
+# B3 3Spp -> weird data
+#
+# B3 Triticale -> weird data
 
-Block = "4"
 
-C_Crop = "Triticale"
-
-
-O2.data.2 <- Data.2021[ Data.2021$Block == Block & Data.2021$C_Crop == C_Crop & Data.2021$Treatment == "C" ,] ;
+str(Plot.Data.6 )
 
 
-xyplot(Calibrated.O2_Kpa ~ Corrected.TIME, groups = Depth_cm,  data = O2.data.2  , type = "l",
-                 
-                 xlim = Date.Range.2021.1, ylim = O2.Range.2, main = paste0("Block -", Block ,C_Crop )) ;
+xyplot(Calibrated.O2_Kpa ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.6 ,   type = c("p", "g") , pch = 17, 
+       
+       col = fill.colors[1:12] , main = "2021",
+       
+       key = list(space = "right", adj = 1,
+                  
+                  text = list(levels(Plot.Data.6$Combined.Factors)),
+                  
+                  points = list(pch = 17, col = fill.colors[1:12]  ))) ;
+
+
+
+
+
+
+###############################################################################################################
+#                         Calculate Temperature and O2 averaged for all factors
+###############################################################################################################
+
+str(Plot.Data.6 ) 
+
+
+
+names(Plot.Data.6)
+
+
+
+Plot.Data.7.mean <- aggregate(cbind( Temperature_C, Calibrated.O2_Kpa)  ~  Corrected.TIME + Depth_cm,  data = Plot.Data.6 , FUN = mean  ) ;
+
+Plot.Data.7.sd <- aggregate(cbind( Temperature_C, Calibrated.O2_Kpa)  ~ Corrected.TIME + Depth_cm,  data = Plot.Data.6 , FUN = sd  ) ;
+
+Plot.Data.7 <- merge(Plot.Data.7.mean , Plot.Data.7.sd, by = c("Corrected.TIME" , "Depth_cm" ) );
+
+str( Plot.Data.7 ) 
+
+names(Plot.Data.7) <- c( "Corrected.TIME" , "Depth_cm" ,"Temperature_C.Avg" , "Calibrated.O2_Kpa.Avg" , "Temperature_C.Std" , "Calibrated.O2_Kpa.Std") ;
+
+
+###############################################################################################################
+#                         Calculate confidence intervals usind the T distribution qt()
+###############################################################################################################
+
+
+
+Plot.Data.7$T.95.Interval <- qt(0.975, df= 12-1) * (Plot.Data.7$Temperature_C.Std / sqrt (12)) ;
+
+Plot.Data.7$T.Low <- Plot.Data.7$Temperature_C.Avg - Plot.Data.7$T.95.Interval ;
+
+Plot.Data.7$T.High <- Plot.Data.7$Temperature_C.Avg +  Plot.Data.7$T.95.Interval ;
+
+Plot.Data.7$O2.95.Interval <- qt(0.975, df= 12-1) * (Plot.Data.7$Calibrated.O2_Kpa.Std / sqrt (12)) ;
+
+Plot.Data.7$O2.Low <- Plot.Data.7$Calibrated.O2_Kpa.Avg - Plot.Data.7$O2.95.Interval ;
+
+Plot.Data.7$O2.High <- Plot.Data.7$Calibrated.O2_Kpa.Avg + Plot.Data.7$O2.95.Interval ;
+
+
+str( Plot.Data.7 )
+
+head ( Plot.Data.7 )
+
+
+###############################################################################################################
+#                       Plot T and O2 averages  with error bars
+###############################################################################################################
+
+
+plot(Temperature_C.Avg ~ Corrected.TIME, data = Plot.Data.7 , type = "b" , col = "RED" , pch = 17 , cex= 1.5 ) ;
+
+arrows(x = Plot.Data.7$Corrected.TIME , y0 = Plot.Data.7$T.Low , x1 = Plot.Data.7$Corrected.TIME , 
+       
+       y1 = Plot.Data.7$T.High, angle = 90,  code = 3, length = 0.05) ;
+
+grid(col = "BLACK")
+
+
+###############################################################################################################
+#                       Plot T averages with error shade
+###############################################################################################################
+
+########################### setting the chart background color ###########################
+
+par( bg = gray(level = 0.8))
+
+
+########################### Plot T Depth = 5cm ################################################
+
+Plot.Data.T.5cm <- Plot.Data.7[ Plot.Data.7$Depth_cm == "5" , ] ;
+
+str( Plot.Data.T.5cm  )
+
+
+########################### Set plot axis range  ################################################
+
+
+Date.Range.2021.8 <- as.POSIXct(c(min(Plot.Data.T.5cm$Corrected.TIME) , max(Plot.Data.T.5cm$Corrected.TIME) + (60*60*24*0))) ;
+
+Temperature.Range.3 <-  c(min(Plot.Data.T.5cm$T.Low , na.rm = T) , max(Plot.Data.T.5cm$T.High , na.rm = T)) ;
+
+
+####################################### Plot  ################################################
+
+plot(Temperature_C.Avg ~ Corrected.TIME, data = Plot.Data.T.5cm , type = "b" ,  
+     
+     xlim =  Date.Range.2021.8 , ylim = Temperature.Range.3 ,col = "RED" , pch = 17 , cex= 1.5 ) ;
+
+polygon( x = c(rev(Plot.Data.T.5cm $Corrected.TIME), Plot.Data.T.5cm $Corrected.TIME ) , 
+         
+         y = c(rev(Plot.Data.T.5cm $T.Low ), Plot.Data.T.5cm $T.High ), col = adjustcolor( col = "RED" , alpha.f = 0.2), border = F) ;
+
+grid(col = "BLACK")
+
+
+
+########################### Plot T Depth = 20cm ################################################
+
+Plot.Data.T.20cm <- Plot.Data.7[ Plot.Data.7$Depth_cm == "20" , ] ;
+
+str( Plot.Data.T.20cm  )
+
+
+####################################### Plot  ################################################
+
+points(Temperature_C.Avg ~ Corrected.TIME, data = Plot.Data.T.20cm  , type = "b" , col = "BLUE" , pch = 17 , cex= 1.5 ) ;
+
+
+polygon( x = c(rev(Plot.Data.T.20cm $Corrected.TIME), Plot.Data.T.20cm $Corrected.TIME ) , 
+         
+         y = c(rev(Plot.Data.T.20cm $T.Low ), Plot.Data.T.20cm $T.High ), col = adjustcolor( col = "BLUE" , alpha.f = 0.2) , border = F) ;
+
+
+
+###############################################################################################################
+#                       Plot O2  averages with error shade
+###############################################################################################################
+
+
+########################### Plot O2  Depth = 5cm ################################################
+
+str( Plot.Data.T.5cm  )
+
+
+########################### Set plot axis range  ################################################
+
+
+O2.Range.1 <- c(min(Plot.Data.7$O2.Low , na.rm = T) , max(Plot.Data.7$O2.High , na.rm = T)) ;
+
+
+####################################### Plot  ################################################
+
+plot(Calibrated.O2_Kpa.Avg ~ Corrected.TIME, data = Plot.Data.T.5cm , type = "b" ,  
+     
+     xlim =  Date.Range.2021.8 , ylim = O2.Range.1 ,col = "RED" , pch = 17 , cex= 1.5 ) ;
+
+polygon( x = c(rev(Plot.Data.T.5cm $Corrected.TIME), Plot.Data.T.5cm $Corrected.TIME ) , 
+         
+         y = c(rev(Plot.Data.T.5cm$O2.Low ), Plot.Data.T.5cm$O2.High ), col = adjustcolor( col = "RED" , alpha.f = 0.2), border = F) ;
+
+grid(col = "BLACK")
+
+
+
+########################### Plot O2 Depth = 20cm ################################################
+
+Plot.Data.T.20cm <- Plot.Data.7[ Plot.Data.7$Depth_cm == "20" , ] ;
+
+str( Plot.Data.T.20cm  )
+
+####################################### Plot  ################################################
+
+points(Calibrated.O2_Kpa.Avg ~ Corrected.TIME, data = Plot.Data.T.20cm  , type = "b" , col = "BLUE" , pch = 17 , cex= 1.5 ) ;
+
+
+
+polygon( x = c(rev(Plot.Data.T.20cm $Corrected.TIME), Plot.Data.T.20cm $Corrected.TIME ) , 
+         
+         y = c(rev(Plot.Data.T.20cm $O2.Low ), Plot.Data.T.20cm $O2.High ), col = adjustcolor( col = "BLUE" , alpha.f = 0.2) , border = F) ;
+
+
+
 
 
 ###############################################################################################################
 #                          Plot Cumulative Precipitation
 ###############################################################################################################
 
-################## Select the time range similar to the time ramnge for T and 02 ##############################
+################## Select the time range similar to the time range for T and 02 ##############################
 
 str(Weather.data)
 
-Weather.data.1 <- Weather.data[ Weather.data$Date.Time >= as.POSIXct("2021-08-20 00:00:01") & 
+Weather.data.2021 <- Weather.data[ Weather.data $ Date.Time >= Date.Range.2021.8[1] & 
                                   
-                                  Weather.data$Date.Time <= as.POSIXct("2021-08-28 00:00:00") , ] ;
+                                  Weather.data $ Date.Time <= Date.Range.2021.8[2] , ] ;
 
 
-Weather.data.1[is.na(Weather.data.1$Precipitation.Increment..in.), c("Precipitation.Increment..in.") ] = 0 ;
+Weather.data.2021[is.na(Weather.data.2021 $ Precipitation.Increment..in.), c("Precipitation.Increment..in.") ] = 0 ;
 
-Weather.data.1$Cumm.Prec <- cumsum(Weather.data.1$Precipitation.Increment..in.) ;
+Weather.data.2021 $ Cumm.Prec <- cumsum(Weather.data.2021 $ Precipitation.Increment..in.) ;
 
 
-str(Weather.data.1)
+str(Weather.data.2021)
 
 
 str(Weather.data$Date.Time)
 
-Weather.Date.Range <- as.POSIXct(c("2021-08-20 00:00:01", "2021-08-28 00:00:00")) ;
+Weather.Date.Range <- Date.Range.2021.8  ;
 
-plot(Cumm.Prec ~ Date.Time ,data = Weather.data.1 , xlim = Weather.Date.Range , type = "l" )
+plot(Cumm.Prec ~ Date.Time , data = Weather.data.2021 , xlim = Weather.Date.Range , type = "l"  , lwd = 3 , col = "BLUE")
 
 
 ###############################################################################################################
-#                         soil moisture 
+#                          Plot  Precipitation 
+###############################################################################################################
+
+plot(Precipitation.Increment..in. ~ Date.Time ,data = Weather.data.2021 , xlim = Weather.Date.Range , type = "h", lwd = 10 , col = "BLUE" )
+
+
+
+###############################################################################################################
+#                         Plot  volumetric soil moisture 
 ###############################################################################################################
 
 
-str(Weather.data.1)
+str(Weather.data.2021)
 
-Soil.Moisture.Range <- c(min(Weather.data.1[ , c("Soil.Moisture.Percent..2in..pct.", "Soil.Moisture.Percent..40in..pct.")], na.rm = T),
+###### There is no date for the 20 cm depth ( 8 in)   is approximated by the average between 4 in and 20 in ####
+
+Weather.data.2021$Soil.Moisture.Percent.20cm <- 
+  
+  rowMeans( Weather.data.2021 [ , c( "Soil.Moisture.Percent..4in..pct." ,  "Soil.Moisture.Percent..20in..pct." ) ] , na.rm = T ) ;
+
+
+
+################## Select the time range similar to the time range for T and 02 ##############################
+
+Soil.Moisture.Range <- c(min(Weather.data.2021[ , c("Soil.Moisture.Percent..2in..pct.")], na.rm = T),
                          
-                         max(Weather.data.1[ , c("Soil.Moisture.Percent..2in..pct.", "Soil.Moisture.Percent..40in..pct.")], na.rm = T)) ;
+                         max(Weather.data.2021[ , c("Soil.Moisture.Percent..4in..pct.")], na.rm = T)) ;
 
-plot(Soil.Moisture.Percent..2in..pct. ~ Date.Time ,data = Weather.data.1 , xlim = Weather.Date.Range , 
+####################################### Plot  ################################################
+
+plot(Soil.Moisture.Percent..2in..pct. ~ Date.Time , data = Weather.data.2021 , xlim = Weather.Date.Range , 
      
-     ylim = Soil.Moisture.Range, type = "l" , col = "RED" ) ;
+     ylim = Soil.Moisture.Range , type = "b" , col = "RED" ) ;
 
-points(Soil.Moisture.Percent..4in..pct. ~ Date.Time ,data = Weather.data.1 , xlim = Weather.Date.Range , 
+
+points(Soil.Moisture.Percent..4in..pct. ~ Date.Time , data = Weather.data.2021 ,  type = "b" , col = "BLUE" ) ;
+
+points(Soil.Moisture.Percent..20in..pct. ~ Date.Time ,data = Weather.data.2021 ,  type = "l" , col = "CYAN" ) ;
+
+points(Soil.Moisture.Percent.20cm ~ Date.Time ,data = Weather.data.2021 ,  type = "b" , col = "MAGENTA" ) ;
+
+grid( col = "BLACK")
+
+
+
+###############################################################################################################
+#                         Plot  soil moisture in % saturation
+###############################################################################################################
+
+
+str(Weather.data.2021)
+
+################################  Scale volumetric soil moisture ranges #################################### 
+
+
+
+Range.2pct <- range(Weather.data.2021 $ Soil.Moisture.Percent..2in..pct., na.rm = T)
+
+((Range.2pct[1] + 7) - Range.2pct[1]) / (Range.2pct[2] - Range.2pct[1])
+
+
+
+################################  Function to Min-Max scale a variable  #################################### 
+
+Min.Max.Scale <- function (x, ...) {
+  
+  low <- min(x , na.rm = T ) 
+  
+  high <- max(x , na.rm = T )
+  
+  scaled.x.all <- (x - low ) / ( high - low)
+  
+  return (scaled.x.all ) 
+  
+}
+
+#### Test ####
+
+Min.Max.Scale ( x = Weather.data.2021 $ Soil.Moisture.Percent..2in..pct.)
+
+
+
+################################  Calculate saturation moisture percentage  #################################### 
+
+Weather.data.2021$Soil.Moisture.Sat.5cm <- Min.Max.Scale ( x = Weather.data.2021$Soil.Moisture.Percent..2in..pct.) ;
+
+Weather.data.2021$Soil.Moisture.Sat.20cm <- Min.Max.Scale ( x = Weather.data.2021$Soil.Moisture.Percent.20cm) ;
+
+Weather.data.2021$Soil.Moisture.Sat.50cm <- Min.Max.Scale ( x = Weather.data.2021$Soil.Moisture.Percent..20in..pct.) ;
+
+
+
+
+####################################### Plot  ################################################
+
+plot(Soil.Moisture.Sat.5cm ~ Date.Time , data = Weather.data.2021 , xlim = Weather.Date.Range , 
      
-      type = "l" , col = "BLUE" ) ;
+     ylim = c(0 , 1) , type = "b" , col = "RED" ) ;
 
-points(Soil.Moisture.Percent..20in..pct. ~ Date.Time ,data = Weather.data.1 , xlim = Weather.Date.Range , 
-       
-       type = "l" , col = "CYAN" ) ;
-points(Soil.Moisture.Percent..40in..pct. ~ Date.Time ,data = Weather.data.1 , xlim = Weather.Date.Range , 
-       
-       type = "l" , col = "MAGENTA" ) ;
+
+points(Soil.Moisture.Sat.20cm ~ Date.Time , data = Weather.data.2021 ,  type = "b" , col = "BLUE" ) ;
+
+points(Soil.Moisture.Sat.50cm ~ Date.Time ,data = Weather.data.2021 ,  type = "b" , col = "BROWN" ) ;
+
+
+grid( col = "BLACK")
+
+
+
+
+
+
 
 
 ################## compute rolling average ##############################
