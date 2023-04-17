@@ -126,13 +126,30 @@ str(Weather.data)
 
 
 
+# ###############################################################################################################
+# #                          2021 Data
+# ###############################################################################################################
+# 
+# Data.2021 <- read.csv (file = "OxygenSensorsData2021\\CuredDataOxygenSensorsData20212023-04-13.csv" , header = T) ;
+# 
+# str(Data.2021)
+# 
+
+
+
 ###############################################################################################################
-#                          2021 Data
+#                          2022 Data
 ###############################################################################################################
 
-Data.2021 <- read.csv (file = "OxygenSensorsData2021\\CuredDataOxygenSensorsData20212023-04-13.csv" , header = T) ;
+Data.2022 <- read.csv (file = "OxygenSensorsData2022_2023\\CuredDataOxygenSensorsData2022_20232023-04-13.csv" , header = T) ;
 
-str(Data.2021)
+str(Data.2022)
+
+
+##################### Make Data.2021 <- Data.2022   to use the same code as for the 2021 data ################
+
+Data.2021 <- Data.2022 ;
+
 
 ##################### Get the data in the correct data classes  #######################################################
 
@@ -204,13 +221,12 @@ levels(Data.2021$Combined.Factors)
 
 
 
-xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors,  data = Data.2021, 
+xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors,  data = Data.2021, type = "p" ,
        
-       xlim = Date.Range.2021.1, ylim = Temperature.Range.1  , type = "p" , pch = 17, 
+       pch = 17,   col = fill.colors [1:24], main = "2022",
        
-       col = fill.colors [1:24], main = "2021",
-       
-       
+       # xlim = Date.Range.2021.1 ,  ylim = Temperature.Range.1 
+
        key = list(space = "right", adj = 1,
                   
                   text = list(levels(Data.2021$Combined.Factors)),
@@ -228,10 +244,21 @@ xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors,  data = Data.2
 #
 # B3 Triticale -> weird data
 
-########################### Data.2021 B4 Clover ################################################
+# ##################################################################################################
+# 
+#  2022 Data.2022
+# 
+# B3 Triticale Treatment B 5 -> problems with the power (battery) weird data
+# 
+# B3 Clover Clover -> weird data
+# 
+# B4 Triticale Treatment B depth = 5 cm -> weird O2 data
 
 
-Plot.Data.1 <- Data.2021 [Data.2021$Block == "4" &  Data.2021$C_Crop == "Clover",  ] ;
+##############################  B3 Triticale  ################################################
+
+
+Plot.Data.1 <- Data.2021 [Data.2021$Block == "3" &  Data.2021$C_Crop == "Triticale",  ] ;
 
 str(Plot.Data.1 )
 
@@ -244,9 +271,9 @@ levels(Plot.Data.1$Combined.Factors)
 
 xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.1 , 
        
-       xlim = Date.Range.2021.1, ylim = Temperature.Range.1  , type = "p" , pch = 17, 
+       #xlim = Date.Range.2021.1, ylim = Temperature.Range.1  ,
        
-       col = fill.colors [1:4], main = "2021",
+        type = "p" , pch = 17, col = fill.colors [1:4], main = "2021",
        
        
        key = list(space = "right", adj = 1,
@@ -257,13 +284,42 @@ xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Da
 
 
 
-########################### Data.2021  without B4 Clover ################################################
+##############################  B3 Triticale Treatment B ################################################
+
+str(Plot.Data.1 )
+
+Plot.Data.1.3TB <- Plot.Data.1[Plot.Data.1$Treatment == "B" ,]  ;
+
+str(Plot.Data.1.3TB)
+
+Plot.Data.1.3TB <- droplevels( x = Plot.Data.1.3TB)
+
+str(Plot.Data.1.3TB)
 
 
-str(Data.2021 )
+xyplot(Temperature_C ~ Corrected.TIME, groups = Depth_cm, data = Plot.Data.1.3TB , 
+       
+       #xlim = Date.Range.2021.1, ylim = Temperature.Range.1  ,
+       
+       type = "p" , pch = 17, col = fill.colors [c(5,6)], main = "2021",
+       
+       
+       key = list(space = "right", adj = 1,
+                  
+                  text = list(levels(Plot.Data.1.3TB$Depth_cm)),
+                  
+                  points = list(pch = 17, col = fill.colors [c(5,6)] ))) ;
 
 
-Plot.Data.2 <- Data.2021 [! (Data.2021$Block == "4" & Data.2021$C_Crop == "Clover"),  ] ;
+
+
+###########################  without B3 Triticale Treatment B Depth 5cm #######################
+
+
+str(Data.2021)
+
+
+Plot.Data.2 <- Data.2021 [! (Data.2021$Block == "3" & Data.2021$C_Crop == "Triticale" & Data.2021$Depth_cm == "5"),  ] ;
 
 str(Plot.Data.2 )
 
@@ -276,28 +332,27 @@ str(Plot.Data.2 )
 
 
 
-Date.Range.2021.3 <- as.POSIXct(c(min(Plot.Data.2$Corrected.TIME) , max(Plot.Data.2$Corrected.TIME) + (60*60*24*0))) ;
+#Date.Range.2021.3 <- as.POSIXct(c(min(Plot.Data.2$Corrected.TIME) , max(Plot.Data.2$Corrected.TIME) + (60*60*24*0))) ;
 
 
 xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.2 , 
        
-       xlim = Date.Range.2021.2, ylim = Temperature.Range.1  , type = "p" , pch = 17, 
+       # xlim = Date.Range.2021.2, ylim = Temperature.Range.1  , 
        
-       col = fill.colors[1:20] , main = "2021",
-       
+       type = "p" , pch = 17,   col = fill.colors[1:22] , main = "2021",
        
        key = list(space = "right", adj = 1,
                   
                   text = list(levels(Plot.Data.2$Combined.Factors)),
                   
-                  points = list(pch = 17, col = fill.colors[1:20]  ))) ;
+                  points = list(pch = 17, col = fill.colors[1:22]  ))) ;
 
 
-########################### Data.2021 B3 3Spp ################################################
+###########################  B3 Clover  ################################################
 
 
 
-Plot.Data.3 <- Plot.Data.2 [Plot.Data.2$Block == "3" &  Plot.Data.2$C_Crop == "3Spp",  ] ;
+Plot.Data.3 <- Plot.Data.2 [Plot.Data.2$Block == "3" &  Plot.Data.2$C_Crop == "Clover",  ] ;
 
 str(Plot.Data.3 )
 
@@ -310,10 +365,22 @@ levels(Plot.Data.3$Combined.Factors)
 
 xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.3 , 
        
-       xlim = Date.Range.2021.2, ylim = Temperature.Range.1  , type = "p" , pch = 17, 
+       # xlim = Date.Range.2021.2, ylim = Temperature.Range.1  , 
        
-       col = fill.colors [1:4], main = "2021",
+       type = "p" , pch = 17, col = fill.colors [1:4], main = "2021",
        
+       key = list(space = "right", adj = 1,
+                  
+                  text = list(levels(Plot.Data.3$Combined.Factors)),
+                  
+                  points = list(pch = 17, col = fill.colors [1:4] ))) ;
+
+
+xyplot(Calibrated.O2_Kpa ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.3 , 
+       
+       # xlim = Date.Range.2021.2, ylim = Temperature.Range.1  , 
+       
+       type = "p" , pch = 17, col = fill.colors [1:4], main = "2021",
        
        key = list(space = "right", adj = 1,
                   
@@ -324,16 +391,14 @@ xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Da
 
 
 
-
-
-########################### Data.2021  without B3 3Spp  ################################################
+###########################  without B3 Clover  ################################################
 
 
 
 str(Plot.Data.2 )
 
 
-Plot.Data.4 <- Plot.Data.2 [!( Plot.Data.2$Block == "3" &  Plot.Data.2$C_Crop == "3Spp" ),  ] ;
+Plot.Data.4 <- Plot.Data.2 [!( Plot.Data.2$Block == "3" &  Plot.Data.2$C_Crop == "Clover" ),  ] ;
 
 str(Plot.Data.4 )
 
@@ -348,68 +413,92 @@ str(Plot.Data.4 )
 Date.Range.2021.5 <- as.POSIXct(c(min(Plot.Data.4$Corrected.TIME) , max(Plot.Data.4$Corrected.TIME) + (60*60*24*0))) ;
 
 
-xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.4 , 
+xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.4 , ylim = c(-20,40) ,
        
-       xlim = Date.Range.2021.5, ylim = Temperature.Range.1  , type = "p" , pch = 17, 
-       
-       col = fill.colors[1:16] , main = "2021",
+      # xlim = Date.Range.2021.5, ylim = Temperature.Range.1  , 
+      
+      type = "p" , pch = 17,   col = fill.colors[1:20] , main = "2021",
        
        
        key = list(space = "right", adj = 1,
                   
                   text = list(levels(Plot.Data.4$Combined.Factors)),
                   
-                  points = list(pch = 17, col = fill.colors[1:16]  ))) ;
+                  points = list(pch = 17, col = fill.colors[1:20]  ))) ;
 
 
-
-########################### Data.2021 B3 Triticale  ################################################
-
-
-str(Plot.Data.4 )
-
-
-Plot.Data.5 <- Plot.Data.4 [ Plot.Data.4$Block == "3" &  Plot.Data.4$C_Crop == "Triticale" ,  ] ;
-
-str(Plot.Data.5 )
-
-
-Plot.Data.5 <- droplevels( x = Plot.Data.5) ;
-
-levels(Plot.Data.5$Combined.Factors)
-
-str(Plot.Data.5 )
-
-
-Date.Range.2021.6 <- as.POSIXct(c(min(Plot.Data.5$Corrected.TIME) , max(Plot.Data.5$Corrected.TIME) + (60*60*24*0))) ;
-
-
-
-xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.5 , 
+xyplot(Calibrated.O2_Kpa ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.4 , ylim = c(-20, 40)  , 
        
-       xlim = Date.Range.2021.6, ylim = Temperature.Range.1  , type = "p" , pch = 17, 
+       # xlim = Date.Range.2021.5, ylim = Temperature.Range.1  , 
        
-       col = fill.colors[1:4] , main = "2021",
+       type = "p" , pch = 17,   col = fill.colors[1:20] , main = "2021",
        
        
        key = list(space = "right", adj = 1,
                   
-                  text = list(levels(Plot.Data.5$Combined.Factors)),
+                  text = list(levels(Plot.Data.4$Combined.Factors)),
                   
-                  points = list(pch = 17, col = fill.colors[1:4]  ))) ;
+                  points = list(pch = 17, col = fill.colors[1:20]  ))) ;
 
 
+# ########################### without B3 Clover Treatment C Depth = 20 cm  ################################################
+# 
+# 
+# str(Plot.Data.4 )
+# 
+# 
+# Plot.Data.5 <- Plot.Data.4 [ ! (Plot.Data.4$Block == "3" &  Plot.Data.4$C_Crop == "Clover" &  Plot.Data.4$Depth_cm == "20" ), ] ;
+# 
+# str(Plot.Data.5 )
+# 
+# 
+# Plot.Data.5 <- droplevels( x = Plot.Data.5) ;
+# 
+# levels(Plot.Data.5$Combined.Factors)
+# 
+# str(Plot.Data.5 )
+# 
+# 
+# Date.Range.2021.6 <- as.POSIXct(c(min(Plot.Data.5$Corrected.TIME) , max(Plot.Data.5$Corrected.TIME) + (60*60*24*0))) ;
+# 
+# 
+# 
+# xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.5 , ylim = c(-20 , 40),
+# 
+#        # xlim = Date.Range.2021.6, 
+#        
+#        type = "p" , pch = 17, col = fill.colors[1:19] , main = "2021",
+# 
+#       
+#        key = list(space = "right", adj = 1,
+# 
+#                   text = list(levels(Plot.Data.5$Combined.Factors)),
+# 
+#                   points = list(pch = 17, col = fill.colors[1:19]  ))) ;
+# 
+# 
+# 
+# xyplot(Calibrated.O2_Kpa ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.5 , ylim = c(-20 , 40),
+#        
+#        # xlim = Date.Range.2021.6, 
+#        
+#        type = "p" , pch = 17, col = fill.colors[1:19] , main = "2021",
+#        
+#        
+#        key = list(space = "right", adj = 1,
+#                   
+#                   text = list(levels(Plot.Data.5$Combined.Factors)),
+#                   
+#                   points = list(pch = 17, col = fill.colors[1:19]  ))) ;
+# 
+# 
 
-########################### Data.2021  without B3 Triticale  ################################################
+########################### without B4 Triticale Treatment B Depth = 5 cm  ################################################
+
 
 str(Plot.Data.4 )
 
-
-Plot.Data.6 <- Plot.Data.4 [ !(Plot.Data.4$Block == "3" &  Plot.Data.4$C_Crop == "Triticale") ,  ] ;
-
-str(Plot.Data.6 )
-
-
+Plot.Data.6 <- Plot.Data.4 [ ! (Plot.Data.4$Block == "4" &  Plot.Data.4$C_Crop == "Triticale" &  Plot.Data.4$Depth_cm == "5" ), ] ;
 
 Plot.Data.6 <- droplevels( x = Plot.Data.6) ;
 
@@ -418,65 +507,104 @@ levels(Plot.Data.6$Combined.Factors)
 str(Plot.Data.6 )
 
 
-
-xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.6 ,   type = "p" , pch = 17, 
+xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.6 , ylim = c(-20 , 40),
        
-       col = fill.colors[1:12] , main = "2021",
+       # xlim = Date.Range.2021.6, 
        
-              key = list(space = "right", adj = 1,
-                  
-                  text = list(levels(Plot.Data.6$Combined.Factors)),
-                  
-                  points = list(pch = 17, col = fill.colors[1:12]  ))) ;
-
-
-
-###############################################################################################################
-#                          Plot O2 
-###############################################################################################################
-
-str(Plot.Data.6 )
-
-
-xyplot(Calibrated.O2_Kpa ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.6 ,   type = "p" , pch = 17, 
+       type = "p" , pch = 17, col = fill.colors[1:17] , main = "2021",
        
-       col = fill.colors[1:12] , main = "2021",
        
        key = list(space = "right", adj = 1,
                   
                   text = list(levels(Plot.Data.6$Combined.Factors)),
                   
-                  points = list(pch = 17, col = fill.colors[1:12]  ))) ;
+                  points = list(pch = 17, col = fill.colors[1:17]  ))) ;
 
 
 
-
-########################### Factors not to plot  because there are issues with the data ########################
-# 
-# 2021 Data.2021
-# 
-# B4 Clover -> problems with the power (battery)
-# 
-# B3 3Spp -> weird data
-#
-# B3 Triticale -> weird data
-
-
-str(Plot.Data.6 )
-
-
-xyplot(Calibrated.O2_Kpa ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.6 ,   type = c("p", "g") , pch = 17, 
+xyplot(Calibrated.O2_Kpa ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.6 , ylim = c(-20 , 40),
        
-       col = fill.colors[1:12] , main = "2021",
+       # xlim = Date.Range.2021.6, 
+       
+       type = "p" , pch = 17, col = fill.colors[1:17] , main = "2021",
+       
        
        key = list(space = "right", adj = 1,
                   
                   text = list(levels(Plot.Data.6$Combined.Factors)),
                   
-                  points = list(pch = 17, col = fill.colors[1:12]  ))) ;
+                  points = list(pch = 17, col = fill.colors[1:17]  ))) ;
 
 
 
+
+# ########################### Data.2021 B3 Triticale  ################################################
+# 
+# 
+# str(Plot.Data.4 )
+# 
+# 
+# Plot.Data.5 <- Plot.Data.4 [ Plot.Data.4$Block == "3" &  Plot.Data.4$C_Crop == "Triticale" ,  ] ;
+# 
+# str(Plot.Data.5 )
+# 
+# 
+# Plot.Data.5 <- droplevels( x = Plot.Data.5) ;
+# 
+# levels(Plot.Data.5$Combined.Factors)
+# 
+# str(Plot.Data.5 )
+# 
+# 
+# Date.Range.2021.6 <- as.POSIXct(c(min(Plot.Data.5$Corrected.TIME) , max(Plot.Data.5$Corrected.TIME) + (60*60*24*0))) ;
+# 
+# 
+# 
+# xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.5 , 
+#        
+#        xlim = Date.Range.2021.6, ylim = Temperature.Range.1  , type = "p" , pch = 17, 
+#        
+#        col = fill.colors[1:4] , main = "2021",
+#        
+#        
+#        key = list(space = "right", adj = 1,
+#                   
+#                   text = list(levels(Plot.Data.5$Combined.Factors)),
+#                   
+#                   points = list(pch = 17, col = fill.colors[1:4]  ))) ;
+# 
+# 
+# 
+# ########################### Data.2021  without B3 Triticale  ################################################
+# 
+# str(Plot.Data.4 )
+# 
+# 
+# Plot.Data.6 <- Plot.Data.4 [ !(Plot.Data.4$Block == "3" &  Plot.Data.4$C_Crop == "Triticale") ,  ] ;
+# 
+# str(Plot.Data.6 )
+# 
+# 
+# 
+# Plot.Data.6 <- droplevels( x = Plot.Data.6) ;
+# 
+# levels(Plot.Data.6$Combined.Factors)
+# 
+# str(Plot.Data.6 )
+# 
+# 
+# 
+# xyplot(Temperature_C ~ Corrected.TIME, groups = Combined.Factors, data = Plot.Data.6 ,   type = "p" , pch = 17, 
+#        
+#        col = fill.colors[1:12] , main = "2021",
+#        
+#               key = list(space = "right", adj = 1,
+#                   
+#                   text = list(levels(Plot.Data.6$Combined.Factors)),
+#                   
+#                   points = list(pch = 17, col = fill.colors[1:12]  ))) ;
+# 
+# 
 
 
 
@@ -494,7 +622,16 @@ names(Plot.Data.6)
 
 Plot.Data.7.mean <- aggregate(cbind( Temperature_C, Calibrated.O2_Kpa)  ~  Corrected.TIME + Depth_cm,  data = Plot.Data.6 , FUN = mean  ) ;
 
+summary (Plot.Data.7.mean) 
+
 Plot.Data.7.sd <- aggregate(cbind( Temperature_C, Calibrated.O2_Kpa)  ~ Corrected.TIME + Depth_cm,  data = Plot.Data.6 , FUN = sd  ) ;
+
+summary (Plot.Data.7.sd) 
+
+which(is.na(Plot.Data.7.sd [ , c( "Calibrated.O2_Kpa")]))
+
+Plot.Data.7.sd [which(is.na(Plot.Data.7.sd [ , c( "Calibrated.O2_Kpa")])), c("Calibrated.O2_Kpa") ] <- 0 ;
+
 
 Plot.Data.7 <- merge(Plot.Data.7.mean , Plot.Data.7.sd, by = c("Corrected.TIME" , "Depth_cm" ) );
 
@@ -504,7 +641,7 @@ names(Plot.Data.7) <- c( "Corrected.TIME" , "Depth_cm" ,"Temperature_C.Avg" , "C
 
 
 ###############################################################################################################
-#                         Calculate confidence intervals usind the T distribution qt()
+#                         Calculate confidence intervals using the T distribution qt()
 ###############################################################################################################
 
 
@@ -559,19 +696,35 @@ str( Plot.Data.T.5cm  )
 
 ########################### Set plot axis range  ################################################
 
-
-Date.Range.2021.8 <- as.POSIXct(c(min(Plot.Data.T.5cm$Corrected.TIME) , max(Plot.Data.T.5cm$Corrected.TIME) + (60*60*24*0))) ;
+Date.Range.2021.8 <- as.POSIXct(c(min(Plot.Data.T.5cm$Corrected.TIME) + (60*60*24*0) , max(Plot.Data.T.5cm$Corrected.TIME) - (60*60*24*0))) ;
 
 Temperature.Range.3 <-  c(min(Plot.Data.T.5cm$T.Low , na.rm = T) , max(Plot.Data.T.5cm$T.High , na.rm = T)) ;
 
 
+########################### Set graphical parameter par to default  ################################################
+
+
+
+par(def.par)
+
+
 ####################################### Plot  ################################################
 
-plot(Temperature_C.Avg ~ Corrected.TIME, data = Plot.Data.T.5cm , type = "b" , xlim =  Date.Range.2021.8 ,
+plot(Temperature_C.Avg ~ Corrected.TIME, data = Plot.Data.T.5cm , type = "l" , xlim =  Date.Range.2021.8 ,
      
-     ylim = Temperature.Range.3 ,col = "RED" , pch = 17 , cex= 1.5 , cex.axis = 2.0 , cex.lab = 2.0, ylab = "Temperature °C", 
+      col = "RED" , pch = 17 , cex= 1.5 , cex.axis = 2.0 , cex.lab = 2.0, ylab = "Temperature °C", 
      
-     xlab = NA,  xaxt = "n" , tck = 1,  main = "2021" , cex.main = 3.0 );
+     xlab = NA, tck = 1,  main = "2021" , cex.main = 3.0 , ylim = c(-10 ,25 ));
+
+# plot(x = rev(Plot.Data.T.5cm $Corrected.TIME) ,  y = c(rev(Plot.Data.T.5cm $T.Low )), type = "l", 
+#      
+#      col = "BLUE", xlim =  Date.Range.2021.8 , ylim = c(-10 ,20 ))
+# 
+# points(Temperature_C.Avg ~ Corrected.TIME, data = Plot.Data.T.5cm , type = "l" , col = "RED")
+# 
+# points(x = Plot.Data.T.5cm $Corrected.TIME ,  y = Plot.Data.T.5cm $T.High , type = "l",
+#         
+#         col = "GREEN")
 
 polygon( x = c(rev(Plot.Data.T.5cm $Corrected.TIME), Plot.Data.T.5cm $Corrected.TIME ) , 
          
@@ -621,7 +774,7 @@ O2.Range.1 <- c(min(Plot.Data.7$O2.Low , na.rm = T) , max(Plot.Data.7$O2.High , 
 
 plot(Calibrated.O2_Kpa.Avg ~ Corrected.TIME, data = Plot.Data.T.5cm , type = "b" , 
      
-     xlim =  Date.Range.2021.8 , ylim = O2.Range.1 , col = "RED" , pch = 17 , cex= 1.5, cex.lab = 2.0,
+     xlim =  Date.Range.2021.8 , ylim = c(10,20) , col = "RED" , pch = 17 , cex= 1.5, cex.lab = 2.0,
      
      ylab = "O2 - Kpa" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
 
@@ -789,9 +942,9 @@ par(bg = gray(level = 0.8)  , mfrow = c(4,1), mar = c(0, 6, 4 , 2) + 0.1 )
 
 plot(Temperature_C.Avg ~ Corrected.TIME, data = Plot.Data.T.5cm , type = "b" , xlim =  Date.Range.2021.8 ,
      
-     ylim = Temperature.Range.3 ,col = "RED" , pch = 17 , cex= 1.5 , cex.axis = 2.0 , cex.lab = 2.0, ylab = "Temperature °C", 
+     ylim = c(-10 , 25) ,col = "RED" , pch = 17 , cex= 1.5 , cex.axis = 2.0 , cex.lab = 2.0, ylab = "Temperature °C", 
      
-     xlab = NA,  xaxt = "n" , tck = 1,  main = "2021" , cex.main = 3.0 );
+     xlab = NA,  xaxt = "n" , tck = 1,  main = "2022 - 2023" , cex.main = 3.0 );
 
 polygon( x = c(rev(Plot.Data.T.5cm $Corrected.TIME), Plot.Data.T.5cm $Corrected.TIME ) , 
          
@@ -857,12 +1010,15 @@ grid(col = "BLACK")
 # grid(col = "BLACK")
 # 
 # 
+# 
+
+
 ########################### Plot Soil Moisture  ################################################
 
 
 plot(Soil.Moisture.Sat.5cm ~ Date.Time , data = Weather.data.2021 , xlim = Weather.Date.Range , 
      
-     ylim = c(0.2 , 0.8) , type = "b" , col = "RED" , cex = 2 , cex.lab = 2.0, pch = 17,
+     ylim = c(0 , 1) , type = "b" , col = "RED" , cex = 2 , cex.lab = 2.0, pch = 17,
      
      ylab = "Soil Moisture" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
 
@@ -881,11 +1037,18 @@ grid( col = "BLACK")
 
 ####################################### Plot O2 5cm   ################################################
 
+######################## setting plot parameters  for the bottom plot ####################################
+
+par (mar = c(6, 6, 1 , 2) + 0.1)
+
+####################################### Plot O2 5cm   ################################################
+
+
 plot(Calibrated.O2_Kpa.Avg ~ Corrected.TIME, data = Plot.Data.T.5cm , type = "b" , 
      
-     xlim =  Date.Range.2021.8 , ylim = O2.Range.1 ,col = "RED" , pch = 17 , cex= 1.5, cex.lab = 2.0,
+     xlim =  Date.Range.2021.8 , ylim = c(10 , 20) ,col = "RED" , pch = 17 , cex= 1.5, cex.lab = 2.0,
      
-     ylab = "O2 - Kpa" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
+     ylab = "O2 - Kpa" , xlab = NA,  tck = 0,  cex.axis = 2.0) ;
 
 polygon( x = c(rev(Plot.Data.T.5cm $Corrected.TIME), Plot.Data.T.5cm $Corrected.TIME ) , 
          
