@@ -48,6 +48,11 @@ library(latticeExtra)
 #                           load the files that will be needed  
 ###############################################################################################################
 
+######  store the default graphics parameters 
+
+def.par<-par()
+
+
 
 ###############################################################################################################
 #                          Weather Data
@@ -482,10 +487,10 @@ grid(col = "BLACK")
 #                       Plot T averages with error shade
 ###############################################################################################################
 
-########################### setting the chart background color ###########################
 
-par( bg = gray(level = 0.8))
+########################### Set plot background color ################################################
 
+par(bg = gray(level = 0.8) , mar = c(0, 6, 4 , 2) + 0.1 )
 
 ########################### Plot T Depth = 5cm ################################################
 
@@ -504,9 +509,11 @@ Temperature.Range.3 <-  c(min(Plot.Data.T.5cm$T.Low , na.rm = T) , max(Plot.Data
 
 ####################################### Plot  ################################################
 
-plot(Temperature_C.Avg ~ Corrected.TIME, data = Plot.Data.T.5cm , type = "b" ,  
+plot(Temperature_C.Avg ~ Corrected.TIME, data = Plot.Data.T.5cm , type = "b" , xlim =  Date.Range.2021.8 ,
      
-     xlim =  Date.Range.2021.8 , ylim = Temperature.Range.3 ,col = "RED" , pch = 17 , cex= 1.5 ) ;
+     ylim = Temperature.Range.3 ,col = "RED" , pch = 17 , cex= 1.5 , cex.axis = 2.0 , cex.lab = 2.0, ylab = "Temperature °C", 
+     
+     xlab = NA,  xaxt = "n" , tck = 1,  main = "2021" , cex.main = 3.0 );
 
 polygon( x = c(rev(Plot.Data.T.5cm $Corrected.TIME), Plot.Data.T.5cm $Corrected.TIME ) , 
          
@@ -517,6 +524,8 @@ grid(col = "BLACK")
 
 
 ########################### Plot T Depth = 20cm ################################################
+
+
 
 Plot.Data.T.20cm <- Plot.Data.7[ Plot.Data.7$Depth_cm == "20" , ] ;
 
@@ -552,9 +561,11 @@ O2.Range.1 <- c(min(Plot.Data.7$O2.Low , na.rm = T) , max(Plot.Data.7$O2.High , 
 
 ####################################### Plot  ################################################
 
-plot(Calibrated.O2_Kpa.Avg ~ Corrected.TIME, data = Plot.Data.T.5cm , type = "b" ,  
+plot(Calibrated.O2_Kpa.Avg ~ Corrected.TIME, data = Plot.Data.T.5cm , type = "b" , 
      
-     xlim =  Date.Range.2021.8 , ylim = O2.Range.1 ,col = "RED" , pch = 17 , cex= 1.5 ) ;
+     xlim =  Date.Range.2021.8 , ylim = O2.Range.1 , col = "RED" , pch = 17 , cex= 1.5, cex.lab = 2.0,
+     
+     ylab = "O2 - Kpa" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
 
 polygon( x = c(rev(Plot.Data.T.5cm $Corrected.TIME), Plot.Data.T.5cm $Corrected.TIME ) , 
          
@@ -609,16 +620,24 @@ str(Weather.data$Date.Time)
 
 Weather.Date.Range <- Date.Range.2021.8  ;
 
-plot(Cumm.Prec ~ Date.Time , data = Weather.data.2021 , xlim = Weather.Date.Range , type = "l"  , lwd = 3 , col = "BLUE")
+plot(Cumm.Prec ~ Date.Time , data = Weather.data.2021 , xlim = Weather.Date.Range , type = "l"  ,
+     
+     lwd = 5 , col = "MAGENTA" ,  cex= 1.5, cex.lab = 2.0,
+     
+     ylab = "Precipitation Acumulation in" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
 
 
 ###############################################################################################################
 #                          Plot  Precipitation 
 ###############################################################################################################
 
-plot(Precipitation.Increment..in. ~ Date.Time ,data = Weather.data.2021 , xlim = Weather.Date.Range , type = "h", lwd = 10 , col = "BLUE" )
+plot(Precipitation.Increment..in. ~ Date.Time ,data = Weather.data.2021 , xlim = Weather.Date.Range ,
+     
+     type = "h", lwd = 10 , col = "MAGENTA" ,  cex= 1.5, cex.lab = 2.0,
+     
+     ylab = "Precipitation in" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
 
-
+grid(col = "BLACK")
 
 ###############################################################################################################
 #                         Plot  volumetric soil moisture 
@@ -640,6 +659,8 @@ Weather.data.2021$Soil.Moisture.Percent.20cm <-
 Soil.Moisture.Range <- c(min(Weather.data.2021[ , c("Soil.Moisture.Percent..2in..pct.")], na.rm = T),
                          
                          max(Weather.data.2021[ , c("Soil.Moisture.Percent..4in..pct.")], na.rm = T)) ;
+
+
 
 ####################################### Plot  ################################################
 
@@ -708,14 +729,138 @@ Weather.data.2021$Soil.Moisture.Sat.50cm <- Min.Max.Scale ( x = Weather.data.202
 
 ####################################### Plot  ################################################
 
+
 plot(Soil.Moisture.Sat.5cm ~ Date.Time , data = Weather.data.2021 , xlim = Weather.Date.Range , 
      
-     ylim = c(0 , 1) , type = "b" , col = "RED" ) ;
+     ylim = c(0 , 1) , type = "b" , col = "RED" , cex = 2 , cex.lab = 2.0, pch = 17,
+     
+     ylab = "Soil Moisture" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
 
 
-points(Soil.Moisture.Sat.20cm ~ Date.Time , data = Weather.data.2021 ,  type = "b" , col = "BLUE" ) ;
 
-points(Soil.Moisture.Sat.50cm ~ Date.Time ,data = Weather.data.2021 ,  type = "b" , col = "BROWN" ) ;
+points(Soil.Moisture.Sat.20cm ~ Date.Time , data = Weather.data.2021 ,  type = "b" ,
+       
+       col = "BLUE" , cex = 2 , pch = 17 ) ;
+
+points(Soil.Moisture.Sat.50cm ~ Date.Time ,data = Weather.data.2021 ,  type = "b" ,
+       
+       col = "BROWN", cex = 2 , pch = 17 ) ;
+
+
+grid( col = "BLACK")
+
+####################################### adding a legend  ################################################
+
+legend.1<-c("5 cm", "20 cm" , "50 cm")
+
+legend.2<-c("solid" , "solid" , "solid" ) 
+
+legend.4<-c( "RED" , "BLUE" , "BROWN")
+
+legend.5<-c( 3, 3)
+
+# legend(x = "bottomleft" , legend = legend.1, lty = legend.2,  pch = legend.3 , col = legend.4, 
+#        pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, ncol = 2)
+
+legend(x = "bottomright" , legend = legend.1, lty = legend.2, col = legend.4, 
+       pt.cex= 2.0 , lwd = legend.5, bty = "n", cex = 2.0, pch = 17)
+
+
+
+
+###############################################################################################################
+#                        Create the composite plot
+###############################################################################################################
+
+########################### setting plot parameters background color ###########################
+
+par(bg = gray(level = 0.8)  , mfrow = c(4,1), mar = c(0, 6, 4 , 2) + 0.1 )
+
+
+####################################### Plot T 5cm  ################################################
+
+plot(Temperature_C.Avg ~ Corrected.TIME, data = Plot.Data.T.5cm , type = "b" , xlim =  Date.Range.2021.8 ,
+     
+     ylim = Temperature.Range.3 ,col = "RED" , pch = 17 , cex= 1.5 , cex.axis = 2.0 , cex.lab = 2.0, ylab = "Temperature °C", 
+     
+     xlab = NA,  xaxt = "n" , tck = 1,  main = "2021" , cex.main = 3.0 );
+
+polygon( x = c(rev(Plot.Data.T.5cm $Corrected.TIME), Plot.Data.T.5cm $Corrected.TIME ) , 
+         
+         y = c(rev(Plot.Data.T.5cm $T.Low ), Plot.Data.T.5cm $T.High ), col = adjustcolor( col = "RED" , alpha.f = 0.2), border = F) ;
+
+grid(col = "BLACK")
+
+########################### Plot T Depth = 20cm ################################################
+
+
+
+points(Temperature_C.Avg ~ Corrected.TIME, data = Plot.Data.T.20cm  , type = "b" , col = "BLUE" , pch = 17 , cex= 1.5 ) ;
+
+
+polygon( x = c(rev(Plot.Data.T.20cm $Corrected.TIME), Plot.Data.T.20cm $Corrected.TIME ) , 
+         
+         y = c(rev(Plot.Data.T.20cm $T.Low ), Plot.Data.T.20cm $T.High ), col = adjustcolor( col = "BLUE" , alpha.f = 0.2) , border = F) ;
+
+
+####################################### adding a legend  ################################################
+
+legend.1<-c("5 cm", "20 cm" )
+
+legend.2<-c("solid" , "solid"  ) 
+
+legend.4<-c( "RED" , "BLUE" )
+
+legend.5<-c( 3, 3)
+
+# legend(x = "bottomleft" , legend = legend.1, lty = legend.2,  pch = legend.3 , col = legend.4, 
+#        pt.cex= 2.0 , lwd = legend.5, bty = "n", horiz = T, ncol = 2)
+
+legend(x = "topleft" , legend = legend.1, lty = legend.2, col = legend.4, 
+       pt.cex= 2.0 , lwd = legend.5, bty = "n", cex = 2.0, pch = 17)
+
+
+
+
+# ########################### Plot Precipitation  Accumulation ################################################
+# 
+# par (mar = c(0, 6, 1 , 2) + 0.1)
+# 
+# 
+# plot(Cumm.Prec ~ Date.Time , data = Weather.data.2021 , xlim = Weather.Date.Range , type = "l"  ,
+# 
+#      lwd = 5 , col = "MAGENTA" ,  cex= 1.5, cex.lab = 2.0,
+# 
+#      ylab = "Precipitation in" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
+# 
+# grid(col = "BLACK")
+# 
+
+########################### Plot Precipitation  ################################################
+
+plot(Precipitation.Increment..in. ~ Date.Time ,data = Weather.data.2021 , xlim = Weather.Date.Range ,
+
+     type = "h", lwd = 10 , col = "MAGENTA" ,  cex= 1.5, cex.lab = 2.0,
+
+     ylab = "Precipitation in" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
+
+grid(col = "BLACK")
+
+
+########################### Plot Soil Moisture  ################################################
+
+
+plot(Soil.Moisture.Sat.5cm ~ Date.Time , data = Weather.data.2021 , xlim = Weather.Date.Range , 
+     
+     ylim = c(0 , 1) , type = "b" , col = "RED" , cex = 2 , cex.lab = 2.0, pch = 17,
+     
+     ylab = "Soil Moisture" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
+
+
+
+points(Soil.Moisture.Sat.20cm ~ Date.Time , data = Weather.data.2021 ,  type = "b" ,
+       
+       col = "BLUE" , cex = 2 , pch = 17 ) ;
 
 
 grid( col = "BLACK")
@@ -723,13 +868,48 @@ grid( col = "BLACK")
 
 
 
+####################################### Plot O2 5cm   ################################################
+
+plot(Calibrated.O2_Kpa.Avg ~ Corrected.TIME, data = Plot.Data.T.5cm , type = "b" , 
+     
+     xlim =  Date.Range.2021.8 , ylim = O2.Range.1 ,col = "RED" , pch = 17 , cex= 1.5, cex.lab = 2.0,
+     
+     ylab = "O2 - Kpa" , xlab = NA,  xaxt = "n" , tck = 1,  cex.axis = 2.0) ;
+
+polygon( x = c(rev(Plot.Data.T.5cm $Corrected.TIME), Plot.Data.T.5cm $Corrected.TIME ) , 
+         
+         y = c(rev(Plot.Data.T.5cm$O2.Low ), Plot.Data.T.5cm$O2.High ), col = adjustcolor( col = "RED" , alpha.f = 0.2), border = F) ;
+
+grid(col = "BLACK")
+
+
+
+########################### Plot O2  20cm ################################################
+
+Plot.Data.T.20cm <- Plot.Data.7[ Plot.Data.7$Depth_cm == "20" , ] ;
+
+str( Plot.Data.T.20cm  )
+
+
+
+points(Calibrated.O2_Kpa.Avg ~ Corrected.TIME, data = Plot.Data.T.20cm  , type = "b" , col = "BLUE" , pch = 17 , cex= 1.5 ) ;
+
+
+
+polygon( x = c(rev(Plot.Data.T.20cm $Corrected.TIME), Plot.Data.T.20cm $Corrected.TIME ) , 
+         
+         y = c(rev(Plot.Data.T.20cm $O2.Low ), Plot.Data.T.20cm $O2.High ),
+         
+         col = adjustcolor( col = "BLUE" , alpha.f = 0.2) , border = F) ;
 
 
 
 
-################## compute rolling average ##############################
 
-apply(embed(x = Weather.data.1$Soil.Moisture.Percent..2in..pct. , 3),1, mean)
 
-filter(Weather.data.1$Soil.Moisture.Percent..2in..pct., rep(1 / n, n))
+
+
+
+
+
 
